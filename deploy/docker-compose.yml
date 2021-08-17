@@ -28,7 +28,7 @@ services:
   appstore-ui:
     container_name: appstore-ui
     hostname: appstore-ui
-    image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstoreuits/appstoreui:latest
+    image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstoreuits/appstoreuiv6:latest
     restart: always
     expose:
       - 8082
@@ -48,7 +48,7 @@ services:
   appstore:
     container_name: appstore
     hostname: appstore
-    image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstore/appstore-binac:latest
+    image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstorev6/appstore-binac:latest
     restart: always
     expose:
       - 8080
