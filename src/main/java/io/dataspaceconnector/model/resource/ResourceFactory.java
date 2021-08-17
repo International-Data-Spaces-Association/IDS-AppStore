@@ -41,7 +41,7 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
     /**
      * The service for resource handling.
      */
-    private final @NonNull ResourceService resourceService;
+    //private final @NonNull ResourceService resourceService;
 
     /**
      * The default remote id assigned to all resources.
@@ -206,9 +206,9 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
     }
 
     private boolean updateSamples(final Resource resource, final List<URI> samples) {
-        if (samples != null) {
-            validateSamples(resource, samples);
-        }
+//        if (samples != null) {
+//            validateSamples(resource, samples);
+//        }
         final var newList
                 = FactoryUtils.updateUriList(resource.getSamples(), samples, DEFAULT_SAMPLES);
         newList.ifPresent(resource::setSamples);
@@ -216,29 +216,29 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return newList.isPresent();
     }
 
-    private void validateSamples(final Resource resource, final List<URI> samples) {
-        for (final var sample : samples) {
-            if (io.dataspaceconnector.common.util.ValidationUtils.isInvalidUri(sample.toString())) {
-                throw new InvalidEntityException("Sample is not a valid uri.");
-            }
-
-            UUID resourceId;
-            try {
-                resourceId = io.dataspaceconnector.common.net.EndpointUtils.getUUIDFromPath(sample);
-            } catch (Exception exception) {
-                throw new InvalidEntityException("Sample is not a valid uri.");
-            }
-
-            if (resource.getId().equals(resourceId)) {
-                throw new InvalidEntityException("Resource cannot reference itself.");
-            }
-
-            if (!resourceService.doesExist(resourceId)) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Could not find matching resource. [id=({})]", sample);
-                }
-                throw new InvalidEntityException("Could not find matching resource.");
-            }
-        }
-    }
+//    private void validateSamples(final Resource resource, final List<URI> samples) {
+//        for (final var sample : samples) {
+//            if (io.dataspaceconnector.common.util.ValidationUtils.isInvalidUri(sample.toString())) {
+//                throw new InvalidEntityException("Sample is not a valid uri.");
+//            }
+//
+//            UUID resourceId;
+//            try {
+//                resourceId = io.dataspaceconnector.common.net.EndpointUtils.getUUIDFromPath(sample);
+//            } catch (Exception exception) {
+//                throw new InvalidEntityException("Sample is not a valid uri.");
+//            }
+//
+//            if (resource.getId().equals(resourceId)) {
+//                throw new InvalidEntityException("Resource cannot reference itself.");
+//            }
+//
+//            if (!resourceService.doesExist(resourceId)) {
+//                if (log.isWarnEnabled()) {
+//                    log.warn("Could not find matching resource. [id=({})]", sample);
+//                }
+//                throw new InvalidEntityException("Could not find matching resource.");
+//            }
+//        }
+//    }
 }
