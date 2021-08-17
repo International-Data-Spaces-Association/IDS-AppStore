@@ -54,6 +54,8 @@ services:
       - 8080
     env_file:
       - ./connector.env
+    volumes:
+      - search-data:/var/data/search:ro
     networks:
       - proxynet
     depends_on:
@@ -67,3 +69,4 @@ networks:
 
 volumes:
   connector-data: {}
+  search-data: {}
