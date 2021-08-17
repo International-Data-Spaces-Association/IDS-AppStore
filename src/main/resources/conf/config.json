@@ -9,7 +9,7 @@
     "@id" : "idsc:MINIMAL_LOGGING"
   },
   "ids:connectorDeployMode" : {
-    "@id" : "idsc:PRODUCTIVE_DEPLOYMENT"
+    "@id" : "idsc:TEST_DEPLOYMENT"
   },
   "ids:connectorDescription" : {
     "@type" : "ids:AppStore",
@@ -57,6 +57,6 @@
     "@id" : "idsc:CONNECTOR_ONLINE"
   },
   "ids:keyStore" : {
-    "@id" : "file:///conf/binac.fit.fraunhofer.de.p12"
+    "@id" : "file:///conf/keystore-localhost.p12"
   }
 }
