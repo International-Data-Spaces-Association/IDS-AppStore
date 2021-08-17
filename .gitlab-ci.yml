@@ -24,7 +24,7 @@ build-and-push-docker-image-dev:
 build-and-push-docker-image:
   extends: .build_and_push_docker_image
   only:
-    - master
+    - main
   variables:
     IMAGE_TAG_TMP: $CI_REGISTRY_IMAGE/appstore:latest
 

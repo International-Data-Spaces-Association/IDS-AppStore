@@ -36,7 +36,3 @@ build/
 .pre-commit-config.yaml
 
 venv/
-
-App/
-
-Resource/
