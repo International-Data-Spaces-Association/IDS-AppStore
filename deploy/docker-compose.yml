@@ -35,7 +35,7 @@ services:
     networks:
       - proxynet
   postgres:
-    image: postgres
+    image: postgres:13
     container_name: appstore-postgres
     expose:
       - 5432
@@ -49,13 +49,13 @@ services:
     container_name: appstore
     hostname: appstore
     image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstorev6/appstore-drm:latest
-    restart: always
+    restart: "always"
     expose:
       - 8080
     env_file:
       - ./connector.env
     volumes:
-      - search-data:/data/search:z
+      - search-data:/data/search
     networks:
       - proxynet
     depends_on:

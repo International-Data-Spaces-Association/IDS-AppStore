@@ -29,13 +29,12 @@ COPY src/main/resources ./src/main/resources
 RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true
 
 # Copy the jar and build image
-FROM adoptopenjdk/openjdk11:alpine-slim
 #FROM gcr.io/distroless/java-debian10:11
+FROM exoplatform/jdk:openjdk-11-ubuntu-2004
 COPY --from=maven /app/target/*.jar /app/app.jar
-
 WORKDIR /app
-RUN mkdir -p ./data/search
+RUN mkdir -p /data/search
 EXPOSE 8080
 EXPOSE 29292
-USER nonroot
+#USER nonroot
 ENTRYPOINT ["java","-jar","app.jar"]
