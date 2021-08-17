@@ -28,7 +28,7 @@ services:
   appstore-ui:
     container_name: appstore-ui
     hostname: appstore-ui
-    image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstoreuits/appstoreui-drm:latest
+    image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstoreuits/appstoreui:latest
     restart: always
     expose:
       - 8082
