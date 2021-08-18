@@ -1,5 +1,6 @@
 import datetime
 import pprint
+import time
 
 import docker
 import requests
@@ -55,9 +56,11 @@ def get_request_check_response(url, creds=True):
     try:
         if creds is True:
             response_tmp = session_creds.get(url)
+            time.sleep(5)
             response_tmp.raise_for_status()
         else:
             response_tmp = session.get(url)
+            time.sleep(5)
             response_tmp.raise_for_status()
         return response_tmp
     except HTTPError as http_error:
@@ -371,8 +374,8 @@ def tag_image_for_registry(image_tmp, resource_id_tmp, resource_version_tmp, reg
         # pprint.pprint("Replacing '-' to '_' in resourceId")
         # resource_id_tmp = resource_id_tmp.replace("-", "_")
 
-        if resource_version is not None:
-            image_tag = f"{resource_id_tmp}:{resource_version}"
+        if resource_version_tmp is not None:
+            image_tag = f"{resource_id_tmp}:{resource_version_tmp}"
         else:
             image_tag = f"{resource_id_tmp}"
 
@@ -415,38 +418,40 @@ def pulling_tagging_pushing_image_to_registry(image_name_pull, resource_id_tag, 
     except Exception as ex:
         pprint.pprint(f"Exception occured!, exception={ex}")
 
+
 ################################
 # SIMULATE EVENT FROM REGISTRY #
 ################################
 def send_simulated_registry_event(resource_uuid_tmp):
     resource_url = f"{registry_address}/{registry_repo_name}/{resource_uuid_tmp}"
     json = {
-            "type": "PUSH_ARTIFACT",
-            "occur_at": 1626448868,
-            "operator": "admin",
-            "event_data": {
-                "resources": [
-                    {
-                        "digest": "sha256:84075fa0ee8106f8e2975dca79d3c6f9587b41afefa7aec57e76a2fc9506df6c",
-                        "tag": f"{resource_version}",
-                        "resource_url": f"{resource_url}"
-                    }
-                ],
-                "repository": {
-                    "date_created": 1626448868,
-                    "name": f"{resource_uuid_tmp}",
-                    "namespace": f"{registry_repo_name}",
-                    "repo_full_name": f"{registry_repo_name}/{resource_uuid_tmp}",
-                    "repo_type": "private"
+        "type": "PUSH_ARTIFACT",
+        "occur_at": 1626448868,
+        "operator": "admin",
+        "event_data": {
+            "resources": [
+                {
+                    "digest": "sha256:84075fa0ee8106f8e2975dca79d3c6f9587b41afefa7aec57e76a2fc9506df6c",
+                    "tag": f"{resource_version}",
+                    "resource_url": f"{resource_url}"
                 }
+            ],
+            "repository": {
+                "date_created": 1626448868,
+                "name": f"{resource_uuid_tmp}",
+                "namespace": f"{registry_repo_name}",
+                "repo_full_name": f"{registry_repo_name}/{resource_uuid_tmp}",
+                "repo_type": "private"
             }
         }
+    }
     pprint.pprint("SENDING SIMULATED EVENT -->")
     pprint.pprint(json)
     url = f"{combined_host}/api/webhook/registry"
     with post_request_check_response(url, json=json, creds=True, ret_location=False) as response_tmp:
         pprint.pprint(f"Status_Code: {response_tmp.status_code} Response: {response_tmp.text}")
         response_tmp.raise_for_status()
+
 
 #####################################################
 # ARTIFACT DESCRIPTION REQUEST AND GET DATA METHODS #
@@ -486,8 +491,8 @@ def send_artifact_request(artifact_uuid):
                 "@id" : """ + f'"{artifact_uuid}"' + """
             }
         }'"""
-        #,
-        #'payload': '{}'"""
+        # ,
+        # 'payload': '{}'"""
     }
 
     url = "https://localhost:8080/api/ids/data"
@@ -506,21 +511,21 @@ def send_artifact_request(artifact_uuid):
 def send_get_artifact(artifact_url_tmp):
     with get_request_check_response(artifact_url_tmp) as response_tmp:
         pprint.pprint(response_tmp.json())
-        response_tmp.raise_for_status()
     return response_tmp
 
 
 def send_get_artifact_data(artifact_url_tmp, artifact_uuid_tmp):
+    pprint.pprint(artifact_url_tmp)
+    pprint.pprint(artifact_uuid_tmp)
     filename_tmp = f"{artifact_uuid_tmp}.json"
     url = artifact_url_tmp + "/data"
+    pprint.pprint(url)
     with get_request_check_response(url) as response_tmp:
         pprint.pprint(response_tmp.status_code)
-        response_tmp.raise_for_status()
+        pprint.pprint(response_tmp.json())
         with open(filename_tmp, 'wb') as f:
-            for chunk in response_tmp.iter_content(chunk_size=8192):
-                f.write(chunk)
+            f.write(response_tmp.content)
     return filename_tmp
-
 
 ####################
 # CREATE RESOURCES #
@@ -548,8 +553,8 @@ add_rule_to_contract(contract, use_rule)
 ############################
 # GET RESOURCE DESCRIPTION #
 ############################
-#response = post_description_request("http://localhost:8080/api/ids/data", resource)
-#pprint.pprint(response.json())
+# response = post_description_request("http://localhost:8080/api/ids/data", resource)
+# pprint.pprint(response.json())
 resource_uuid = resource.replace(f"{combined_host}/api/resources/", "")
 artifact_uuid = artifact.replace(f"{combined_host}/api/artifacts/", "")
 pprint.pprint("ResourceId: " + resource_uuid)
@@ -558,7 +563,19 @@ pprint.pprint("ArtifactId: " + artifact_uuid)
 ###########################
 # SENDING SIMULATED EVENT #
 ###########################
-#send_simulated_registry_event(resource_uuid)
+# send_simulated_registry_event(resource_uuid)
+
+##########################
+# DOCKER UPLOAD METHODS  #
+##########################
+# https://localhost:8080/api/resources/97fa143c-b19e-4b95-9ae9-9ec68ea880ad
+
+pulling_tagging_pushing_image_to_registry(image_name_pull=image_name, resource_id_tag=resource_uuid,
+                                          resource_version_tag=resource_id_tag_version,
+                                          registry_address_tmp=registry_address,
+                                          registry_repo_name_tmp=registry_repo_name,
+                                          registry_user_tmp=registry_user,
+                                          registry_password_tmp=registry_password)
 
 ##################################
 # GET ARTIFACT AND ARTIFACT DATA #
@@ -567,29 +584,3 @@ send_get_artifact(artifact)
 
 filename = send_get_artifact_data(artifact, artifact_uuid)
 pprint.pprint("File can be found in working directory: " + filename)
-
-#send_artifact_request(artifact)
-
-# nach anlegen auf die resourcen ein get data
-# send description request af die resource
-# send artifact request == gleiche Antwort wie get auf /api/artifact/data (artifact response + /data)
-
-
-##########################
-# DOCKER UPLOAD METHODS  #
-##########################
-# https://localhost:8080/api/resources/97fa143c-b19e-4b95-9ae9-9ec68ea880ad
-
-# pulling_tagging_pushing_image_to_registry(image_name_pull=image_name, resource_id_tag=resource_id,
-#                                           resource_version_tag=resource_id_tag_version,
-#                                           registry_address_tmp=registry_address,
-#                                           registry_repo_name_tmp=registry_repo_name,
-#                                           registry_user_tmp=registry_user,
-#                                           registry_password_tmp=registry_password)
-
-#
-#  def runContainer(image):
-#     if image is not None:
-#         container = client.containers.run(image, "echo hello world!")
-#         pprint.pprint(container)
-#     return container
