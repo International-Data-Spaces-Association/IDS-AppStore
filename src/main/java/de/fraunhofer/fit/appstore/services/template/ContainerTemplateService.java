@@ -9,6 +9,7 @@ import io.dataspaceconnector.service.resource.type.ResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -29,6 +30,12 @@ public class ContainerTemplateService {
      * The resource service.
      */
     private final @NonNull ResourceService resourceService;
+
+    /**
+     * The registry host.
+     */
+    @Value("${registry.host}")
+    private String registryHost;
 
     /**
      * Create backend container template by resource id.
@@ -82,10 +89,20 @@ public class ContainerTemplateService {
         // Registry TODO: Check elements if null on this point
         if (!rep.getDistributionService().toString().isBlank()
                 || !app.getRepositoryNameSpace().isBlank() || !app.getRepositoryName().isBlank()) {
-            template.setRegistry(URI.create(String.format("%s/%s/%s",
-                    rep.getDistributionService().toString(),
-                    app.getRepositoryNameSpace(),
-                    app.getRepositoryName())));
+
+            String registryAdress;
+            if(rep.getDistributionService().toString().contains("http://")){
+                registryAdress = rep.getDistributionService().toString().replace("http://", "");
+            } else if(rep.getDistributionService().toString().contains("https://")){
+                registryAdress = rep.getDistributionService().toString().replace("https://", "");
+            } else {
+                registryAdress = this.registryHost;
+            }
+
+            template.setRegistry(URI.create(String.format("%s/%s",
+                    registryAdress,
+                    app.getRepositoryNameSpace()
+                    )));
         }
 
         ContainerTemplateUtils.setTemplateDescription(app, rep, template, res);
