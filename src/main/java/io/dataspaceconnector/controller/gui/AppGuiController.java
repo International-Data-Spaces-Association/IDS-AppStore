@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 
-@CrossOrigin(origins = {"https://binac.fit.fraunhofer.de", "http://binac.fit.fraunhofer.de"})
+@CrossOrigin(origins = {"https://drm-appstore.fit.fraunhofer.de", "http://drm-appstore.fit.fraunhofer.de"})
 @RequiredArgsConstructor
 @RequestMapping("/api/gui")
 @Tag(name="AppStore GUI")

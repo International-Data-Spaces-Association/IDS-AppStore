@@ -33,12 +33,6 @@ public class RegistryAPIClientConfig {
     private String registryUrl;
 
     /**
-     * The registry host.
-     */
-    @Value("${registry.host}")
-    private String registryHost;
-
-    /**
      * The registry api username.
      */
     @Value("${registry.client.user}")
