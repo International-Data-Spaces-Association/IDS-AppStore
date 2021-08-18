@@ -1,4 +1,3 @@
-import datetime
 import pprint
 
 import docker
@@ -10,9 +9,9 @@ from requests import HTTPError
 ##########################
 apiUser = "admin"
 apiPassword = "idsappstore!"
-host = "binac.fit.fraunhofer.de"
-port = None
-protocol = "https"
+host = "localhost"
+port = 8080
+protocol = "http"
 if port is not None:
     combined_host = f"{protocol}://{host}:{port}"
 else:
@@ -22,15 +21,17 @@ else:
 # APPSTORE REGISTRY SETTINGS #
 ##############################
 registry_address = "binac.fit.fraunhofer.de"
-registry_repo_name = "ids-binac"
-registry_user = "binac-ids"
-registry_password = "binac1IDS!"
+registry_repo_name = "isst-integration"
+registry_user = "ISSTtest"
+registry_password = "ISSTtest1234!"
 
 ###################
 # DOCKER SETTINGS #
 ###################
 client = docker.from_env()
 
+#resource_id = "b2a17a95-1fa4-4c02-9005-8e26b57eacea"
+#resource_id_tag = "b2a17a95-1fa4-4c02-9005-8e26b57eacea"
 resource_id_tag_version = "latest"
 image_name = "ubuntu:latest"
 
@@ -141,9 +142,6 @@ def create_resource():
 
 def create_representation():
     json = {
-        "title": "Docker Representation",
-        "description": "This is the docker representation for the DataProcessingApp",
-        "language": "EN",
         "runtimeEnvironment": "docker",
         "distributionService": "https://binac.fit.fraunhofer.de"
     }
@@ -153,10 +151,10 @@ def create_representation():
 
 def create_dataApp():
     json = {
-        "title": "DataApp Information",
-        "description": "This is the dataApp information for the DataProcessingApp.",
         "docs": "App-related human-readable documentation.",
+        "title": "Smart Data App for Example Usage",
         "environmentVariables": "Env1=environmentvariable;Env2=environmentvariable2",
+        "description": "data app for processing data.",
         "storageConfig": "/data/temp:/temp",
         "supportedUsagePolicies": [
             "PROVIDE_ACCESS"
@@ -168,16 +166,14 @@ def create_dataApp():
 
 def create_endpoints():
     json = {
-        "title": "DataApp Input Endpoint",
-        "description": "This is the input endpoint for the DataProcessingApp.",
-        "location": "/input",
+        "location": "/output",
+        "path": "/output",
         "mediaType": "application/json",
         "port": 5000,
         "protocol": "HTTP/1.1",
         "type": "Input",
         "docs": "https://app.swaggerhub.com/apis/app/1337",
-        "info": "More information about the endpoint",
-        "path": "/input"
+        "info": "Endpoint-related human-readable information"
     }
     loc = post_request_check_response(f"{combined_host}/api/endpoints", json)
     return loc
@@ -185,8 +181,6 @@ def create_endpoints():
 
 def create_artifact():
     json = {
-        "title": "",
-        "description": "",
         "value": ""
     }
     loc = post_request_check_response(f"{combined_host}/api/artifacts", json)
@@ -500,6 +494,7 @@ def send_artifact_request(artifact_uuid):
     files = []
     response_tmp = session.post(url, headers=headers, data=json, files=files)
     response_tmp.raise_for_status()
+    # response_tmp = post_request_check_response(url, json, creds=False, ret_location=False)
     pprint.pprint(response_tmp)
 
 
@@ -548,17 +543,16 @@ add_rule_to_contract(contract, use_rule)
 ############################
 # GET RESOURCE DESCRIPTION #
 ############################
-#response = post_description_request("http://localhost:8080/api/ids/data", resource)
+#response = post_description_request(f"{combined_host}/api/ids/data", resource)
 #pprint.pprint(response.json())
 resource_uuid = resource.replace(f"{combined_host}/api/resources/", "")
 artifact_uuid = artifact.replace(f"{combined_host}/api/artifacts/", "")
-pprint.pprint("ResourceId: " + resource_uuid)
-pprint.pprint("ArtifactId: " + artifact_uuid)
+pprint.pprint(resource_uuid)
 
 ###########################
 # SENDING SIMULATED EVENT #
 ###########################
-#send_simulated_registry_event(resource_uuid)
+send_simulated_registry_event(resource_uuid)
 
 ##################################
 # GET ARTIFACT AND ARTIFACT DATA #
