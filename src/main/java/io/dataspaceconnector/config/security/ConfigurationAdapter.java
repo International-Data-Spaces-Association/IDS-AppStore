@@ -57,7 +57,7 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                 .authorizeRequests()
-                .antMatchers("/", "/api/ids/data", "/api/gui/**").anonymous()
+                .antMatchers("/", "/api/ids/data", "/api/gui/**", "/api/webhook/**").anonymous()
                 .antMatchers("/api/subscriptions/**").authenticated()
                 .antMatchers("/api/**").hasRole("ADMIN")
                 .antMatchers("/actuator/**").hasRole("ADMIN")
