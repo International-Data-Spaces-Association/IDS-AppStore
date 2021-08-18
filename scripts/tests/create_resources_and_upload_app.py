@@ -371,8 +371,8 @@ def tag_image_for_registry(image_tmp, resource_id_tmp, resource_version_tmp, reg
         # pprint.pprint("Replacing '-' to '_' in resourceId")
         # resource_id_tmp = resource_id_tmp.replace("-", "_")
 
-        if resource_version is not None:
-            image_tag = f"{resource_id_tmp}:{resource_version}"
+        if resource_version_tmp is not None:
+            image_tag = f"{resource_id_tmp}:{resource_version_tmp}"
         else:
             image_tag = f"{resource_id_tmp}"
 
@@ -568,28 +568,14 @@ send_get_artifact(artifact)
 filename = send_get_artifact_data(artifact, artifact_uuid)
 pprint.pprint("File can be found in working directory: " + filename)
 
-#send_artifact_request(artifact)
-
-# nach anlegen auf die resourcen ein get data
-# send description request af die resource
-# send artifact request == gleiche Antwort wie get auf /api/artifact/data (artifact response + /data)
-
-
 ##########################
 # DOCKER UPLOAD METHODS  #
 ##########################
 # https://localhost:8080/api/resources/97fa143c-b19e-4b95-9ae9-9ec68ea880ad
 
-# pulling_tagging_pushing_image_to_registry(image_name_pull=image_name, resource_id_tag=resource_id,
-#                                           resource_version_tag=resource_id_tag_version,
-#                                           registry_address_tmp=registry_address,
-#                                           registry_repo_name_tmp=registry_repo_name,
-#                                           registry_user_tmp=registry_user,
-#                                           registry_password_tmp=registry_password)
-
-#
-#  def runContainer(image):
-#     if image is not None:
-#         container = client.containers.run(image, "echo hello world!")
-#         pprint.pprint(container)
-#     return container
+pulling_tagging_pushing_image_to_registry(image_name_pull=image_name, resource_id_tag=resource_uuid,
+                                           resource_version_tag=resource_id_tag_version,
+                                           registry_address_tmp=registry_address,
+                                           registry_repo_name_tmp=registry_repo_name,
+                                           registry_user_tmp=registry_user,
+                                           registry_password_tmp=registry_password)

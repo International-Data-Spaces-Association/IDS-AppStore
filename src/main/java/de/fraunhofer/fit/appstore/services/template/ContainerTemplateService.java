@@ -99,10 +99,7 @@ public class ContainerTemplateService {
                 registryAdress = this.registryHost;
             }
 
-            template.setRegistry(URI.create(String.format("%s/%s",
-                    registryAdress,
-                    app.getRepositoryNameSpace()
-                    )));
+            template.setRegistry(URI.create(String.format("%s", registryAdress)));
         }
 
         ContainerTemplateUtils.setTemplateDescription(app, rep, template, res);
