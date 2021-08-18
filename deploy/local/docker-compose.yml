@@ -28,7 +28,7 @@ services:
   appstore-ui:
     container_name: appstore-ui
     hostname: appstore-ui
-    image: ghcr.io/international-data-spaces-association/ids-appstore/idsappstoreui:latest
+    image: ghcr.io/international-data-spaces-association/ids-appstoreui:main
     restart: "always"
     expose:
       - 8082
@@ -48,7 +48,7 @@ services:
   appstore:
     container_name: appstore
     hostname: appstore
-    image: ghcr.io/international-data-spaces-association/ids-appstore/idsappstore:latest
+    image: ghcr.io/international-data-spaces-association/ids-appstore/ids-appstore:main
     restart: "always"
     expose:
       - 8080
