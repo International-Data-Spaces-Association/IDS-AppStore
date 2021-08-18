@@ -122,7 +122,7 @@ public class EntityPersistenceServiceTest {
     }
 
     private io.dataspaceconnector.model.resource.Resource getRequestedResource() {
-        return new ResourceFactory(resourceService).create(new ResourceDesc());
+        return new ResourceFactory().create(new ResourceDesc());
     }
 
     private Artifact getArtifact(final String value) {

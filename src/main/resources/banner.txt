@@ -4,4 +4,4 @@
   / ___ \  | |_) | | |_) |    ___) | | |_  | (_) | | |    |  __/
  /_/   \_\ | .__/  | .__/    |____/   \__|  \___/  |_|     \___|
            |_|     |_|
- ${application.title}             ${application.formatted-version}
+ ${spring.application.name} ${application.formatted-version}
