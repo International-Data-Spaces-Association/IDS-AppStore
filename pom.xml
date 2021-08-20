@@ -2,6 +2,7 @@
 <!--
 
     Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+    Copyright 2021 Fraunhofer Institute for Applied Information Technology
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -729,20 +730,29 @@
 						<licenseSet>
 							<header>scripts/ci/license/header.txt</header>
 							<excludes>
+								<exclude>src/main/java/de/fraunhofer/fit/appstore/**</exclude>
+								<exclude>venv/**</exclude>
 								<exclude>**/README</exclude>
 								<exclude>src/test/resources/**</exclude>
 								<exclude>src/main/resources/**</exclude>
-								<exclude>scripts/ci/e2e/active-tests.txt</exclude>
+								<!--<exclude>scripts/ci/e2e/active-tests.txt</exclude>-->
+								<exclude>scripts/**</exclude>
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>
-								<exclude>charts/dataspace-connector/Chart.lock</exclude>
-								<exlcude>charts/dataspace-connector/.helmignore</exlcude>
+								<!--<exclude>charts/dataspace-connector/Chart.lock</exclude>-->
+								<!--<exlcude>charts/dataspace-connector/.helmignore</exlcude>-->
 								<exclude>**/*.tgz</exclude>
 								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
 								<exclude>.editorconfig</exclude>
 							</excludes>
+						</licenseSet>
+						<licenseSet>
+							<header>scripts/ci/license/header_FIT.txt</header>
+							<includes>
+								<include>src/main/java/de/fraunhofer/fit/appstore/**</include>
+							</includes>
 						</licenseSet>
 					</licenseSets>
 					<properties>
