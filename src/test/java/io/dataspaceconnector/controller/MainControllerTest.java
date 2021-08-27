@@ -16,6 +16,7 @@
  */
 package io.dataspaceconnector.controller;
 
+import de.fraunhofer.iais.eis.AppStoreBuilder;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
@@ -53,7 +54,7 @@ public class MainControllerTest {
     @Test
     public void getPublicSelfDescription_nothing_returnDescriptionWithOutDescription() throws Exception {
         /* ARRANGE */
-        final var connector = new BaseConnectorBuilder()
+        final var connector = new AppStoreBuilder()
                 ._curator_(URI.create("someCurator"))
                 ._outboundModelVersion_("9999")
                 ._maintainer_(URI.create("someMaintainer"))
@@ -78,7 +79,7 @@ public class MainControllerTest {
         Mockito.doThrow(ConstraintViolationException.class).when(connectorService).getAppStoreWithoutResources();
 
         /* ACT */
-        final var result = mockMvc.perform(get("/"))
+        final var result = mockMvc.perform(get("/public"))
                 .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
@@ -95,7 +96,7 @@ public class MainControllerTest {
     @WithMockUser("ADMIN")
     public void getPrivateSelfDescription_nothing_returnDescription() throws Exception {
         /* ARRANGE */
-        final var connector = new BaseConnectorBuilder()
+        final var connector = new AppStoreBuilder()
                 ._curator_(URI.create("someCurator"))
                 ._outboundModelVersion_("9999")
                 ._maintainer_(URI.create("someMaintainer"))
@@ -147,22 +148,16 @@ public class MainControllerTest {
 
         assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"},"
                      + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\","
-                     + "\"templated\":true},\"artifacts\":{\"href\":\"http://localhost/api"
-                     + "/artifacts{?page,size}\",\"templated\":true},"
-                     + "\"brokers\":{\"href\":\"http://localhost/api/brokers{?page,size}\","
-                     + "\"templated\":true},\"catalogs\":{\"href\":\"http://localhost/api"
-                     + "/catalogs{?page,size}\",\"templated\":true},"
+                     + "\"templated\":true},\"apps\":{\"href\":\"http://localhost/api/apps{?page,size}\",\"templated\":true},"
+                     + "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\",\"templated\":true},"
+                     + "\"catalogs\":{\"href\":\"http://localhost/api/catalogs{?page,size}\",\"templated\":true},"
                      + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\","
-                     + "\"templated\":true},\"datasources\":{\"href\":\"http://localhost/api"
-                     + "/datasources{?page,size}\",\"templated\":true},"
+                     + "\"templated\":true},"
                      + "\"endpoints\":{\"href\":\"http://localhost/api/endpoints{?page,size}\","
-                     + "\"templated\":true},\"offers\":{\"href\":\"http://localhost/api/offers"
-                     + "{?page,size}\",\"templated\":true},"
+                     + "\"templated\":true},"
+                     + "\"resources\":{\"href\":\"http://localhost/api/resources{?page,size}\",\"templated\":true},"
                      + "\"representations\":{\"href\":\"http://localhost/api/representations"
                      + "{?page,size}\",\"templated\":true},"
-                     + "\"routes\":{\"href\":\"http://localhost/api/routes{?page,size}\","
-                     + "\"templated\":true},\"requests\":{\"href\":\"http://localhost/api"
-                     + "/requests{?page,size}\",\"templated\":true},"
                      + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
                      + "\"templated\":true},"
                      + "\"subscriptions\":{\"href\":\"http://localhost/api/subscriptions{?page,size}\","

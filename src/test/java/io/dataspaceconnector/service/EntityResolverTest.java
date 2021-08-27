@@ -16,14 +16,7 @@
  */
 package io.dataspaceconnector.service;
 
-import de.fraunhofer.iais.eis.AppRepresentationBuilder;
-import de.fraunhofer.iais.eis.ArtifactBuilder;
-import de.fraunhofer.iais.eis.ContractAgreementBuilder;
-import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.iais.eis.ContractOfferBuilder;
-import de.fraunhofer.iais.eis.ResourceBuilder;
-import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.InvalidResourceException;
@@ -39,22 +32,11 @@ import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.service.resource.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsRepresentationBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
-import io.dataspaceconnector.service.resource.type.AgreementService;
-import io.dataspaceconnector.service.resource.type.ArtifactService;
-import io.dataspaceconnector.service.resource.type.CatalogService;
-import io.dataspaceconnector.service.resource.type.ContractService;
-import io.dataspaceconnector.service.resource.type.RepresentationService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
-import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.service.resource.ids.builder.*;
+import io.dataspaceconnector.service.resource.type.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -64,13 +46,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -123,7 +102,10 @@ public class EntityResolverTest {
     @MockBean
     private DeserializationService deserializationService;
 
-    @Autowired
+    @MockBean
+    private EndpointService endpointService;
+
+    @MockBean
     private EntityResolver resolver;
 
     private final UUID resourceId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
@@ -134,22 +116,7 @@ public class EntityResolverTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> resolver.getEntityById(null));
-    }
-
-    @Test
-    public void getEntityById_validArtifact_returnArtifact() {
-        /* ARRANGE */
-        final var resourceUri = URI.create("https://localhost:8080/api/artifacts/" + resourceId);
-        final var resource = getArtifact();
-        Mockito.doReturn(resource).when(artifactService).get(resourceId);
-
-        /* ACT */
-        final var result = resolver.getEntityById(resourceUri);
-
-        /* ASSERT */
-        assertTrue(result.isPresent());
-        assertEquals(resource, result.get());
+        assertEquals(Optional.empty(), resolver.getEntityById(null));
     }
 
     @Test

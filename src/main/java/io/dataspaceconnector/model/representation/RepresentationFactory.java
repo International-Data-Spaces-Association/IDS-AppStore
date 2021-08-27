@@ -61,8 +61,8 @@ public class RepresentationFactory
     /**
      * The default distribution service assigned to all representations.
      */
-    @Value("${registry.project}")
-    private URI defaultDistributionService;
+    @Value("${registry.host}")
+    private URI defaultDistributionService = URI.create("binac.fit.fraunhofer.de");
 
     /**
      * Create a new representation.

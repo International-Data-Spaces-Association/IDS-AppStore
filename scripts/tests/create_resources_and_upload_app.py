@@ -33,7 +33,7 @@ registry_password = "binac1IDS!"
 client = docker.from_env()
 
 resource_id_tag_version = "latest"
-image_name = "ubuntu:latest"
+image_name = "tutum/hello-world:latest"
 
 resource_version = 1
 
@@ -125,7 +125,7 @@ def create_catalog():
 
 def create_resource():
     json = {
-        "title": "DataProcessingApp",
+        "title": "HelloWorldDataProcessingApp",
         "description": "data app for processing data.",
         "keywords": [
             "data",
@@ -173,14 +173,14 @@ def create_endpoints():
     json = {
         "title": "DataApp Input Endpoint",
         "description": "This is the input endpoint for the DataProcessingApp.",
-        "location": "/input",
+        "location": "/output",
         "mediaType": "application/json",
-        "port": 5000,
+        "port": 80,
         "protocol": "HTTP/1.1",
-        "type": "Input",
+        "type": "Output",
         "docs": "https://app.swaggerhub.com/apis/app/1337",
         "info": "More information about the endpoint",
-        "path": "/input"
+        "path": "/output"
     }
     loc = post_request_check_response(f"{combined_host}/api/endpoints", json)
     return loc

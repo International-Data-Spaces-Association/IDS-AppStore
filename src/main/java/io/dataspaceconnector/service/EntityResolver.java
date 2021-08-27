@@ -172,7 +172,6 @@ public class EntityResolver {
      *
      * @param elementId The entity id.
      * @return The respective object.
-     * @throws IllegalArgumentException If the resource is null or the elementId.
      */
     public Optional<Entity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);

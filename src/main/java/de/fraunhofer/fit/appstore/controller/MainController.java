@@ -61,15 +61,15 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-//    @GetMapping(value = {"/", ""}, produces = "application/ld+json")
-//    @Operation(summary = "Public IDS self-description")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Ok"),
-//            @ApiResponse(responseCode = "401", description = "Unauthorized")})
-//    @ResponseBody
-//    public ResponseEntity<Object> getPublicSelfDescription() {
-//        return ResponseEntity.ok(connectorService.getAppStoreWithoutResources().toRdf());
-//    }
+    @GetMapping(value = {"/public", ""}, produces = "application/ld+json")
+    @Operation(summary = "Public IDS self-description")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @ResponseBody
+    public ResponseEntity<Object> getPublicSelfDescription() {
+        return ResponseEntity.ok(connectorService.getAppStoreWithoutResources().toRdf());
+    }
 
     /**
      * Gets connector self-description with all resources.

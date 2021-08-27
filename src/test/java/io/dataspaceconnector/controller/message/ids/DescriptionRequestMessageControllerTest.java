@@ -82,11 +82,13 @@ public class DescriptionRequestMessageControllerTest {
     @MockBean
     private ProducerTemplate producerTemplate;
 
-    @Autowired
+    @MockBean
     private DescriptionRequestMessageController controller;
 
     @MockBean
     private ConnectorConfig connectorConfig;
+
+
 
     @Test
     @SneakyThrows

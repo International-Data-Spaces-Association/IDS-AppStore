@@ -57,10 +57,10 @@ class MainControllerIT {
         Mockito.when(connectorService.getAppStoreWithoutResources()).thenReturn(connector);
 
         /* ACT */
-        final var result = mockMvc.perform(get("/")).andExpect(status().isOk()).andReturn();
+        final var result = mockMvc.perform(get("/public")).andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertDoesNotThrow(() -> new Serializer().deserialize(result.getResponse().getContentAsString(), BaseConnector.class));
+        assertDoesNotThrow(() -> new Serializer().deserialize(result.getResponse().getContentAsString(), AppStore.class));
         assertEquals(connector.toRdf(), result.getResponse().getContentAsString());
     }
 
