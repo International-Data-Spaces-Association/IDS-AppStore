@@ -53,8 +53,6 @@ public class AppViewAssembler
         final var view = modelMapper.map(app, AppView.class);
         view.add(getSelfLink(app.getId()));
 
-        // TODO APPSTORE add app relations (endpoints, representation) --> Done!
-
         final var representationLink = linkTo(methodOn(AppsToRepresentationsController.class)
                         .getResource(app.getId(), null, null))
                         .withRel(BaseType.REPRESENTATIONS);

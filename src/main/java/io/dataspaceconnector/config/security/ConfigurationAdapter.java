@@ -28,11 +28,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 /**
  * This class configures admin rights for all backend endpoints behind "/api" using the role
@@ -55,10 +50,11 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         http
                 .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
-                .antMatchers("/", "/api/ids/data", "/api/gui/**", "/api/webhook/**").anonymous()
+                .antMatchers("/", "/public", "/api/ids/data", "/api/gui/**", "/api/webhook/**")
+                .anonymous()
                 .antMatchers("/api/subscriptions/**").authenticated()
                 .antMatchers("/api/**").hasRole("ADMIN")
                 .antMatchers("/actuator/**").hasRole("ADMIN")

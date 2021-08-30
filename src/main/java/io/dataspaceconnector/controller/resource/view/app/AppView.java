@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true) // TODO APPSTORE add app attributes
+@EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = BaseType.APPS, itemRelation = "catalog")
 public class AppView extends RepresentationModel<AppView> {
     /**

@@ -65,7 +65,7 @@ services:
   appstore:
     container_name: appstore
     hostname: appstore
-    image: ghcr.io/international-data-spaces-association/ids-appstore/ids-appstore:main
+    image: ghcr.io/international-data-spaces-association/ids-appstore:main
     restart: "always"
     expose:
       - 8080

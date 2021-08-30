@@ -33,18 +33,35 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for ui methods.
+ */
 @RestController
-
-@CrossOrigin(origins = {"https://localhost", "http://localhost","https://localhost:8080", "http://localhost:8080"})
+@CrossOrigin(origins = {
+        "https://localhost",
+        "http://localhost",
+        "https://localhost:8080",
+        "http://localhost:8080"
+})
 @RequiredArgsConstructor
 @RequestMapping("/api/gui")
-@Tag(name="AppStore GUI")
+@Tag(name = "AppStore GUI")
 public class UiController {
 
+    /**
+     * The service managing apps.
+     */
     private final @NonNull AppService appService;
 
+    /**
+     * The service managing resources.
+     */
     private final @NonNull ResourceService resourceService;
 
     /**
@@ -85,18 +102,36 @@ public class UiController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * Get a list of all apps for displaying them in the ui.
+     *
+     * @param page The page number
+     * @param size The page size
+     * @return The List of apps
+     */
     @Tag(name = "UI", description = ResourceDescription.APPS)
     @GetMapping(value = "/list")
     @Operation(summary = "Search all Apps with value in description")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     public ResponseEntity<Object> getApps(
-            @RequestParam(value = "page", required = false, defaultValue = "0") final Integer page,
-            @RequestParam(value = "size", required = false, defaultValue = "30") final Integer size) {
+            @RequestParam(
+                    value = "page",
+                    required = false,
+                    defaultValue = "0") final Integer page,
+            @RequestParam(
+                    value = "size",
+                    required = false,
+                    defaultValue = "30") final Integer size) {
         var pageable = Utils.toPageRequest(page, size);
         var apps = resourceService.getAll(Pageable.unpaged());
 
-        //PagedModel<Resource> pgm = new PagedModel(apps.getContent(), new PagedModel.PageMetadata(apps.getSize(), apps.getNumber(), apps.getTotalElements(), apps.getTotalPages()));
+        //PagedModel<Resource> pgm = new PagedModel(
+        //                                          apps.getContent(),
+        //                                          new PagedModel.PageMetadata(apps.getSize(),
+        //                                          apps.getNumber(),
+        //                                          apps.getTotalElements(),
+        //                                          apps.getTotalPages()));
 
         return new ResponseEntity<>(apps, HttpStatus.OK);
     }

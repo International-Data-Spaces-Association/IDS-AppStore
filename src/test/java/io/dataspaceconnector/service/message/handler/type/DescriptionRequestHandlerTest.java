@@ -16,16 +16,7 @@
  */
 package io.dataspaceconnector.service.message.handler.type;
 
-import de.fraunhofer.iais.eis.Artifact;
-import de.fraunhofer.iais.eis.ArtifactBuilder;
-import de.fraunhofer.iais.eis.BaseConnectorBuilder;
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
-import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
-import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
-import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.SecurityProfile;
-import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
@@ -75,7 +66,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     @Test
     public void handleMessage_validSelfDescriptionMsg_returnSelfDescription() {
         /* ARRANGE */
-        final var connector = new BaseConnectorBuilder()
+        final var connector = new AppStoreBuilder()
                 ._resourceCatalog_(new ArrayList<>())
                 ._outboundModelVersion_("4.0.0")
                 ._inboundModelVersion_(Util.asList("4.0.0"))

@@ -65,12 +65,8 @@ public class ContainerTemplateService {
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 
-        // TODO: CHECK FOR IMAGE IN REGISTRY
-
         return createContainerTemplate(resource, representation, app);
     }
-
-    // TODO: Take a Look at the template generation
 
     /**
      * Create container template from resource, representation, and app.
@@ -93,7 +89,6 @@ public class ContainerTemplateService {
         template.setName(res.getId().toString());
 
         // Image Name ("image": "linuxserver/headphones:latest"
-        // TODO: check elements if null on this point
         if (!app.getRepositoryNameSpace().isBlank() || !app.getRepositoryName().isBlank()) {
             // IF work with versioned resources
             // template.setImage(app.getRepositoryNameSpace() + "/" + app.getRepositoryName() +
@@ -101,14 +96,13 @@ public class ContainerTemplateService {
             template.setImage(app.getRepositoryNameSpace() + "/" + app.getRepositoryName());
         }
 
-        // Registry TODO: Check elements if null on this point
         if (!rep.getDistributionService().toString().isBlank()
                 || !app.getRepositoryNameSpace().isBlank() || !app.getRepositoryName().isBlank()) {
 
             String registryAdress;
-            if(rep.getDistributionService().toString().contains("http://")){
+            if (rep.getDistributionService().toString().contains("http://")) {
                 registryAdress = rep.getDistributionService().toString().replace("http://", "");
-            } else if(rep.getDistributionService().toString().contains("https://")){
+            } else if (rep.getDistributionService().toString().contains("https://")) {
                 registryAdress = rep.getDistributionService().toString().replace("https://", "");
             } else {
                 registryAdress = this.registryHost;
