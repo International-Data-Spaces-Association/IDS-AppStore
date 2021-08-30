@@ -41,8 +41,6 @@ public class AppDesc extends NamedDescription {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private URI remoteId;
 
-    // TODO APPSTORE copy app attributes --> Done!
-
     /**
      * The documentation of the data app.
      */
