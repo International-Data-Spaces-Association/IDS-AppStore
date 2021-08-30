@@ -34,4 +34,7 @@ build/
 ### precommit ###
 .pre-commit-config.yaml
 
+### Gitlab CI ###
+.gitlab-ci.yml
+
 venv/

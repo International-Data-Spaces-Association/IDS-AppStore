@@ -1,5 +1,4 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
  * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
