@@ -226,12 +226,14 @@ public final class ToIdsObjectMapper {
      * @return The filled ids connector.
      */
     public static Connector getConnectorFromConfiguration(final Configuration config) {
-        return new BaseConnectorBuilder()
+        return new BaseConnectorBuilder(config.getConnectorId())
                 ._title_(Util.asList(new TypedLiteral(config.getTitle())))
                 ._description_(Util.asList(new TypedLiteral(config.getDescription())))
                 ._curator_(config.getCurator())
                 ._maintainer_(config.getMaintainer())
-                ._securityProfile_(getSecurityProfile(config.getSecurityProfile()))
+                ._securityProfile_(config.getSecurityProfile() == null
+                        ? SecurityProfile.BASE_SECURITY_PROFILE
+                        : getSecurityProfile(config.getSecurityProfile()))
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
                         ._accessURL_(config.getDefaultEndpoint())
                         .build())
@@ -266,9 +268,6 @@ public final class ToIdsObjectMapper {
      * @return The ids payment modality.
      */
     public static PaymentModality getPaymentModality(final PaymentMethod paymentMethod) {
-        if (paymentMethod == null) {
-            return null;
-        }
 
         switch (paymentMethod) {
             case FREE:
