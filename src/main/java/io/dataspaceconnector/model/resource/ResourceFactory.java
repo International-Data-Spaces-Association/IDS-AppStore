@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +16,8 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import io.dataspaceconnector.service.resource.type.ResourceService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -27,7 +25,6 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Base class for creating and updating resources.
@@ -38,9 +35,9 @@ import java.util.UUID;
 public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc> {
 
 
-    /**
-     * The service for resource handling.
-     */
+//    /**
+//     * The service for resource handling.
+//     */
     //private final @NonNull ResourceService resourceService;
 
     /**
@@ -218,7 +215,10 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
 
 //    private void validateSamples(final Resource resource, final List<URI> samples) {
 //        for (final var sample : samples) {
-//            if (io.dataspaceconnector.common.util.ValidationUtils.isInvalidUri(sample.toString())) {
+//            if (
+//              io.dataspaceconnector.common.util.ValidationUtils.isInvalidUri(sample.toString())
+//            )
+//            {
 //                throw new InvalidEntityException("Sample is not a valid uri.");
 //            }
 //

@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -230,7 +231,7 @@ public class SubscriberNotificationService {
                         }
                     }
                 } catch (Exception e) {
-                    if (log.isWarnEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.debug("{} [url=({}), exception=({})]",
                                 ErrorMessage.UPDATE_MESSAGE_FAILED, recipient, e.getMessage());
                     }
@@ -284,7 +285,9 @@ public class SubscriberNotificationService {
             try {
                 return artifactSvc.getData(accessVerifier, dataReceiver, id, new QueryInput());
             } catch (IOException exception) {
-                log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
+                }
             }
         }
         return InputStream.nullInputStream();

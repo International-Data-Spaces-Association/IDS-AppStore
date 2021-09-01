@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,8 +80,8 @@ public final class IdsResourceBuilder extends AbstractIdsBuilder<Resource,
         final var keywords = ToIdsObjectMapper.getKeywordsAsTypedLiteral(resource.getKeywords(),
                 language);
         final var license = resource.getLicense();
-        final var paymentModality
-                = ToIdsObjectMapper.getPaymentModality(resource.getPaymentModality());
+        final var paymentModality = resource.getPaymentModality() == null
+                ? null : ToIdsObjectMapper.getPaymentModality(resource.getPaymentModality());
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
         final var title = resource.getTitle();

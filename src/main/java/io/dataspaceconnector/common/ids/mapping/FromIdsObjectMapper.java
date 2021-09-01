@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +53,7 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -67,6 +69,7 @@ import java.util.stream.Collectors;
 /**
  * Maps ids objects to internal entities.
  */
+@Log4j2
 public final class FromIdsObjectMapper {
 
     /**
@@ -231,8 +234,8 @@ public final class FromIdsObjectMapper {
                     .ifPresent(desc::setEndpointDocumentation);
         }
 
-        if (paymentModality != null && !paymentModality.isEmpty()) {
-            desc.setPaymentMethod(fromIdsPaymentModality(paymentModality));
+        if (paymentModality != null) {
+            desc.setPaymentMethod(fromIdsPaymentModality(paymentModality, resource.getId()));
         }
 
         if (samples != null && !samples.isEmpty()) {
@@ -535,39 +538,36 @@ public final class FromIdsObjectMapper {
      * @return The internal configuration desc.
      */
     public static ConfigurationDesc fromIdsConfig(final ConfigurationModel configModel) {
-        final var description = new ConfigurationDesc();
-        if (!configModel.getConnectorDescription().getTitle().isEmpty()) {
-            description.setTitle(
-                    configModel.getConnectorDescription().getTitle().get(0).getValue());
+        final var desc = new ConfigurationDesc();
+
+        final var connector = configModel.getConnectorDescription();
+        if (!connector.getTitle().isEmpty()) {
+            desc.setTitle(connector.getTitle().get(0).getValue());
         }
-        if (!configModel.getConnectorDescription().getDescription().isEmpty()) {
-            description.setDescription(
-                    configModel.getConnectorDescription().getDescription().get(0).getValue()
-            );
+        if (!connector.getDescription().isEmpty()) {
+            desc.setDescription(connector.getDescription().get(0).getValue());
         }
-        description.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
-        description.setCurator(configModel.getConnectorDescription().getCurator());
-        description.setDefaultEndpoint(
-                configModel.getConnectorDescription().getHasDefaultEndpoint().getAccessURL());
-        description.setInboundModelVersion(
-                configModel.getConnectorDescription().getInboundModelVersion());
-        description.setOutboundModelVersion(
-                configModel.getConnectorDescription().getOutboundModelVersion());
-        description.setKeystoreSettings(new KeystoreDesc(
+        desc.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
+        desc.setCurator(connector.getCurator());
+        desc.setDefaultEndpoint(connector.getHasDefaultEndpoint().getAccessURL());
+        desc.setInboundModelVersion(connector.getInboundModelVersion());
+        desc.setOutboundModelVersion(connector.getOutboundModelVersion());
+        desc.setKeystoreSettings(new KeystoreDesc(
                 configModel.getKeyStore(),
                 configModel.getKeyStorePassword(),
                 configModel.getKeyStoreAlias()));
-        description.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
-        description.setMaintainer(configModel.getConnectorDescription().getMaintainer());
-        description.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
-        description.setSecurityProfile(
-                fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
-        description.setTruststoreSettings(new TruststoreDesc(
+        desc.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
+        desc.setMaintainer(connector.getMaintainer());
+        desc.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
+        desc.setSecurityProfile(fromIdsSecurityProfile(connector.getSecurityProfile()));
+        desc.setTruststoreSettings(new TruststoreDesc(
                 configModel.getTrustStore(),
                 configModel.getTrustStorePassword(),
                 configModel.getTrustStoreAlias()));
-        description.setStatus(fromIdsConnectorStatus(configModel.getConnectorStatus()));
-        return description;
+        desc.setStatus(fromIdsConnectorStatus(configModel.getConnectorStatus()));
+        desc.setConnectorId(connector.getId());
+
+        return desc;
     }
 
     /**
@@ -577,6 +577,10 @@ public final class FromIdsObjectMapper {
      * @return The internal log level.
      */
     private static LogLevel fromIdsLogLevel(final de.fraunhofer.iais.eis.LogLevel logLevel) {
+        if (logLevel == null) {
+            return LogLevel.OFF;
+        }
+
         switch (logLevel) {
             // TODO infomodel has less log levels than DSC, info will get lost
             case MINIMAL_LOGGING:
@@ -596,6 +600,10 @@ public final class FromIdsObjectMapper {
      */
     private static SecurityProfile fromIdsSecurityProfile(
             final de.fraunhofer.iais.eis.SecurityProfile securityProfile) {
+        if (securityProfile == null) {
+            return SecurityProfile.BASE_SECURITY;
+        }
+
         switch (securityProfile) {
             case TRUST_SECURITY_PROFILE:
                 return SecurityProfile.TRUST_SECURITY;
@@ -613,6 +621,10 @@ public final class FromIdsObjectMapper {
      */
     public static ConnectorStatus fromIdsConnectorStatus(
             final de.fraunhofer.iais.eis.ConnectorStatus status) {
+        if (status == null) {
+            return ConnectorStatus.FAULTY;
+        }
+
         switch (status) {
             case CONNECTOR_ONLINE:
                 return ConnectorStatus.ONLINE;
@@ -642,19 +654,26 @@ public final class FromIdsObjectMapper {
                 new AuthenticationDesc(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 
-    private static PaymentMethod fromIdsPaymentModality(final List<PaymentModality> modalities) {
-        final var paymentModality = modalities.get(0);
-        if (paymentModality == null) {
+    private static PaymentMethod fromIdsPaymentModality(final Object modality, final URI id) {
+        if (modality == null) {
             return PaymentMethod.UNDEFINED;
         }
 
-        switch (paymentModality) {
-            case FIXED_PRICE:
-                return PaymentMethod.FIXED_PRICE;
-            case NEGOTIATION_BASIS:
-                return PaymentMethod.NEGOTIATION_BASIS;
-            default:
-                return PaymentMethod.FREE;
+        try {
+            switch ((PaymentModality) modality) {
+                case FIXED_PRICE:
+                    return PaymentMethod.FIXED_PRICE;
+                case NEGOTIATION_BASIS:
+                    return PaymentMethod.NEGOTIATION_BASIS;
+                default:
+                    return PaymentMethod.FREE;
+            }
+        } catch (Exception exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not read payment modality from incoming resource. "
+                        + "[resourceId=({}), modality=({})]", id, modality.toString());
+            }
+            return PaymentMethod.UNDEFINED;
         }
     }
 }

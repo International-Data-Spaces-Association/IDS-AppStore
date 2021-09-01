@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +16,7 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
@@ -69,6 +71,8 @@ public class ResourceDesc extends NamedDescription {
     /**
      * The payment modality.
      */
+    @JsonProperty("paymentMethod")
+    @JsonAlias("paymentModality")
     private PaymentMethod paymentMethod;
 
     /**

@@ -2,6 +2,7 @@
 <!--
 
     Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+    Copyright 2021 Fraunhofer Institute for Applied Information Technology
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -23,7 +24,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.3</version>
+		<version>2.5.4</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -63,22 +64,22 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-messaging-services.version>3.1.0</ids-messaging-services.version>
+		<ids-messaging-services.version>4.2.2</ids-messaging-services.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
 		<modelmapper.version>2.4.4</modelmapper.version>
-		<jackson.version>2.12.4</jackson.version>
+		<jackson.version>2.12.5</jackson.version>
 		<postgres.version>42.2.23</postgres.version>
-		<springdoc-ui.version>1.5.9</springdoc-ui.version>
-		<springdoc-security.version>1.5.9</springdoc-security.version>
-		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
+		<springdoc-ui.version>1.5.10</springdoc-ui.version>
+		<springdoc-security.version>1.5.10</springdoc-security.version>
+		<springdoc-hateoas.version>1.5.10</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
-		<equalsverifier.version>3.7</equalsverifier.version>
+		<equalsverifier.version>3.7.1</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
-		<camel.version>3.11.0</camel.version>
+		<camel.version>3.11.1</camel.version>
 		<idscp2.version>0.5.0</idscp2.version>
 		<!-- PROPS FOR Hibernate Search -->
 		<hibernate.search.version>6.0.0.Final</hibernate.search.version>
@@ -729,20 +730,29 @@
 						<licenseSet>
 							<header>scripts/ci/license/header.txt</header>
 							<excludes>
+								<exclude>src/main/java/de/fraunhofer/fit/appstore/**</exclude>
+								<exclude>venv/**</exclude>
 								<exclude>**/README</exclude>
 								<exclude>src/test/resources/**</exclude>
 								<exclude>src/main/resources/**</exclude>
-								<exclude>scripts/ci/e2e/active-tests.txt</exclude>
+								<!--<exclude>scripts/ci/e2e/active-tests.txt</exclude>-->
+								<exclude>scripts/**</exclude>
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>
-								<exclude>charts/dataspace-connector/Chart.lock</exclude>
-								<exlcude>charts/dataspace-connector/.helmignore</exlcude>
+								<!--<exclude>charts/dataspace-connector/Chart.lock</exclude>-->
+								<!--<exlcude>charts/dataspace-connector/.helmignore</exlcude>-->
 								<exclude>**/*.tgz</exclude>
 								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
 								<exclude>.editorconfig</exclude>
 							</excludes>
+						</licenseSet>
+						<licenseSet>
+							<header>scripts/ci/license/header_FIT.txt</header>
+							<includes>
+								<include>src/main/java/de/fraunhofer/fit/appstore/**</include>
+							</includes>
 						</licenseSet>
 					</licenseSets>
 					<properties>

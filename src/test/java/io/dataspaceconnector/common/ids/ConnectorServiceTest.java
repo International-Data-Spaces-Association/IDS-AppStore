@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +16,7 @@
  */
 package io.dataspaceconnector.common.ids;
 
-import de.fraunhofer.iais.eis.BaseConnectorBuilder;
-import de.fraunhofer.iais.eis.ConfigurationModel;
-import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
-import de.fraunhofer.iais.eis.ConfigurationModelImpl;
-import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.ConnectorDeployMode;
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
-import de.fraunhofer.iais.eis.ConnectorStatus;
-import de.fraunhofer.iais.eis.KeyType;
-import de.fraunhofer.iais.eis.LogLevel;
-import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.ResourceBuilder;
-import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
-import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
@@ -224,7 +211,7 @@ public class ConnectorServiceTest {
      *************************************************************************/
 
     private Connector getConnector() {
-        return new BaseConnectorBuilder(URI.create("https://connector-id.com"))
+        return new AppStoreBuilder(URI.create("https://connector-id.com"))
                 ._maintainer_(URI.create("https://example.com"))
                 ._curator_(URI.create("https://example.com"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)

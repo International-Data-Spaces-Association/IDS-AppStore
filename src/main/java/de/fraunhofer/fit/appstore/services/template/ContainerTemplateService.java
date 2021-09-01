@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.fraunhofer.fit.appstore.services.template;
 
 import de.fraunhofer.fit.appstore.exceptions.TemplateException;
@@ -9,6 +24,7 @@ import io.dataspaceconnector.service.resource.type.ResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -31,6 +47,12 @@ public class ContainerTemplateService {
     private final @NonNull ResourceService resourceService;
 
     /**
+     * The registry host.
+     */
+    @Value("${registry.host}")
+    private String registryHost;
+
+    /**
      * Create backend container template by resource id.
      *
      * @param resourceId The resource id.
@@ -43,12 +65,8 @@ public class ContainerTemplateService {
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 
-        // TODO: CHECK FOR IMAGE IN REGISTRY
-
         return createContainerTemplate(resource, representation, app);
     }
-
-    // TODO: Take a Look at the template generation
 
     /**
      * Create container template from resource, representation, and app.
@@ -71,7 +89,6 @@ public class ContainerTemplateService {
         template.setName(res.getId().toString());
 
         // Image Name ("image": "linuxserver/headphones:latest"
-        // TODO: check elements if null on this point
         if (!app.getRepositoryNameSpace().isBlank() || !app.getRepositoryName().isBlank()) {
             // IF work with versioned resources
             // template.setImage(app.getRepositoryNameSpace() + "/" + app.getRepositoryName() +
@@ -79,13 +96,19 @@ public class ContainerTemplateService {
             template.setImage(app.getRepositoryNameSpace() + "/" + app.getRepositoryName());
         }
 
-        // Registry TODO: Check elements if null on this point
         if (!rep.getDistributionService().toString().isBlank()
                 || !app.getRepositoryNameSpace().isBlank() || !app.getRepositoryName().isBlank()) {
-            template.setRegistry(URI.create(String.format("%s/%s/%s",
-                    rep.getDistributionService().toString(),
-                    app.getRepositoryNameSpace(),
-                    app.getRepositoryName())));
+
+            String registryAdress;
+            if (rep.getDistributionService().toString().contains("http://")) {
+                registryAdress = rep.getDistributionService().toString().replace("http://", "");
+            } else if (rep.getDistributionService().toString().contains("https://")) {
+                registryAdress = rep.getDistributionService().toString().replace("https://", "");
+            } else {
+                registryAdress = this.registryHost;
+            }
+
+            template.setRegistry(URI.create(String.format("%s", registryAdress)));
         }
 
         ContainerTemplateUtils.setTemplateDescription(app, rep, template, res);

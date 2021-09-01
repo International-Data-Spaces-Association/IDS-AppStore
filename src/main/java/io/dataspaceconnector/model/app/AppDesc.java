@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +40,6 @@ public class AppDesc extends NamedDescription {
      */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private URI remoteId;
-
-    // TODO APPSTORE copy app attributes --> Done!
 
     /**
      * The documentation of the data app.

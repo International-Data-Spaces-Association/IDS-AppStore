@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,8 +61,8 @@ public class RepresentationFactory
     /**
      * The default distribution service assigned to all representations.
      */
-    @Value("${registry.project}")
-    private URI defaultDistributionService;
+    @Value("${registry.host}")
+    private URI defaultDistributionService = URI.create("binac.fit.fraunhofer.de");
 
     /**
      * Create a new representation.

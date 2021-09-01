@@ -1,5 +1,6 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,10 +57,10 @@ class MainControllerIT {
         Mockito.when(connectorService.getAppStoreWithoutResources()).thenReturn(connector);
 
         /* ACT */
-        final var result = mockMvc.perform(get("/")).andExpect(status().isOk()).andReturn();
+        final var result = mockMvc.perform(get("/public")).andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertDoesNotThrow(() -> new Serializer().deserialize(result.getResponse().getContentAsString(), BaseConnector.class));
+        assertDoesNotThrow(() -> new Serializer().deserialize(result.getResponse().getContentAsString(), AppStore.class));
         assertEquals(connector.toRdf(), result.getResponse().getContentAsString());
     }
 
