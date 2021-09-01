@@ -45,8 +45,8 @@ services:
   appstore-ui:
     container_name: appstore-ui
     hostname: appstore-ui
-    image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstoreuits/appstoreui-drm:latest
-    restart: always
+    image: ghcr.io/international-data-spaces-association/ids-appstoreui:main
+    restart: "always"
     expose:
       - 8082
     networks:
@@ -57,7 +57,7 @@ services:
     expose:
       - 5432
     env_file:
-      - ./postgres.env
+      - postgres.env
     networks:
       - proxynet
     volumes:
@@ -65,12 +65,12 @@ services:
   appstore:
     container_name: appstore
     hostname: appstore
-    image: registry.fit.fraunhofer.de/dataspace/appstore/idsappstorev6/appstore-drm:latest
+    image: ghcr.io/international-data-spaces-association/ids-appstore:main
     restart: "always"
     expose:
       - 8080
     env_file:
-      - ./connector.env
+      - connector.env
     volumes:
       - search-data:/data/search
     networks:

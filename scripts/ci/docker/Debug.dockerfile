@@ -13,9 +13,10 @@ COPY src/main/resources ./src/main/resources
 RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true
 
 # Copy the jar and build image
-FROM gcr.io/distroless/java-debian10:debug
+FROM exoplatform/jdk:openjdk-11-ubuntu-2004
 COPY --from=maven /app/target/*.jar /app/app.jar
 WORKDIR /app
+RUN mkdir -p /data/search
 EXPOSE 8080
 EXPOSE 29292
 # USER nonroot # Run root in debug images
