@@ -1,0 +1,18 @@
+I"c<h1 class="fs-9" id="data-app---endpoints">Data App - Endpoints</h1>
+
+<p class="fs-6 fw-300">In this document, the different endpoint types of an IDS Data App are described in more detail regarding their meaning and function.</p>
+
+<h2 id="endpoints">Endpoints</h2>
+<p>Depending on which app type is implemented, different endpoints must be implemented. The following table gives an overview of the different endpoint types available.</p>
+
+<p>| Type                          | Category      | Multiplicity  |
+|:——————————|:————–|:————–|
+| <a href="#input">Input</a>               | dataflow      | multiple      |
+| <a href="#output">Output</a>             | dataflow      | multiple      |
+| <a href="#input_ext">Input Extern</a>    | dataflow      | multiple      |
+| <a href="#output_ext">Output Extern</a>  | dataflow      | multiple      |
+| <a href="#config">Config</a>             | management    | single        |
+| <a href="#status">Status</a>             | management    | single        |
+| <a href="#usage">Usage</a>               | usage control | single        |
+—</p>
+:ET

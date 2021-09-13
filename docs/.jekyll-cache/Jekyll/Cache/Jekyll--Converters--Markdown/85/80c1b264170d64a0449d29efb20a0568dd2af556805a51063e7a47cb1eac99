@@ -1,0 +1,192 @@
+I"y4<h1 id="data-app---types">Data App - Types</h1>
+
+<p>There are currently three different types of apps available, which in turn must fulfill at least one of the previously mentioned profiles.
+In addition to the app types there is also a composition of apps, so called app bundle, which consists of multiple apps from all types.
+The apps in the data app and adapter app categories can fulfill both the basic and advanced profiles and their usage control equivalents.
+Due to the administrative access of the control app to the control plane, only a grouping into the extended profile is possible, the basic profile cannot be applied here.
+The different app types and their profiles must be considered from different perspectives during the certification process.</p>
+
+<h2 id="overview-of-data-app-types">Overview of Data App Types</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Profiles</th>
+      <th style="text-align: left">Applicability</th>
+      <th style="text-align: left">Certification</th>
+      <th style="text-align: left">Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><a href="#data-app">Data App</a></td>
+      <td style="text-align: left">basic profile, basic profile - uc</td>
+      <td style="text-align: left">generic</td>
+      <td style="text-align: left">App Criteria</td>
+      <td style="text-align: left">data plane</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><a href="#adapter-app">Adapter App</a></td>
+      <td style="text-align: left">basic profile, basic profile - uc, advanced profile, advanced profile - uc</td>
+      <td style="text-align: left">system-specific</td>
+      <td style="text-align: left">App Criteria</td>
+      <td style="text-align: left">data plane</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><a href="#control-app">Control App</a></td>
+      <td style="text-align: left">advanced profil, advanced profile - uc</td>
+      <td style="text-align: left">(system-), connector-specific</td>
+      <td style="text-align: left">Connector Criteria</td>
+      <td style="text-align: left">control plane</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><a href="#app-bundle">App Bundle</a></td>
+      <td style="text-align: left">basic profile, basic profile - uc, advanced profile, advanced profile - uc</td>
+      <td style="text-align: left">connector-specific</td>
+      <td style="text-align: left">- - - - - - - - -</td>
+      <td style="text-align: left">data plane, control plane</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In all following setups, we assume that the IDS Connector is running. As the IDS Connector deploys and monitors the
+IDS Apps, they are theoretically running inside the IDS Connector. That is why there is a separation
+between the IDS Connector’s core and the overall IDS Connector visualization.</p>
+
+<h2 id="-data-app-"><a name="data-app"> Data App </a></h2>
+
+<p>Applicability: generic</p>
+
+<p>The Data App is a re-usable application that can be downloaded and fully managed by the IDS 
+Connector. When defining the route, matching inputs and outputs of Data App, IDS Connector, and 
+backend system (as data source or sink) have to be put together to define a data flow on consumer or 
+provider side.</p>
+
+<p><strong>Data app example</strong></p>
+<ol>
+  <li>Start: IDS Connector endpoint or adapter app (data source)</li>
+  <li>Data App endpoint of type <a href="app-endpoints.md#input"><code class="language-plaintext highlighter-rouge">INPUT</code></a></li>
+  <li>Data App endpoint of type <a href="app-endpoints.md#output"><code class="language-plaintext highlighter-rouge">OUTPUT</code></a></li>
+  <li>End: IDS Connector endpoint or adapter app (data sink)</li>
+</ol>
+
+<p><strong>Data app example</strong></p>
+<ol>
+  <li>Start: IDS Connector endpoint or adapter app (data source)</li>
+  <li>Data App1 endpoint of type <a href="app-endpoints.md#input"><code class="language-plaintext highlighter-rouge">INPUT</code></a></li>
+  <li>Data App1 endpoint of type <a href="app-endpoints.md#output"><code class="language-plaintext highlighter-rouge">OUTPUT</code></a></li>
+  <li>Data App2 endpoint of type <a href="app-endpoints.md#input"><code class="language-plaintext highlighter-rouge">INPUT</code></a></li>
+  <li>Data App2 endpoint of type <a href="app-endpoints.md#output"><code class="language-plaintext highlighter-rouge">OUTPUT</code></a></li>
+  <li>End: Different Data App for further data processing, System Adapter to store data to or external Service endpoint (Apache Camel natively supports multiple protocols to connect to various endpoints)</li>
+</ol>
+
+<p>The Data App can be used in various use cases and perform small processing steps or tasks, as 
+e.g., transform, clean, analyze or anonymize data. Data Apps can be executed connector- and system-independent. Furthermore, Data Apps are independent of the context in which they are used. Data apps can also be chained together on the same data route to summarize multiple processing steps on the same data.</p>
+
+<p><img src="../assets/images/data_app.png" alt="Data App Overview" /></p>
+
+<h2 id="-adapter-app-"><a name="adapter-app"> Adapter App </a></h2>
+<p><em>Naming variants: System Adapter App</em></p>
+
+<p>Applicability: system-specific usage</p>
+
+<p>The Adapter App is a re-usable application that can be downloaded and fully managed by the IDS Connector. When defining the route, matching inputs and outputs of Adapter App, IDS Connector, and data source, data sink or external service have to be put together to define a data flow on consumer or provider side.</p>
+
+<p><strong>External Service example</strong></p>
+<ol>
+  <li>Start: Adapter App (External Service output) endpoint of type <a href="app-endpoints.md#output"><code class="language-plaintext highlighter-rouge">OUTPUT</code></a></li>
+  <li>IDS Connector endpoint</li>
+  <li>End: Adapter App (External Service input) endpoint of type <a href="app-endpoints.md#input"><code class="language-plaintext highlighter-rouge">INPUT</code></a></li>
+</ol>
+
+<p><strong>Data Source example</strong></p>
+<ol>
+  <li>Start: Adapter App (Data Source) endpoint of type <a href="app-endpoints.md#output"><code class="language-plaintext highlighter-rouge">OUTPUT</code></a></li>
+  <li>End: IDS Connector endpoint</li>
+</ol>
+
+<p><strong>Data Sink example</strong></p>
+<ol>
+  <li>Start: IDS Connector endpoint</li>
+  <li>End: Adapter App (Data Sink) endpoint of type <a href="app-endpoints.md#input"><code class="language-plaintext highlighter-rouge">INPUT</code></a></li>
+</ol>
+
+<p><strong>Data Source / Data Sink with intermediate Data App example</strong></p>
+<ol>
+  <li>Start: IDS Connector endpoint or Adapter App (Data Source) endpoint of type <a href="app-endpoints.md#output"><code class="language-plaintext highlighter-rouge">OUTPUT</code></a></li>
+  <li>(optional) Data App1 endpoint of type <a href="app-endpoints.md#input"><code class="language-plaintext highlighter-rouge">INPUT</code></a></li>
+  <li>(optional) Data App1 endpoint of type <a href="app-endpoints.md#output"><code class="language-plaintext highlighter-rouge">OUTPUT</code></a></li>
+  <li>(optional) Data App2 endpoint of type <a href="app-endpoints.md#input"><code class="language-plaintext highlighter-rouge">INPUT</code></a></li>
+  <li>(optional) Data App2 endpoint of type <a href="app-endpoints.md#output"><code class="language-plaintext highlighter-rouge">OUTPUT</code></a></li>
+  <li>End: Adapter App (Data Sink) endpoint of type <a href="app-endpoints.md#input"><code class="language-plaintext highlighter-rouge">INPUT</code></a> or IDS Connector endpoint</li>
+</ol>
+
+<p>The Adapter App can be used in various use cases and provides the IDS Connector with the functionality to connect to external services, custom data sources or custom data sinks. This is important when the routing framework is not natively able to support the provided endpoints or protocols. It can be executed connector- but not system-independent, as it only works with pre-defined systems. In general, it is not interested in the context in which it is used.</p>
+
+<p>System adapters following the advanced profile and implementing usage-control are able to enforce usage policies on data sources, data sinks or external services.</p>
+
+<p><img src="../assets/images/adapter_app.png" alt="Adapter App Overview" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- As generic endpoints interacting with the backend system is not sufficient for actually storing data, the app needs to be configured.
+- The IDS App needs a defined endpoint for output configuration. It needs to be specified where exactly to route the data into the backend system.
+- Possibly *n* input and *m* output endpoints with an unspecified protocol; the route definition uses one specific input endpoint to integrate the app into the data route
+- IDS Info Model description of app endpoints, protocol bindings, and supported usage control patterns
+- The IDS App gets the artifact and contract agreement id as input. For fetching the agreement, it needs to request the IDS Connector.
+</code></pre></div></div>
+
+<h2 id="-control-app-"><a name="control-app"> Control App </a></h2>
+
+<p>Applicability: system- and/or connector-specific usage</p>
+
+<p>The Control App is a re-usable application that can be downloaded and fully managed by the IDS Connector. In contrast to Data and Adapter Apps, it does not act on the data flow, but on the administrative control flow. It offers the possibility to connect existing backend systems, which may consist of a single or a cluster of applications and services, to an IDS ecosystem using the IDS Connector.</p>
+
+<p>Therefore, it is a connector-specific app that requires programming against the respective API of a connector in a specific version for its implementation.</p>
+
+<p>The administrative capabilities can be applied to different use cases. For example, existing data sources from backend services can be enriched with metadata and subsequently registered at the IDS Connector as IDS Resources. Furthermore, administrative access to the IDS Connector of a Control App enables, for example, the integration of a deployed IAM or IDS communication with other IDS Connectors or IDS Brokers. It also enables advanced functionality on the Connector itself, so a Control App on an IDS Connector can publish resources, negotiate contracts, or configure or provision data routes with Data Apps or Adapter Apps.</p>
+
+<p><strong>Control App example</strong>
+ The Control App is connector-specific and even depends on a specific version of the connector implementation. Control Apps offer an interface for the administrative connector API that can be used by another use case-specific implementation.</p>
+
+<p>Such a use case shall be sketched as an example, but can vary arbitrarily according to the functional scope of the implemented interface:</p>
+<ol>
+  <li>Create a resource</li>
+  <li>Publish resource to the IDS Broker as a data provider</li>
+  <li>Automatic Update of data queries as a data consumer</li>
+</ol>
+
+<p><img src="../assets/images/control_app.png" alt="Control App Overview" /></p>
+
+<h2 id="-app-bundle-"><a name="app-bundle"> App Bundle </a></h2>
+<p><em>Naming variants: Service App</em></p>
+
+<p>App bundles can be seen as a composition of apps from the Adapter App, Data App and Control App categories and their implemented profiles. With such a composition, different (already existing) apps can be put together to fulfill a certain use-case or purpose. The compilations for solving specific problems can also be shared across Connectors, a bundle can be shared with other participants in the IDS ecosystem via the central App Store.</p>
+
+<h3 id="examples">Examples</h3>
+<p>Examples of possible compositions will be shown below. These are only examples for conceptual understanding. Accordingly, the bundles are not subject to any restrictions on the composition of their components.</p>
+
+<h3 id="read-data-from-backend-system-connection-with-preprocessing-task">Read data from backend system connection with preprocessing task</h3>
+<p>In this example composition a backend system is connected via a Control App for reading data and doing a data cleaning within a Data App before provisioning data over the connector itself.</p>
+
+<p><strong>Data Flow: Backend-System –&gt; (Control App –&gt; Data App) –&gt; Connector</strong></p>
+
+<p>Bundle consists of:</p>
+<ul>
+  <li>Control App</li>
+  <li>Data App:</li>
+</ul>
+
+<h3 id="creating-a-data-processing-pipeline-with-adapter-apps-and-data-apps">Creating a data processing pipeline with Adapter Apps and Data Apps</h3>
+<p>In this example compositon a simple data processing pipeline is bundled together from different apps. The Adapter App provides data from a data source, which is then processed in a data app (e.g. data cleaning) and then stored again by an adapter app in a data sink.</p>
+
+<p><strong>Data Flow: Adapter App (source) –&gt; Data App –&gt; Adapter App (sink)</strong></p>
+
+<p>Bundle consists of:</p>
+<ul>
+  <li>Adapter App (source)</li>
+  <li>Data App</li>
+  <li>Adapter App (sink)</li>
+</ul>
+
+<p>With the idea of bundleing apps even very complex and specific use cases can be described in different single apps without losing the idea of being partially reusable to others participants.</p>
+:ET

@@ -1,0 +1,16 @@
+I"Õ<h1 id="usage-control-endpoints">Usage Control Endpoints</h1>
+
+<h2 id="-usage-"><a name="usage"> Usage </a></h2>
+<p>The usage endpoint acts as a Policy Information Point (PIP) to deliver some information about the app itself represented in a json format.
+The information that can be retrieved from the app at this endpoint contains general information for use with a usage control app.</p>
+
+<p>The following information can then be retrieved via this Policy Information Point:</p>
+<ul>
+  <li><strong>AppName:</strong> The name of the app</li>
+  <li><strong>AppURI:</strong> The URI of the app or another identifier</li>
+  <li><strong>AppPurpose:</strong> The general purpose of an app.</li>
+  <li><strong>AppActions:</strong> The superclass of a policy: Usage, Distribute, Execute.</li>
+</ul>
+
+<p>For more information on the usage control endpoint or the usage control integration patterns take a look at the usage-control document <a href="../usage-control">configuration</a></p>
+:ET
