@@ -1,8 +1,10 @@
-remote_theme: pmarsceill/just-the-docs
+theme: just-the-docs
 title: IDS App Store
 description: IDS App Store Documentation
 baseurl: "/IDS-AppStore"
-url: "https://international-data-spaces-association.github.io"
+
+ # Local URL
+url: http://localhost:4000
 
 # Color scheme currently only supports "dark", "light"/nil (default), or a custom scheme that you define
 color_scheme: custom
