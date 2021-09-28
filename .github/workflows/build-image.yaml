@@ -1,11 +1,11 @@
 name: docker-image
 
 on:
-   push:
+  push:
     branches: [ main ]
-   tags: 'v*'
-   release:
-     types: [published]
+    tags: 'v*'
+  release:
+    types: [published]
 
 env:
   REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
