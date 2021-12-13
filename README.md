@@ -39,6 +39,8 @@ improvement, or have an idea for a useful feature. Please find a set of guidelin
 This is an ongoing project of the [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), based on
 the open source project [Dataspace Connector](https://github.com/International-Data-Spaces-Association/DataspaceConnector) - starting at version 6.1.0.
 The core development is driven by
+* [Christoph Quix](https://github.com/DominicReuter-FIT), [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), lead developer
+* [Ahmad Hemid](https://github.com/DominicReuter-FIT), [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), lead developer
 * [Dominic Reuter](https://github.com/DominicReuter-FIT), [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), lead developer
 
 with significant contributions, comments, and support by (in alphabetical order):
