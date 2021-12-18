@@ -41,7 +41,6 @@ the open source project [Dataspace Connector](https://github.com/International-D
 The core development is driven by
 * [Christoph Quix](https://www.fit.fraunhofer.de/de/geschaeftsfelder/data-science-und-kuenstliche-intelligenz/datenmanagement.html), [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), project owner
 * [Ahmad Hemid](mailto:ahmad.hemid@fit.fraunhofer.de), [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), lead developer
-* [Dominic Reuter](https://github.com/DominicReuter-FIT), [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), lead developer
 
 with significant contributions, comments, and support by (in alphabetical order):
 * ...
