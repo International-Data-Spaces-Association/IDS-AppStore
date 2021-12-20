@@ -1,19 +1,18 @@
 ---
 layout: default
-title: General
+title: Data App
 nav_order: 4
 description: ""
 permalink: /general
 ---
 
-# Data App - General
+# Data App
+{: .fs-9 }
+
+An IDS App is a re-usable asset. It can be downloaded from a central IDS App Store and it can be deployed and monitored by an IDS Connector.
+{: .fs-6 .fw-300 }
 
 ## General
-
-```
-What is an IDS App? How is it characterized? An IDS App is a re-usable asset. It can be downloaded
-from a central IDS App Store and can be deployed and monitored by an IDS Connector.
-```
 
 So that apps can be operated and executed in a secure environment, they must be made available as virtualized containers.
 
@@ -29,7 +28,6 @@ As mentioned earlier, apps are deployed and distributed in a virtualized contain
 
 Due to the diversity of existing connectors, app containers are described according to the OCI standard (Open Container Initiative). In addition to support for a large number of operating systems, this also prevents independence from commercial providers and binding to a specific provider.
 Especially the offer of different runtime environments following the OCI standard enables a high degree of portability. Thus, an app can be run on a virtualized server as well as in the care of the large cloud platforms without any adaptations.
-
 
 ## Management and Orchestration
 Within the IDS Connector, the underlying data flow is managed and orchestrated via middleware (e.g., Camel) by creating and defining routes for the different data. So each Connector is in control of where and how a data flow is defined within its boundaries. IDS Data Apps are also meant to work on the connectors data flow and therefore the can be integrated in the routes as well. It is possible to use more than one app at a time within a defined data route. The apps are specified in such a way they can be connected to each other using their input and ouput data endpoints to work on a data flow within a route. If several apps are connected to each other, we can speak of a processing chain to fulfill a specific purpose. 
