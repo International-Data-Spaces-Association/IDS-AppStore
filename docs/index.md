@@ -2,7 +2,6 @@
 layout: default
 title: Home
 nav_order: 1
-description: "The App Store ..."
 permalink: /
 ---
 
@@ -17,4 +16,3 @@ This documentation provides a rough overview of the IDS App Store. It facilitate
 ---
 
 The IDS App Store is an ongoing open source project on GitHub, developed at Fraunhofer FIT. It is supported and promoted by the International Data Spaces Association (IDSA).
-...
