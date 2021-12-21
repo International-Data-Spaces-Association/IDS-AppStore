@@ -134,7 +134,7 @@ In this example composition a backend system is connected via a Control App for 
 
 Bundle consists of:
 - Control App 
-- Data App:
+- Data App
 
 ### Creating a data processing pipeline with Adapter Apps and Data Apps
 In this example compositon a simple data processing pipeline is bundled together from different apps. The Adapter App provides data from a data source, which is then processed in a data app (e.g. data cleaning) and then stored again by an adapter app in a data sink.

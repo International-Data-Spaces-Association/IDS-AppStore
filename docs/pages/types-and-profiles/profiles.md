@@ -8,13 +8,11 @@ parent: Types and Profiles
 
 # Data App - Profiles
 
-There are currently 4 profiles for data apps, which will be explained in the following section. The four profiles are divided into a basic and an advanced profile, each of which is further differentiated by whether the app has an integrated usage control implementation or not.
+There are currently four profiles for data apps which will be explained in the following section. The four profiles are divided into a basic and an advanced profile, each of which is further differentiated by whether the app has an integrated usage control implementation or not.
 
 In general data apps do not need a standardized API. This just needs to be documented via the API specification in the metadata representation in a human- and machine-radable way.
 
-The basic profile is assumed as the default value for all IDS data apps.
-
-Whether an app belongs to the advanced profile, on the other hand, is determined by whether one of the functionalities explained below is implemented in the app. Up to now, the implementation of usage control in a data app and/or the integration of communication with the Connetor interface have been the decisive criteria for classification in the Advanced profile.
+The basic profile is assumed as the default value for all IDS data apps. Whether an app belongs to the advanced profile, on the other hand, is determined by whether one of the functionalities explained below is implemented in the app. Up to now, the implementation of usage control in a data app and/or the integration of communication with the Connetor interface have been the decisive criteria for classification in the advanced profile.
 
 ## Overview of Data App Profiles
 
@@ -34,7 +32,7 @@ Furthermore, a data app in the basic profile must ensure that it can be integrat
 If an app implements an optional usage control endpoint that serves as a policy information point (PIP) and only provides general information about the app itself and its intended use, the app is still attributed to the **Basic Profile** due to its passive participation in the usage control process.
 
 **Summary:**
-- Defined endpoints depending on the app type (see: [Data App - Endpoints](../endpoints))
+- Defined endpoints depending on the app type (see: [Endpoints](../endpoints))
 - Ability to integrate into the data flow of a connector and applied to it
 - Data App must be signed by its developer before publishing and distributing to guarantee its origin
 - Optional: Implementation of an usage control endpoint that acts as a policy information point (PIP)
@@ -57,11 +55,11 @@ Data apps developed under the advanced profile are essentially subject to the co
 - Requirements from the **basic profile**
 - Adminstrative access towards a connector API (core execution container) 
 
-In the Advanced profile, additional requirements are added to those already set out in the Basic profile. The profiles differ particularly with regard to the active integration of usage control. If a data app integrates an active part in the implementation of usage control, it is automatically assigned to the advanced profile. Further information on the integration of Policy Enforcement Points (PEP) in an app can be found in the Usage Control document [Data App - Usage Control](../usage-control). 
+In the Advanced profile, additional requirements are added to those already set out in the Basic profile. The profiles differ particularly with regard to the active integration of usage control. If a data app integrates an active part in the implementation of usage control, it is automatically assigned to the advanced profile. Further information on the integration of Policy Enforcement Points (PEP) in an app can be found in the [usage control document](../usage-control). 
 
 ## <a name="advanced-uc"> Advanced Profile - Usage Control </a>
 
-If, in addition to the requirements already established from the advanced profile, active components for implementing usage policies are also implemented in the interaction between a data app and a usage control framework, the app is assigned to the advanced profile - usage control. In order for usage policies to be actively implemented at the app level, several policy enforcement points (PEP) must be implemented in addition to a policy information point (PIP) for general app and purpose information. The implementation of the policy enforcement points is tightly integrated in the app implementation. A usage control framework specific communnication is required at this point to be able to enforce several policies at the app implementation level. More information about usage control integration can be found here [Data App - Usage Control](../usage-control).
+If, in addition to the requirements already established from the advanced profile, active components for implementing usage policies are also implemented in the interaction between a data app and a usage control framework, the app is assigned to the advanced profile - usage control. In order for usage policies to be actively implemented at the app level, several policy enforcement points (PEP) must be implemented in addition to a policy information point (PIP) for general app and purpose information. The implementation of the policy enforcement points is tightly integrated in the app implementation. A usage control framework specific communnication is required at this point to be able to enforce several policies at the app implementation level. For more informatione about usage control see [Usage Control](../usage-control).
 
 **Summary:**
 - Requirements from the **advanced profile**

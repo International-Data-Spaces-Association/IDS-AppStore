@@ -7,7 +7,7 @@ permalink: /endpoints/metadata-representation-endpoints
 parent: Endpoints
 ---
 
-# <a name="infomodel-endpoint-ref"> Endpoints - Metadata Representation (IDS-Informationmodel) </a>
+# Metadata Representation Endpoints
 Due to the free choice in the programming languages and frameworks used in the development of IDS apps, endpoints must be described very precisely in terms of the communication protocols used and the data schemas employed. It is also possible to integrate multiple protocols from one app with multiple endpoints for communication in parallel.
 
 For each communication protocol used in an app, a so-called EndpointBinding must be created in the metadata description, which, in addition to the protocol used, also represents the affiliation of the implemented endpoints to a protocol by means of endpoint references.

@@ -8,18 +8,18 @@ parent: Endpoints
 ---
 
 # Data Endpoints
-The endpoints for exchanging data between apps and between apps and connectors are divided into two categories. In each case, consuming data or delivering data is considered.
+The endpoints for exchanging data between apps as well as between apps and connectors are divided into two categories. In each case, consuming data or delivering data is considered.
 In principle, there is a data input endpoint for consuming data, which can be used to transport data to an app, and a data output endpoint for making data available from an app.
 
-In order to identify more quickly whether data endpoints only communicate internally, especially within a connector environment, or whether communication is established with an external component, the data endpoints are separated once again.
+In order to identify more quickly whether data endpoints only communicate internally, especially within a connector environment, or whether communication is established with an external component, the data endpoints are separated:
 
-- Input
-- Input_External
-- Output
-- Output_External
+- [Input](#input)
+- [Input_External](#input_ext)
+- [Output](#output)
+- [Output_External](output_ext)
 
 ## <a name="input"> Input </a>
-The input endpoint is mandatory for almost all app types that work with data or data streams. The input endpoint is used to describe the consumption of data or the data flow between data apps and data apps and a connector. In summary, the data input endpoint describes an interface for all app types at which data can be transported to an app within the conncetors environment.
+The input endpoint is mandatory for almost all app types that work with data or data streams. The input endpoint is used to describe the consumption of data or the data flow between data apps as well as data apps and a connector. In summary, the data input endpoint describes an interface for all app types at which data can be transported to an app within the conncetors environment.
 
 ## <a name="input_ext"> Input External </a>
 If an input endpoint is used to connect external data sources or data streams outside the actual connector environment, the External input endpoint can be used to make it clear in the metadata description that a connection is established across the boundaries of the connector at this endpoint.

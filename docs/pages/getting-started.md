@@ -29,8 +29,8 @@ If you want to build and run locally, ensure that at least Java 11 is installed.
 1.  Clone this repository: `git clone https://github.com/International-Data-Spaces-Association/IDS-AppStore.git`
 2.  Execute `cd IDS-AppStore` and `./mvnw clean package -DskipTests`.
 3.  Navigate to `/target` and run `java -jar ids-appstore-{VERSION}.jar`.
-4.  If everything worked fine, the application is available at https://localhost:8080/. The API can
-    be accessed at https://localhost:8080/api. The Swagger UI can be found at https://localhost:8080/api/docs.
+4.  If everything worked fine, the application is available at <https://localhost:8080/>. The API can
+    be accessed at <https://localhost:8080/api>. The Swagger UI can be found at <https://localhost:8080/api/docs>.
 
 ## Contributing
 
