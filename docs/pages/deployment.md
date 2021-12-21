@@ -45,7 +45,7 @@ sudo ./install.sh
 ## Installation and Running of the App Store
 The App Store can be installed from the following GitHub repository: <https://github.com/International-Data-Spaces-Association/IDS-AppStore>
 
-Instruction on how to install and run the App Store can be found [here](./IDS-AppStore/getting-started).
+Instruction on how to install and run the App Store can be found [here](https://international-data-spaces-association.github.io/IDS-AppStore/getting-started).
 
 
 ## Installation and Running of the Connector and Portainer: 
