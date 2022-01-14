@@ -8,7 +8,7 @@
 <p align="center">
   <a href="mailto:info@dataspace-connector.de">Contact</a> •
   <a href="#contributing">Contribute</a> •
-  <a href="https://github.com/International-Data-Spaces-Association/IDS-AppStore/wiki">Docs</a> •
+  <a href="https://international-data-spaces-association.github.io/IDS-AppStore/">Docs</a> •
   <a href="https://github.com/International-Data-Spaces-Association/IDS-AppStore/issues">Issues</a> •
   <a href="#license">License</a>
 </p>
