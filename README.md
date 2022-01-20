@@ -22,7 +22,7 @@
 If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
 
 1.  Clone this repository.
-2.  Create Data/search folder on the root with `cd /` and `mkdir /p data/search`
+2.  Create Data/search folder on the root with `cd /` and `mkdir -p /data/search`
 3.  Execute `cd IDS-AppStore`, `chmod +x mvnw` and `./mvnw clean package -DskipTests -Dmaven.javadoc.skip=true`.
 5.  Navigate to `/target` and run `java -jar ids-appstore-{VERSION}.jar`.
 6.  If everything worked fine, the application is available at https://localhost:8080/. The API can
