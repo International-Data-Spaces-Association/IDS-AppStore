@@ -34,8 +34,8 @@
         "@id" : "https://appstore.fit.fraunhofer.de/api/ids/data"
       }
     },
-    "ids:outboundModelVersion" : "4.1.2",
-    "ids:inboundModelVersion" : [ "4.0.0", "4.1.0", "4.1.2" ],
+    "ids:outboundModelVersion" : "4.2.6",
+    "ids:inboundModelVersion" : [ "4.0.0", "4.1.0", "4.1.2", "4.2.0", "4.2.1", "4.2.2", "4.2.3", "4.2.4", "4.2.5", "4.2.6" ],
     "ids:title" : [ {
       "@value" : "IDS AppStore",
       "@type" : "http://www.w3.org/2001/XMLSchema#string"
