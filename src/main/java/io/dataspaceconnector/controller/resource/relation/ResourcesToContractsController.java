@@ -34,6 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(BasePath.RESOURCES + "/{id}/" + BaseType.CONTRACTS)
 @Tag(name = ResourceName.RESOURCES, description = ResourceDescription.RESOURCES)
-public class ResourcesToContractsController extends BaseResourceChildRestrictedController<
+public class ResourcesToContractsController extends BaseResourceChildController<
         ResourceContractLinker, Contract, ContractView> {
 }
