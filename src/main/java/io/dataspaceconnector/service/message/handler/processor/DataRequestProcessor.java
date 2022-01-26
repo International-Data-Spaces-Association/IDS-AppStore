@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +15,7 @@
  */
 package io.dataspaceconnector.service.message.handler.processor;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.fraunhofer.fit.appstore.model.portainer.Template;
-import de.fraunhofer.fit.appstore.services.registry.RegistryService;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.exception.InvalidInputException;
@@ -35,6 +31,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 
 /**
  * Fetches the data of an artifact as the response to an ArtifactRequestMessage.
@@ -54,11 +51,6 @@ class DataRequestProcessor extends IdsProcessor<
      * Service for resolving entities.
      */
     private final @NonNull EntityResolver entityResolver;
-
-    /**
-     * Service for registry management.
-     */
-    private final @NonNull RegistryService registryService;
 
     /**
      * Fetches the data of the requested artifact as the response payload and creates an
@@ -81,25 +73,10 @@ class DataRequestProcessor extends IdsProcessor<
         final var queryInput = getQueryInputFromPayload(msg.getBody());
         final var data = entityResolver.getDataByArtifactId(artifact, queryInput);
 
-        // Add user credentials to template.
-        final var userCreds = registryService.createUserCredentialsForPullingImages();
-        userCreds.setEmail(null);
-        userCreds.setRealname(null);
-
-        final var objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        final var dataTmp = objectMapper.readValue(data.readAllBytes(), Template.class);
-        dataTmp.setRegistryUser(userCreds);
-
-        // TODO: EXCEPTION HANDLING FOR OBJECT MAPPING (JSON TO OBJECT AND OBJECT TO JSON)
-        final var newData
-                = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dataTmp);
-
         final var desc = new ArtifactResponseMessageDesc(issuer, messageId, transferContract);
         final var responseHeader = messageService.buildMessage(desc);
 
-        return new Response(responseHeader, newData);
+        return new Response(responseHeader, Base64Utils.encodeToString(data.readAllBytes()));
     }
 
     /**
