@@ -9,10 +9,10 @@ from requests import HTTPError
 # CONNECTOR API SETTINGS #
 ##########################
 apiUser = "admin"
-apiPassword = "idsappstore!"
+apiPassword = "password"
 host = "localhost"
 port = 8080
-protocol = "http"
+protocol = "https"
 if port is not None:
     combined_host = f"{protocol}://{host}:{port}"
 else:
@@ -22,7 +22,7 @@ else:
 # APPSTORE REGISTRY SETTINGS #
 ##############################
 registry_address = "app.registry.example.org"
-registry_repo_name = "ids-example"
+registry_repo_name = "library"
 registry_user = "admin"
 registry_password = "password"
 
@@ -31,8 +31,8 @@ registry_password = "password"
 ###################
 client = docker.from_env()
 
-resource_id_tag_version = "main"
-image_name = "ubuntu:latest"
+resource_id_tag_version = "latest"
+image_name = "ahemid:idsapp"
 
 resource_version = 1
 
@@ -504,15 +504,15 @@ pprint.pprint(resource_uuid)
 ###########################
 # SENDING SIMULATED EVENT #
 ###########################
-send_simulated_registry_event(resource_uuid)
+##send_simulated_registry_event(resource_uuid)
 
 ##################################
 # GET ARTIFACT AND ARTIFACT DATA #
 ##################################
-send_get_artifact(artifact)
+##send_get_artifact(artifact)
 
-filename = send_get_artifact_data(artifact, artifact_uuid)
-pprint.pprint("File can be found in working directory: " + filename)
+##filename = send_get_artifact_data(artifact, artifact_uuid)
+##pprint.pprint("File can be found in working directory: " + filename)
 
 ##########################
 # DOCKER UPLOAD METHODS  #
