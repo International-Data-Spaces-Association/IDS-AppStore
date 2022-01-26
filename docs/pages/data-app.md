@@ -2,8 +2,9 @@
 layout: default
 title: Data App
 nav_order: 5
-description: ""
 permalink: /data-app
+has_children: true
+has_toc: true
 ---
 
 # Data App

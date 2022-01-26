@@ -1,12 +1,12 @@
 ---
 layout: default
 title: Types
-nav_order: 2
+nav_order: 1
 permalink: /types-and-profiles/types
 parent: Types and Profiles
 ---
 
-# Data App - Types
+# Data App Types
 
 There are currently three different types of apps available, which in turn must fulfill at least one of the previously mentioned profiles.
 In addition to the app types there is also a composition of apps, so called app bundle, which consists of multiple apps from all types.

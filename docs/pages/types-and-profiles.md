@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Types and Profiles
-nav_order: 6
+nav_order: 7
 permalink: /types-and-profiles
 has_children: true
 has_toc: true

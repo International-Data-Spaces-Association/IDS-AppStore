@@ -1,12 +1,12 @@
 ---
 layout: default
 title: Configuration
-nav_order: 8
+nav_order: 9
 description: ""
 permalink: /configuration
 ---
 
-# Data App - Configuration
+# Data App Configuration
 
 The IDS Data Apps can be configured for their use on a Connector, if required. Configuration can be used to set special application parameters or runtime configurations for an app. When configuring a Data App, a distinction can be made between two points in time of the configuration. Either apps can already be configured at deployment time with a static configuration file, or apps can alternatively be configured at runtime.
 

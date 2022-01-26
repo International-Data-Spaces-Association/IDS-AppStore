@@ -1,12 +1,12 @@
 ---
 layout: default
 title: Profiles
-nav_order: 1
+nav_order: 2
 permalink: /types-and-profiles/profiles
 parent: Types and Profiles
 ---
 
-# Data App - Profiles
+# Data App Profiles
 
 There are currently four profiles for data apps which will be explained in the following section. The four profiles are divided into a basic and an advanced profile, each of which is further differentiated by whether the app has an integrated usage control implementation or not.
 
