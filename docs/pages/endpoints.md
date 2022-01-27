@@ -1,14 +1,14 @@
 ---
 layout: default
 title: Endpoints
-nav_order: 8
+nav_order: 7
 description: ""
 permalink: /endpoints
 has_children: true
 has_toc: true
 ---
 
-# Data App - Endpoints
+# Endpoints
 {: .fs-9 }
 
 In this section, the different endpoint types of an IDS Data App are described regarding their meaning and function. Depending on which app type is implemented, different endpoints must be implemented.

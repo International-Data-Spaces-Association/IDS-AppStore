@@ -13,6 +13,8 @@ has_toc: true
 **This section is currently being edited.** In the future, this section will include guidance on deploying the IDS App Store. 
 {: .fs-6 .fw-300 }
 
+---
+
 There are four main components needed to make the entire App Store environment running, starting from uploading an app to the App Store to downloading an app from the Connector.  
 
 Those main components are as follows: 
