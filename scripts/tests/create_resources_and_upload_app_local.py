@@ -6,7 +6,7 @@ import requests
 from requests import HTTPError
 
 ##########################
-# CONNECTOR API SETTINGS #
+# APPSTORE API SETTINGS #
 ##########################
 apiUser = "admin"
 apiPassword = "password"
@@ -18,9 +18,9 @@ if port is not None:
 else:
     combined_host = f"{protocol}://{host}"
 
-##############################
-# APPSTORE REGISTRY SETTINGS #
-##############################
+########################################
+# APPSTORE REGISTRY SETTINGS (HARBOR)  #
+########################################
 registry_address = "app.registry.example.org"
 registry_repo_name = "library"
 registry_user = "admin"
@@ -32,88 +32,13 @@ registry_password = "password"
 client = docker.from_env()
 
 resource_id_tag_version = "latest"
-image_name = "ahemid:idsapp"
+image_name = "ahemid/idsapp"
 
 resource_version = 1
 
-####################
-# REQUEST SETTINGS #
-####################
-requests.packages.urllib3.disable_warnings()
-session_creds = requests.Session()
-session_creds.auth = (apiUser, apiPassword)
-session_creds.verify = False
-
-session = requests.session()
-session.verify = False
-
 
 ############################
-# HTTP POST HELPER METHODS #
-############################
-def get_request_check_response(url, creds=True):
-    try:
-        if creds is True:
-            response_tmp = session_creds.get(url)
-            time.sleep(5)
-            response_tmp.raise_for_status()
-        else:
-            response_tmp = session.get(url)
-            time.sleep(5)
-            response_tmp.raise_for_status()
-        return response_tmp
-    except HTTPError as http_error:
-        pprint(f"HTTP ERROR OCCURED: {http_error}")
-    except Exception as err:
-        pprint(f"Something went wrong sending the request: {err}")
-
-
-def post_request_check_response(url, json, creds=True, ret_location=True):
-    if json is None:
-        raise Exception(f"Problem with request json!, json= {json}")
-    try:
-        if creds is True:
-            response_tmp = session_creds.post(url, json=json)
-            response_tmp.raise_for_status()
-        else:
-            response_tmp = session.post(url, data=json)
-            response_tmp.raise_for_status()
-
-        if ret_location is True:
-            loc = response_tmp.headers["Location"]
-            if loc is None:
-                raise Exception(f"Problem with response location!, requestUrl={url}")
-            pprint.pprint(loc)
-            return loc
-        else:
-            return response_tmp
-
-    except HTTPError as http_error:
-        pprint(f"HTTP ERROR OCCURED: {http_error}")
-    except Exception as err:
-        pprint(f"Something went wrong sending the request: {err}")
-
-
-def post_description_request(recipient, element_id):
-    params = {}
-    if recipient is not None:
-        params["recipient"] = recipient
-    if element_id is not None:
-        params["elementId"] = element_id
-    try:
-        response_tmp = session_creds.post(f"{combined_host}/api/ids/description", params=params)
-        response_tmp.raise_for_status()
-        return response_tmp
-    except HTTPError as http_error:
-        pprint(f"HTTP ERROR OCCURED: {http_error}")
-    except Exception as err:
-        pprint(f"Something WENT WRONG SENDING THE REQUEST: {err}")
-    else:
-        pprint(f"REQUEST SUCCESSFULL!")
-
-
-############################
-# CREATE RESOURCES METHODS #
+# APP METADATA METHODS     #
 ############################
 
 def create_catalog():
@@ -158,8 +83,8 @@ def create_dataApp():
         "title": "DataApp Information",
         "description": "This is the dataApp information for the DataProcessingApp.",
         "docs": "App-related human-readable documentation.",
-        "environmentVariables": "Env1=environmentvariable;Env2=environmentvariable2",
-        "storageConfig": "/data/temp:/temp",
+        "environmentVariables": "dbUser=sa;dbPasswd=passwd",
+        "storageConfig": "-v /data",
         "supportedUsagePolicies": [
             "PROVIDE_ACCESS"
         ]
@@ -244,6 +169,10 @@ def create_rule_allow_access():
     loc = post_request_check_response(f"{combined_host}/api/rules", json)
     return loc
 
+##########################################################################
+# USUALLY, IT SHOULD NOT BE NECESSARY TO CHANGE ANYTHING BELOW THIS LINE # 
+##########################################################################
+
 
 #############################
 # LINKING RESOURCES METHODS #
@@ -287,7 +216,82 @@ def add_contract_to_resource(resource, contract):
 def add_rule_to_contract(contract, rule):
     link_two_resources(contract, rule)
 
+####################
+# REQUEST SETTINGS #
+####################
+requests.packages.urllib3.disable_warnings()
+session_creds = requests.Session()
+session_creds.auth = (apiUser, apiPassword)
+session_creds.verify = False
 
+session = requests.session()
+session.verify = False
+
+
+############################
+# HTTP POST HELPER METHODS #
+############################
+def get_request_check_response(url, creds=True):
+    try:
+        if creds is True:
+            response_tmp = session_creds.get(url)
+            time.sleep(5)
+            response_tmp.raise_for_status()
+        else:
+            response_tmp = session.get(url)
+            time.sleep(5)
+            response_tmp.raise_for_status()
+        return response_tmp
+    except HTTPError as http_error:
+        pprint(f"HTTP ERROR OCCURED: {http_error}")
+    except Exception as err:
+        pprint(f"Something went wrong sending the request: {err}")
+
+
+def post_request_check_response(url, json, creds=True, ret_location=True):
+    if json is None:
+        raise Exception(f"Problem with request json!, json= {json}")
+    try:
+        if creds is True:
+            response_tmp = session_creds.post(url, json=json)
+            response_tmp.raise_for_status()
+        else:
+            response_tmp = session.post(url, data=json)
+            response_tmp.raise_for_status()
+
+        if ret_location is True:
+            loc = response_tmp.headers["Location"]
+            if loc is None:
+                raise Exception(f"Problem with response location!, requestUrl={url}")
+            pprint.pprint(loc)
+            return loc
+        else:
+            return response_tmp
+
+    except HTTPError as http_error:
+        pprint(f"HTTP ERROR OCCURED: {http_error}")
+    except Exception as err:
+        pprint(f"Something went wrong sending the request: {err}")
+
+
+def post_description_request(recipient, element_id):
+    params = {}
+    if recipient is not None:
+        params["recipient"] = recipient
+    if element_id is not None:
+        params["elementId"] = element_id
+    try:
+        response_tmp = session_creds.post(f"{combined_host}/api/ids/description", params=params)
+        response_tmp.raise_for_status()
+        return response_tmp
+    except HTTPError as http_error:
+        pprint(f"HTTP ERROR OCCURED: {http_error}")
+    except Exception as err:
+        pprint(f"Something WENT WRONG SENDING THE REQUEST: {err}")
+    else:
+        pprint(f"REQUEST SUCCESSFULL!")
+
+	
 #################
 # DOCKER METHOD #
 #################
@@ -382,7 +386,7 @@ def tag_image_for_registry(image_tmp, resource_id_tmp, resource_version_tmp, reg
         # Tag image
         tagged = image_tmp.tag(complete_tag)
         if tagged is True:
-            pprint.pprint(f"Successfully taged image. image={image_tmp}, tag={complete_tag}")
+            pprint.pprint(f"Successfully tagged image. image={image_tmp}, tag={complete_tag}")
             return complete_tag
         else:
             raise Exception("Failed to tag image.")
