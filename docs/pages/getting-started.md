@@ -44,9 +44,7 @@ improvement, or have an idea for a useful feature. Please find a set of guidelin
 ## Developers
 
 This is an ongoing project of the [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), based on
-the open source project [Dataspace Connector](https://github.com/International-Data-Spaces-Association/DataspaceConnector) - starting at version 6.1.0.
-
-The core development is driven by:
+the open source project [Dataspace Connector](https://github.com/International-Data-Spaces-Association/DataspaceConnector) - starting at version 6.1.0. The core development is driven by:
 * [Christoph Quix](https://www.fit.fraunhofer.de/de/geschaeftsfelder/data-science-und-kuenstliche-intelligenz/datenmanagement.html), [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), project owner
 * [Ahmad Hemid](mailto:ahmad.hemid@fit.fraunhofer.de), [Fraunhofer FIT](https://www.fit.fraunhofer.de/en.html), lead developer
 

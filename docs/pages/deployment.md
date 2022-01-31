@@ -59,7 +59,7 @@ Instructions on how to install the Dataspace Connector can be found at the follo
 
 If both the Connector and the App Store are installed on the same machine, the running port must be changed in the `src/main/resources/application.properties` file. 8080 must be replaced with the number you choose, e.g., 8085.   
 
-Portainer can be installed via the following link: <https://docs.portainer.io/v/ce-2.9/start/install/agent/docker>.
+Portainer can be installed via the following link: <https://docs.portainer.io/v/ce-2.11/start/install/server/docker>.
 The Connector is configured to connect to Portainer on port 9000.
 
 

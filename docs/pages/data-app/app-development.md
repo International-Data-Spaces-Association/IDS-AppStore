@@ -7,7 +7,6 @@ parent: Data App
 ---
 
 # App Development
-{: .fs-9 }
 
 **This section is currently being edited.** In the future, this section will include a data app development guide.
 {: .fs-6 .fw-300 }
