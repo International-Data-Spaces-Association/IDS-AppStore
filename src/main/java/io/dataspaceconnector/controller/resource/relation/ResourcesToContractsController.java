@@ -27,6 +27,7 @@ import io.dataspaceconnector.service.resource.relation.ResourceContractLinker;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.dataspaceconnector.controller.resource.base.BaseResourceChildController;
 
 /**
  * Offers the endpoints for managing the relations between resources and contracts.
