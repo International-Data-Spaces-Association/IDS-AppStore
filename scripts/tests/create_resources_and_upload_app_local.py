@@ -72,7 +72,7 @@ def create_representation():
         "description": "This is the docker representation for the DataProcessingApp",
         "language": "EN",
         "runtimeEnvironment": "docker",
-        "distributionService": "https://app.registry.example.org"
+        "distributionService": "https://localhost:8080"
     }
     loc = post_request_check_response(f"{combined_host}/api/representations", json)
     return loc
