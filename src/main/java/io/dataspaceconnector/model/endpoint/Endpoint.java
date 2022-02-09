@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +15,8 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.dataspaceconnector.model.app.App;
-import io.dataspaceconnector.model.base.RemoteService;
-import io.dataspaceconnector.model.named.NamedEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.util.UriConverter;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,67 +26,37 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToMany;
+import javax.persistence.Inheritance;
 import javax.persistence.Table;
 import java.net.URI;
-import java.util.List;
 
+import static io.dataspaceconnector.model.config.DatabaseConstants.ENDPOINT_LOCATION_LENGTH;
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Entity which manages the endpoints.
  */
 @javax.persistence.Entity
-@Table(name = "endpoint")
+@Inheritance
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 @SQLDelete(sql = "UPDATE endpoint SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
-@Getter
-@Setter(AccessLevel.PACKAGE)
-@EqualsAndHashCode(callSuper = true)
+@Table(name = "endpoint")
 @RequiredArgsConstructor
-public class Endpoint extends NamedEntity implements RemoteService {
+public class Endpoint extends Entity {
 
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The endpoint id on connector side.
-     */
-    @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH)
-    private URI remoteId;
-
     /**+
      * The access url of the endpoint.
      */
-    @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH)
-    private URI location; // mapped to accessURL
-
-    /**
-     * The media type expressed by this endpoint.
-     */
-    private String mediaType;
-
-    /**
-     * The port of the endpoint.
-     */
-    private long port;
-
-    /**
-     * The protocol of the endpoint.
-     */
-    private String protocol;
-
-    /**
-     * The endpoint type.
-     */
-    @Enumerated(EnumType.STRING)
-    private EndpointType type;
+    @Column(length = ENDPOINT_LOCATION_LENGTH)
+    private String location;
 
     /**
      * The documentation for the endpoint.
@@ -108,12 +73,5 @@ public class Endpoint extends NamedEntity implements RemoteService {
     /**
      * The type information.
      */
-    private String path;
-
-    /**
-     * A list of related apps.
-     */
-    @JsonIgnore
-    @ManyToMany(mappedBy = "endpoints")
-    private List<App> apps;
+    private String type;
 }

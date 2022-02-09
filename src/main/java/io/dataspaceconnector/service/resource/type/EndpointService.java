@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +15,66 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
+import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import io.dataspaceconnector.service.resource.base.RemoteResolver;
-import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
+import io.dataspaceconnector.service.routing.RouteHelper;
+import lombok.NonNull;
 
 /**
  * Handles the basic logic for endpoints.
+ *
+ * @param <T> The endpoint type.
+ * @param <D> The endpoint description type.
  */
-@Service("AppEndpointService")
-public class EndpointService extends BaseEntityService<Endpoint, EndpointDesc>
-        implements RemoteResolver {
+public class EndpointService<T extends Endpoint, D extends EndpointDesc>
+        extends BaseEntityService<T, D> {
 
     /**
-     * {@inheritDoc}
+     * Service for managing routes.
+     */
+    private final @NonNull RouteRepository routeRepo;
+
+    /**
+     * Helper class for deploying and deleting Camel routes.
+     */
+    private final @NonNull RouteHelper routeHelper;
+
+    /**
+     * Constructor.
+     *
+     * @param repository       The endpoint repository.
+     * @param factory          The endpoint logic.
+     * @param routeRepository  the service for managing routes.
+     * @param camelRouteHelper The helper class for Camel routes.
+     */
+    public EndpointService(
+            final BaseEntityRepository<T> repository,
+            final AbstractFactory<T, D> factory,
+            final @NonNull RouteRepository routeRepository,
+            final @NonNull RouteHelper camelRouteHelper) {
+        super(repository, factory);
+        this.routeRepo = routeRepository;
+        this.routeHelper = camelRouteHelper;
+    }
+
+    /**
+     * Persists a connector endpoint. If an already existing endpoint is updated, the Camel routes
+     * for all routes referencing the endpoint are recreated.
+     *
+     * @param endpoint the endpoint to persist.
+     * @return the persisted endpoint.
      */
     @Override
-    public Optional<UUID> identifyByRemoteId(final URI remoteId) {
-        return Optional.empty(); // TODO
+    protected final T persist(final T endpoint) {
+        if (endpoint.getId() != null) {
+            final var affectedRoutes = routeRepo.findTopLevelRoutesByEndpoint(endpoint.getId());
+            affectedRoutes.forEach(routeHelper::deploy);
+        }
+
+        return super.persist(endpoint);
     }
 }

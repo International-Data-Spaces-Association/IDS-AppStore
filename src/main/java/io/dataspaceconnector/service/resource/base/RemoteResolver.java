@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +25,7 @@ import java.util.UUID;
 public interface RemoteResolver {
     /**
      * Search for an local entity by its remote id.
+     *
      * @param remoteId The remote id.
      * @return The local entity id.
      */

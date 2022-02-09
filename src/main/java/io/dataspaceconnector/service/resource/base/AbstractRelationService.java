@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +46,7 @@ public abstract class AbstractRelationService<K extends Entity, W extends Entity
         implements RelationService<K, W, T, X> {
 
     /*
-        NOTE: Pretty much all functions will throw an ResourceNotFoundException but they are not
+        NOTE: Pretty much all functions will throw a ResourceNotFoundException but they are not
         added to the function signature. The basic idea here was, that a request to an missing
         entity can only come from an user and in most cases will be handled by an
         ResourceNotFoundExceptionHandler. By handling the exception this way the calling controller

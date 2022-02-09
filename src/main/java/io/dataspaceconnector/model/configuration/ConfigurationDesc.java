@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,15 +96,15 @@ public class ConfigurationDesc extends NamedDescription {
     /**
      * The truststore settings.
      */
-    private TruststoreDesc truststoreSettings;
+    private TruststoreDesc truststore;
 
     /**
      * The proxy settings.
      */
-    private ProxyDesc proxySettings;
+    private ProxyDesc proxy;
 
     /**
      * The keystore settings.
      */
-    private KeystoreDesc keystoreSettings;
+    private KeystoreDesc keystore;
 }

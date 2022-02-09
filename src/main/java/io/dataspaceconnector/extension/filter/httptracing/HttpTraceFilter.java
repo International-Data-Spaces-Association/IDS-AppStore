@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +55,7 @@ public final class HttpTraceFilter extends OncePerRequestFilter {
 
     /**
      * The constructor.
+     *
      * @param handler Responsible for HttpTrace events raised by this class.
      */
     public HttpTraceFilter(final HttpTraceEventHandler handler) {
@@ -139,8 +139,8 @@ public final class HttpTraceFilter extends OncePerRequestFilter {
         if (wrappedResponse.getContentSize() > 0) {
             try {
                 response = new String(wrappedResponse.getContentAsByteArray(), 0,
-                                      wrappedResponse.getContentSize(),
-                                      wrappedResponse.getCharacterEncoding());
+                        wrappedResponse.getContentSize(),
+                        wrappedResponse.getCharacterEncoding());
             } catch (UnsupportedEncodingException e) {
                 if (log.isErrorEnabled()) {
                     log.error("Failed to get the response. [exception=({})]", e.getMessage(), e);

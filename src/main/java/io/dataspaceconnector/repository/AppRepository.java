@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +19,9 @@ import io.dataspaceconnector.model.app.App;
 import org.springframework.stereotype.Repository;
 
 /**
- * The repository containing all objects of type {@link App}.
+ * The repository containing all objects of type {@link io.dataspaceconnector.model.app.App}.
  */
 @Repository
-public interface AppRepository extends BaseEntityRepository<App> {
+public interface AppRepository extends RemoteEntityRepository<App> {
+
 }

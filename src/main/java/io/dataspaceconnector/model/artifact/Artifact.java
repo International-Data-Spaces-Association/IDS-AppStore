@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +15,6 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.named.NamedEntity;
@@ -98,7 +96,6 @@ public abstract class Artifact extends NamedEntity implements RemoteObject {
     /**
      * The representations in which this artifact is used.
      */
-    @JsonIgnore
     @ManyToMany(mappedBy = "artifacts")
     private List<Representation> representations;
 
@@ -112,6 +109,7 @@ public abstract class Artifact extends NamedEntity implements RemoteObject {
      * Increment the data access counter.
      */
     public void incrementAccessCounter() {
+        assert numAccessed >= 0;
         numAccessed += 1;
     }
 

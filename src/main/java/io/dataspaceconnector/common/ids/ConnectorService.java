@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +15,8 @@
  */
 package io.dataspaceconnector.common.ids;
 
-import de.fraunhofer.iais.eis.AppStore;
-import de.fraunhofer.iais.eis.AppStoreImpl;
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.Resource;
@@ -25,16 +24,19 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
 import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
 import io.dataspaceconnector.model.configuration.ConnectorStatus;
+import io.dataspaceconnector.model.configuration.DeployMode;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.resource.type.CatalogService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,6 +49,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+/* AppStore Extension */
+import de.fraunhofer.iais.eis.AppStore;
+import de.fraunhofer.iais.eis.AppStoreImpl;
 
 /**
  * This service offers different methods related to the connector configuration, like e.g. getting
@@ -80,12 +86,20 @@ public class ConnectorService {
     /**
      * Service for ids resources.
      */
-    private final @NonNull IdsResourceBuilder resourceBuilder;
+    private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     /**
      * Service for offered resources.
      */
-    private final @NonNull ResourceService resourceService;
+    private final @NonNull OfferedResourceService offeredResourceService;
+
+    /**
+     * Get keystore manager from ids messaging services.
+     * @return The keystore manager.
+     */
+    public KeyStoreManager getKeyStoreManager() {
+        return configContainer.getKeyStoreManager();
+    }
 
     /**
      * Get a local copy of the current connector and extract its id.
@@ -107,6 +121,18 @@ public class ConnectorService {
         final var status = connector.getConnectorStatus();
 
         return FromIdsObjectMapper.fromIdsConnectorStatus(status);
+    }
+
+    /**
+     * Get the current deploy method.
+     *
+     * @return The connector's deploy method.
+     */
+    public DeployMode getDeployMethod() {
+        final var config = configContainer.getConfigurationModel();
+        final var deployMethod = config.getConnectorDeployMode();
+
+        return FromIdsObjectMapper.fromIdsDeployMode(deployMethod);
     }
 
     /**
@@ -157,19 +183,19 @@ public class ConnectorService {
     }
 
     /**
-     * Build a app store object with all app resources.
+     * Build a base connector object with all offered resources.
      *
      * @return The ids base connector object.
      */
-    public AppStore getAppStoreWithAppResources() throws ConstraintViolationException {
+    public BaseConnector getConnectorWithOfferedResources() throws ConstraintViolationException {
         // Get a local copy of the current connector.
         final var connector = configContainer.getConnector();
         final var catalogs = getAllCatalogsWithOfferedResources();
 
-        // Create a connector with a list of app resources.
-        final var appStore = (AppStoreImpl) connector;
-        appStore.setResourceCatalog(catalogs);
-        return appStore;
+        // Create a connector with a list of offered resources.
+        final var connectorImpl = (BaseConnectorImpl) connector;
+        connectorImpl.setResourceCatalog(catalogs);
+        return connectorImpl;
     }
 
     /**
@@ -177,14 +203,14 @@ public class ConnectorService {
      *
      * @return The ids base connector object.
      */
-    public AppStore getAppStoreWithoutResources() throws ConstraintViolationException {
+    public BaseConnector getConnectorWithoutResources() throws ConstraintViolationException {
         // Get a local copy of the current connector.
         final var connector = configContainer.getConnector();
 
         // Create a connector without any resources.
-        final var appStore = (AppStoreImpl) connector;
-        appStore.setResourceCatalog(null);
-        return appStore;
+        final var connectorImpl = (BaseConnectorImpl) connector;
+        connectorImpl.setResourceCatalog(null);
+        return connectorImpl;
     }
 
     /**
@@ -195,6 +221,8 @@ public class ConnectorService {
     @Transactional
     public void updateConfigModel() throws ConfigUpdateException {
         try {
+            /* AppStore Adaptation */
+            // final var connector = getConnectorWithOfferedResources();
             final var connector = getAppStoreWithAppResources();
             final var configModel = (ConfigurationModelImpl) configContainer
                     .getConfigurationModel();
@@ -230,11 +258,45 @@ public class ConnectorService {
      * @return The ids resource.
      */
     public Optional<Resource> getOfferedResourceById(final URI resourceId) {
-        final var resource = resourceService.getAll(Pageable.unpaged())
+        final var resource = offeredResourceService.getAll(Pageable.unpaged())
                 .stream()
                 .filter(x -> resourceId.toString().contains(x.getId().toString()))
                 .findAny();
 
         return resource.map(resourceBuilder::create);
     }
+
+    /* AppStore Extension */
+    /**
+     * Build an app store object with all app resources.
+     *
+     * @return The ids base connector object.
+     */
+    public AppStore getAppStoreWithAppResources() throws ConstraintViolationException {
+        // Get a local copy of the current connector.
+        final var connector = configContainer.getConnector();
+        final var catalogs = getAllCatalogsWithOfferedResources();
+
+        // Create a connector with a list of app resources.
+        final var appStore = (AppStoreImpl) connector;
+        appStore.setResourceCatalog(catalogs);
+        return appStore;
+    }
+
+    /**
+     * Build a base connector object without resources.
+     *
+     * @return The ids base connector object.
+     */
+    public AppStore getAppStoreWithoutResources() throws ConstraintViolationException {
+        // Get a local copy of the current connector.
+        final var connector = configContainer.getConnector();
+
+        // Create a connector without any resources.
+        final var appStore = (AppStoreImpl) connector;
+        appStore.setResourceCatalog(null);
+        return appStore;
+    }
+
+
 }

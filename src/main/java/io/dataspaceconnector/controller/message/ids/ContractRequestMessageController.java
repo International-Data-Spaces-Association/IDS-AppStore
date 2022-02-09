@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +24,12 @@ import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.net.ContentType;
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.resource.view.agreement.AgreementViewAssembler;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
@@ -45,9 +48,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,11 +70,10 @@ import java.util.UUID;
  * This controller provides the endpoint for sending a contract request message and starting the
  * metadata and data exchange.
  */
-@ConditionalOnProperty("ids.controller.enabled")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class ContractRequestMessageController {
     /**
      * Service for updating database entities.
@@ -129,12 +131,12 @@ public class ContractRequestMessageController {
      * @return The response entity.
      */
     @PostMapping("/contract")
-    @Operation(summary = "Send IDS contract request message")
+    @Operation(summary = "Send an IDS ContractRequestMessage to start the contract negotiation.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway")})
@@ -167,11 +169,9 @@ public class ContractRequestMessageController {
             if (response != null) {
                 agreementId = result.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
             } else {
-                final var responseEntity =
-                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
-                return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<Object>("An internal server error occurred.",
-                                HttpStatus.INTERNAL_SERVER_ERROR));
+                final var body = toObjectResponse(result.getIn().getBody(ResponseEntity.class));
+                return Objects.requireNonNullElseGet(body, () -> new JsonResponse(
+                        "An error occurred.").create(HttpStatus.INTERNAL_SERVER_ERROR));
             }
 
             // Return response entity containing the locations of the contract agreement, the
@@ -181,6 +181,7 @@ public class ContractRequestMessageController {
 
             final var headers = new HttpHeaders();
             headers.setLocation(entity.getRequiredLink("self").toUri());
+            headers.setContentType(MediaType.valueOf(ContentType.HAL));
 
             return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
         } else {
@@ -237,6 +238,7 @@ public class ContractRequestMessageController {
 
         final var headers = new HttpHeaders();
         headers.setLocation(entity.getRequiredLink("self").toUri());
+        headers.setContentType(MediaType.valueOf(ContentType.HAL));
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }

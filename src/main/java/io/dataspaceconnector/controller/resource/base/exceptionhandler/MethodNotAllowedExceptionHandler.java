@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +29,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public class MethodNotAllowedExceptionHandler {
     /**
-     * Handle {@link MethodNotAllowed}.
+     * Handles thrown {@link MethodNotAllowed}.
      *
      * @return Response entity with code 405.
      */

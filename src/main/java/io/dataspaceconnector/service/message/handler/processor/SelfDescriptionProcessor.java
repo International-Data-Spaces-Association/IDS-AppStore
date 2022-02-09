@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +62,9 @@ class SelfDescriptionProcessor extends IdsProcessor<
             MessagePayload> msg) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
+        /* AppStore Extension */
         final var connector = connectorService.getAppStoreWithAppResources();
+        // final var connector = connectorService.getConnectorWithOfferedResources();
 
         // Build ids response message.
         final var desc = new DescriptionResponseMessageDesc(issuer, messageId);

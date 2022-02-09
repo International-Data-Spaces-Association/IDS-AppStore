@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +31,13 @@ public class ResponseToDtoConverter extends Idscp2MappingProcessor {
 
     /**
      * Converts an incoming response message to q {@link Response}.
+     *
      * @param in the in-message of the exchange.
      */
     @Override
     protected void processInternal(final Message in) {
-        final var header = in
-                .getHeader(ParameterUtils.IDSCP_HEADER, de.fraunhofer.iais.eis.Message.class);
+        final var header = in.getHeader(ParameterUtils.IDSCP_HEADER,
+                de.fraunhofer.iais.eis.Message.class);
         final var payload = new String(in.getBody(byte[].class), StandardCharsets.UTF_8);
 
         in.setBody(new Response(header, payload));

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +51,8 @@ public class RepresentationDesc extends NamedDescription implements RemoteObject
      * content like RDF/XML."
      */
     private String standard;
+
+    /* AppStore Extension */
 
     /**
      * Data app runtime environment.

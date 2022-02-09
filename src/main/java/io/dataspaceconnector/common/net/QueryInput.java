@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +15,11 @@
  */
 package io.dataspaceconnector.common.net;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 /**
  * Query for a backend.
@@ -28,7 +27,7 @@ import java.util.Map;
 @Schema(
         name = "QueryInput",
         description = "Query parameters, headers and path variables as maps",
-        oneOf = QueryInput.class,
+        implementation = QueryInput.class,
         example = "{\n"
                   + "  \"headers\": {\n"
                   + "    \"key\": \"value\"\n"

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +25,14 @@ public final class BaseType {
     }
 
     /**
-     * The resource endpoint's base path.
+     * The resource offer's endpoint's base path.
      */
-    public static final String RESOURCES = "resources";
+    public static final String OFFERS = "offers";
+
+    /**
+     * The resource request's endpoint's base path.
+     */
+    public static final String REQUESTS = "requests";
 
     /**
      * The representation endpoint's base path.
@@ -46,11 +50,6 @@ public final class BaseType {
     public static final String ARTIFACTS = "artifacts";
 
     /**
-     * The data app endpoint's base path.
-     */
-    public static final String APPS = "apps";
-
-    /**
      * The rule endpoint's base path.
      */
     public static final String RULES = "rules";
@@ -64,6 +63,11 @@ public final class BaseType {
      * The contract agreement's base path.
      */
     public static final String AGREEMENTS = "agreements";
+
+    /**
+     * The routes' base path.
+     */
+    public static final String ROUTES = "routes";
 
     /**
      * The subscriptions' base path.
@@ -81,7 +85,22 @@ public final class BaseType {
     public static final String CONFIGURATIONS = "configurations";
 
     /**
+     * The data sources' base path.
+     */
+    public static final String DATA_SOURCES = "datasources";
+
+    /**
      * The endpoints' base path.
      */
     public static final String ENDPOINTS = "endpoints";
+
+    /**
+     * The apps' base path.
+     */
+    public static final String APPS = "apps";
+
+    /**
+     * The app stores' base path.
+     */
+    public static final String APPSTORES = "appstores";
 }

@@ -17,6 +17,7 @@ package de.fraunhofer.fit.appstore.services.template;
 
 import de.fraunhofer.fit.appstore.exceptions.TemplateException;
 import de.fraunhofer.fit.appstore.model.portainer.Template;
+import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.Resource;
@@ -61,7 +62,14 @@ public class ContainerTemplateService {
      */
     public Template createContainerTemplate(final UUID resourceId)
             throws TemplateException {
-        final var resource = resourceService.get(resourceId);
+        final var entity = resourceService.get(resourceId);
+        // We should have a Resource
+        if(!(entity instanceof Resource)) {
+            // Should not happen
+            throw new TemplateException("ContainerTemplateService is not implemented for Entities which are not Resources");
+        }
+
+        final var resource = (Resource) entity;
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 

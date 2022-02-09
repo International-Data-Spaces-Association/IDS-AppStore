@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +15,7 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.dataspaceconnector.model.base.RemoteObject;
+import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
@@ -32,8 +30,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 import org.springframework.data.annotation.Version;
 
 import javax.persistence.Column;
@@ -41,6 +37,7 @@ import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -53,6 +50,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
  * A resource describes offered or requested data.
  */
 @javax.persistence.Entity
+@Inheritance
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
@@ -60,8 +58,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Where(clause = "deleted = false")
 @Table(name = "resource")
 @RequiredArgsConstructor
-@Indexed
-public class Resource extends NamedEntity implements RemoteObject {
+public class Resource extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -69,16 +66,8 @@ public class Resource extends NamedEntity implements RemoteObject {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The resource id on provider side.
-     */
-    @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH)
-    private URI remoteId;
-
-    /**
      * The keywords of the resource.
      */
-    @KeywordField
     @ElementCollection
     private List<String> keywords;
 
@@ -148,18 +137,50 @@ public class Resource extends NamedEntity implements RemoteObject {
     private List<Contract> contracts;
 
     /**
-     * The catalogs in which this resource is used.
+     * Set the catalogs used by this resource.
+     *
+     * @param catalogList The catalog list.
      */
-    @JsonIgnore
-    @ManyToMany(mappedBy = "resources")
-    private List<Catalog> catalogs;
+    public void setCatalogs(final List<Catalog> catalogList) {
+        /*
+            NOTE: Offered and Requested Resource override this function.
+         */
+        throw new NotImplemented();
+    }
 
     /**
-     * The list of brokers this resource is registered at.
+     * Get the list of catalogs used by this resource.
+     *
+     * @return The list of catalogs used by this resource.
      */
-    @JsonIgnore
-    @ManyToMany(mappedBy = "resources")
-    private List<Broker> brokers;
+    public List<Catalog> getCatalogs() {
+        /*
+            NOTE: Offered and Requested Resource override this function
+            so that exception should never be returned. Throw exception
+            here so that a missing override crashes really load.
+         */
+        throw new NotImplemented();
+    }
+
+    /**
+     * @param brokers The broker list.
+     */
+    public void setBrokers(final List<Broker> brokers) {
+        /*
+            NOTE: Offered Resource override this function.
+         */
+        throw new NotImplemented();
+    }
+
+    /**
+     * @return The list of brokers used by this resource.
+     */
+    public List<Broker> getBrokers() {
+        /*
+            NOTE: Offered Resource override this function
+         */
+        throw new NotImplemented();
+    }
 
     /**
      * List of subscriptions listening to updates for this resource.

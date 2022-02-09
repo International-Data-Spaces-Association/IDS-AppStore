@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +17,11 @@ package io.dataspaceconnector.model.keystore;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 
 /**
  * Factory class for the key store.
  */
-@Component
 public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
 
     /**

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +15,6 @@
  */
 package io.dataspaceconnector.model.rule;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.named.NamedEntity;
@@ -73,7 +71,6 @@ public class ContractRule extends NamedEntity implements RemoteObject {
     /**
      * The contracts in which this rule is used.
      */
-    @JsonIgnore
     @ManyToMany(mappedBy = "rules")
     private List<Contract> contracts;
 }

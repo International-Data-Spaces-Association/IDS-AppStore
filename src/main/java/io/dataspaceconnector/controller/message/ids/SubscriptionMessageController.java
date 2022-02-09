@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +19,13 @@ import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.message.builder.type.SubscriptionRequestService;
@@ -35,7 +39,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,11 +54,12 @@ import java.net.URI;
 /**
  * Controller for sending ids subscription (request) messages.
  */
-@ConditionalOnProperty("ids.controller.enabled")
 @RestController
 @RequiredArgsConstructor
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class SubscriptionMessageController {
 
     /**
@@ -78,17 +83,16 @@ public class SubscriptionMessageController {
     private final @NonNull CamelContext context;
 
     /**
-     * Subscribe to updates of an provided ids element.
+     * Subscribe to updates of a provided ids element.
      *
      * @param recipient    The target connector url.
      * @param subscription The subscription object.
      * @return The response entity.
      */
     @PostMapping("/subscribe")
-    @Operation(summary = "Send IDS request message for element subscription")
+    @Operation(summary = "Send an IDS request message for subscribing to (meta)data updates.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway")})
@@ -114,7 +118,8 @@ public class SubscriptionMessageController {
                         subscription.getTarget(), subscription);
 
                 // Read and process the response message.
-                return ResponseEntity.ok(MessageUtils.extractPayloadFromMultipartMessage(response));
+                return new JsonResponse(MessageUtils.extractPayloadFromMultipartMessage(response))
+                        .create(HttpStatus.OK);
             } catch (MessageException exception) {
                 // If the message could not be built.
                 return ResponseUtils.respondIdsMessageFailed(exception);
@@ -129,17 +134,16 @@ public class SubscriptionMessageController {
     }
 
     /**
-     * Unsubscribe from updates of an provided ids element.
+     * Unsubscribe from updates of a provided ids element.
      *
      * @param recipient The target connector url.
      * @param elementId The target of the referred element.
      * @return The response entity.
      */
     @PostMapping("/unsubscribe")
-    @Operation(summary = "Send IDS request message for element unsubscription")
+    @Operation(summary = "Send an IDS request message for unsubscribe from an element.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
@@ -163,7 +167,8 @@ public class SubscriptionMessageController {
                 final var response = subscriptionReqSvc.sendMessage(recipient, elementId, null);
 
                 // Read and process the response message.
-                return ResponseEntity.ok(MessageUtils.extractPayloadFromMultipartMessage(response));
+                return new JsonResponse(MessageUtils.extractPayloadFromMultipartMessage(response))
+                        .create(HttpStatus.OK);
             } catch (MessageException exception) {
                 // If the message could not be built.
                 return ResponseUtils.respondIdsMessageFailed(exception);

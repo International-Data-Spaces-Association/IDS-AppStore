@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +16,8 @@
 package io.dataspaceconnector.model.catalog;
 
 import io.dataspaceconnector.model.named.NamedEntity;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -49,8 +49,14 @@ public class Catalog extends NamedEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The resources grouped by the catalog.
+     * The offered resources grouped by the catalog.
      **/
     @ManyToMany
-    private List<Resource> resources;
+    private List<OfferedResource> offeredResources;
+
+    /**
+     * The requested resources grouped by the catalog.
+     **/
+    @ManyToMany
+    private List<RequestedResource> requestedResources;
 }

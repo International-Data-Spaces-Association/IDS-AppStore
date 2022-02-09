@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,18 +57,18 @@ public final class FactoryUtils {
     }
 
     /**
-     * Update number.
+     * Update integer.
      *
-     * @param oldNumber Old number.
-     * @param newNumber New number.
-     * @return New number, if new number is different from the old number.
+     * @param oldInt Old port.
+     * @param newInt New port.
+     * @return New port, if new port is different from the old port.
      */
-    public static Long updateNumber(final Long oldNumber, final Long newNumber) {
-        if (!oldNumber.equals(newNumber)) {
-            return newNumber;
+    public static Integer updateInteger(final int oldInt, final int newInt) {
+        if (oldInt != newInt) {
+            return newInt;
         }
 
-        return oldNumber;
+        return oldInt;
     }
 
     /**
@@ -150,6 +149,29 @@ public final class FactoryUtils {
     }
 
     /**
+     * Update list of policy patterns.
+     *
+     * @param oldList     Old list.
+     * @param newList     New list.
+     * @param defaultList Default values.
+     * @return Optional with the new value or without a value.
+     */
+    public static Optional<List<PolicyPattern>> updatePolicyList(
+            final List<PolicyPattern> oldList,
+            final List<PolicyPattern> newList,
+            final List<PolicyPattern> defaultList) {
+        final var newValues = cleanPolicyList(
+                newList == null ? defaultList : newList
+        );
+
+        if (oldList == null || !oldList.equals(newValues)) {
+            return Optional.of(newValues);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
      * Update list of uris.
      *
      * @param oldList     Old list.
@@ -168,37 +190,6 @@ public final class FactoryUtils {
         }
 
         return Optional.empty();
-    }
-
-    /**
-     * Updates a List of policy patterns.
-     *
-     * @param oldList     The old list.
-     * @param newList     The new list.
-     * @param defaultList The default list.
-     * @return The updated list of policy patterns.
-     */
-    public static Optional<List<PolicyPattern>> updateEnumList(
-            final List<PolicyPattern> oldList,
-            final List<PolicyPattern> newList,
-            final List<PolicyPattern> defaultList) {
-
-        final var newValues = cleanEnumList(newList == null ? defaultList : newList);
-
-        if (oldList == null || !oldList.equals(newValues)) {
-            return Optional.of(newValues);
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Cleans a list of policyPatterns.
-     *
-     * @param list The list that should be cleared.
-     * @return Cleaned up list of policy patterns.
-     */
-    public static List<PolicyPattern> cleanEnumList(final List<PolicyPattern> list) {
-        return removeNullFromList(list);
     }
 
     /**
@@ -239,6 +230,16 @@ public final class FactoryUtils {
      * @return Cleared list.
      */
     public static List<URI> cleanUriList(final List<URI> list) {
+        return removeNullFromList(list);
+    }
+
+    /**
+     * Clean list of policypatterns.
+     *
+     * @param list List of policypatterns.
+     * @return Cleared list.
+     */
+    public static List<PolicyPattern> cleanPolicyList(final List<PolicyPattern> list) {
         return removeNullFromList(list);
     }
 

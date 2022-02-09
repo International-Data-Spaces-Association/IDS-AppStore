@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +19,7 @@ import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UUIDFormatException;
 import io.dataspaceconnector.common.util.UUIDUtils;
-import io.dataspaceconnector.service.resource.relation.BrokerResourceLinker;
+import io.dataspaceconnector.service.resource.relation.BrokerOfferedResourceLinker;
 import io.dataspaceconnector.service.resource.type.BrokerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,7 +40,7 @@ public class BrokerCommunication {
     /**
      * Service for relation between broker and offered resources.
      */
-    private final @NotNull BrokerResourceLinker linker;
+    private final @NotNull BrokerOfferedResourceLinker linker;
 
     /**
      * Service for the broker.

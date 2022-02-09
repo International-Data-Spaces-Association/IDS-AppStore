@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +15,7 @@
  */
 package io.dataspaceconnector.model.representation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.subscription.Subscription;
@@ -42,6 +38,9 @@ import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
+/* AppStore Extension */
+import io.dataspaceconnector.model.app.App;
+
 /**
  * A representation describes how data is presented.
  */
@@ -53,7 +52,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Representation extends NamedEntity implements RemoteObject {
+public class Representation extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -84,6 +83,25 @@ public class Representation extends NamedEntity implements RemoteObject {
     private String standard;
 
     /**
+     * The artifacts associated with this representation.
+     */
+    @ManyToMany
+    private List<Artifact> artifacts;
+
+    /**
+     * The resources associated with this representation.
+     */
+    @ManyToMany(mappedBy = "representations")
+    private List<Resource> resources;
+
+    /**
+     * List of subscriptions listening to updates for this representation.
+     */
+    @OneToMany
+    private List<Subscription> subscriptions;
+
+    /* AppStore Extension */
+    /**
      * Data app runtime environment.
      */
     private String runtimeEnvironment;
@@ -101,22 +119,4 @@ public class Representation extends NamedEntity implements RemoteObject {
     @ManyToMany
     private List<App> dataApps;
 
-    /**
-     * The artifacts associated with this representation.
-     */
-    @ManyToMany
-    private List<Artifact> artifacts;
-
-    /**
-     * The resources associated with this representation.
-     */
-    @JsonIgnore
-    @ManyToMany(mappedBy = "representations")
-    private List<Resource> resources;
-
-    /**
-     * List of subscriptions listening to updates for this representation.
-     */
-    @OneToMany
-    private List<Subscription> subscriptions;
 }

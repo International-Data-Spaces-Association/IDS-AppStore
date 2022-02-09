@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,92 +19,103 @@ import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.controller.resource.view.agreement.AgreementViewAssembler;
-import io.dataspaceconnector.controller.resource.view.app.AppViewAssembler;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssembler;
 import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembler;
 import io.dataspaceconnector.controller.resource.view.contract.ContractViewAssembler;
-import io.dataspaceconnector.controller.resource.view.endpoint.EndpointViewAssembler;
+import io.dataspaceconnector.controller.resource.view.endpoint.AppEndpointViewAssembler;
+import io.dataspaceconnector.controller.resource.view.endpoint.GenericEndpointViewAssembler;
 import io.dataspaceconnector.controller.resource.view.representation.RepresentationViewAssembler;
-import io.dataspaceconnector.controller.resource.view.resource.ResourceViewAssembler;
+import io.dataspaceconnector.controller.resource.view.resource.OfferedResourceViewAssembler;
+import io.dataspaceconnector.controller.resource.view.resource.RequestedResourceViewAssembler;
+import io.dataspaceconnector.controller.resource.view.route.RouteViewAssembler;
 import io.dataspaceconnector.controller.resource.view.rule.ContractRuleViewAssembler;
 import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.model.agreement.Agreement;
-import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.subscription.Subscription;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
 /**
  * This is a helper class for retrieving self-links of a database entity.
  */
+@Component
+@RequiredArgsConstructor
 public final class SelfLinkHelper {
+
     /**
      * View assembler for catalogs.
      */
-    private static final CatalogViewAssembler CATALOG_ASSEMBLER = new CatalogViewAssembler();
+    private final @NonNull CatalogViewAssembler catalogAssembler;
 
     /**
-     * View assembler for resources.
+     * View assembler for offered resources.
      */
-    private static final ResourceViewAssembler RESOURCE_ASSEMBLER = new ResourceViewAssembler();
+    private final @NonNull OfferedResourceViewAssembler offeredResourceAssembler;
+
+    /**
+     * View assembler for requested resources.
+     */
+    private final @NonNull RequestedResourceViewAssembler requestedResourceAssembler;
 
     /**
      * View assembler for representations.
      */
-    private static final RepresentationViewAssembler REPRESENTATION_ASSEMBLER =
-            new RepresentationViewAssembler();
+    private final @NonNull RepresentationViewAssembler representationAssembler;
 
     /**
      * View assembler for artifacts.
      */
-    private static final ArtifactViewAssembler ARTIFACT_ASSEMBLER = new ArtifactViewAssembler();
+    private final @NonNull ArtifactViewAssembler artifactAssembler;
 
     /**
      * View assembler for contracts.
      */
-    private static final ContractViewAssembler CONTRACT_ASSEMBLER = new ContractViewAssembler();
+    private final @NonNull ContractViewAssembler contractAssembler;
 
     /**
      * View assembler for contract rules.
      */
-    private static final ContractRuleViewAssembler RULE_ASSEMBLER = new ContractRuleViewAssembler();
+    private final @NonNull ContractRuleViewAssembler ruleAssembler;
 
     /**
      * View assembler for contract agreements.
      */
-    private static final AgreementViewAssembler AGREEMENT_ASSEMBLER = new AgreementViewAssembler();
+    private final @NonNull AgreementViewAssembler agreementAssembler;
+
+    /**
+     * View assembler for generic endpoints.
+     */
+    private final @NonNull GenericEndpointViewAssembler genericEndpointAssembler;
+
+    /**
+     * View assembler for app endpoints.
+     */
+    private final @NonNull AppEndpointViewAssembler appEndpointAssembler;
+
+    /**
+     * View assembler for routes.
+     */
+    private final @NonNull RouteViewAssembler routeAssembler;
 
     /**
      * View assembler for subscriptions.
      */
-    private static final SubscriptionViewAssembler SUBSCRIPTION_ASSEMBLER =
-            new SubscriptionViewAssembler();
-
-    /**
-     * View assembler for endpoints.
-     */
-    private static final EndpointViewAssembler ENDPOINT_ASSEMBLER = new EndpointViewAssembler();
-
-    /**
-     * View assembler for apps.
-     */
-    private static final AppViewAssembler APP_ASSEMBLER = new AppViewAssembler();
-
-    /**
-     * Default constructor.
-     */
-    private SelfLinkHelper() {
-        // not used
-    }
+    private final @NonNull SubscriptionViewAssembler subscriptionAssembler;
 
     /**
      * This function is a helper function for hiding the problem that the self-link is always
@@ -115,11 +125,13 @@ public final class SelfLinkHelper {
      * @param <T>    Generic type of database entity.
      * @return The abstract entity.
      */
-    public static <T extends Entity> URI getSelfLink(final T entity) {
+    public <T extends Entity> URI getSelfLink(final T entity) {
         if (entity instanceof Catalog) {
             return getSelfLink((Catalog) entity);
-        } else if (entity instanceof Resource) {
-            return getSelfLink((Resource) entity);
+        } else if (entity instanceof OfferedResource) {
+            return getSelfLink((OfferedResource) entity);
+        } else if (entity instanceof RequestedResource) {
+            return getSelfLink((RequestedResource) entity);
         } else if (entity instanceof Representation) {
             return getSelfLink((Representation) entity);
         } else if (entity instanceof Artifact) {
@@ -130,12 +142,14 @@ public final class SelfLinkHelper {
             return getSelfLink((ContractRule) entity);
         } else if (entity instanceof Agreement) {
             return getSelfLink((Agreement) entity);
+        } else if (entity instanceof GenericEndpoint) {
+            return getSelfLink((GenericEndpoint) entity);
+        } else if (entity instanceof AppEndpoint) {
+            return getSelfLink((AppEndpoint) entity);
+        } else if (entity instanceof Route) {
+            return getSelfLink((Route) entity);
         } else if (entity instanceof Subscription) {
             return getSelfLink((Subscription) entity);
-        } else if (entity instanceof App) {
-            return getSelfLink((App) entity);
-        } else if (entity instanceof Endpoint) {
-            return getSelfLink((Endpoint) entity);
         }
 
         throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
@@ -151,7 +165,7 @@ public final class SelfLinkHelper {
      * @return The abstract entity and its self-link.
      * @throws ResourceNotFoundException If the entity could not be found.
      */
-    public static <T extends Entity, S extends SelfLinking> URI getSelfLink(
+    public <T extends Entity, S extends SelfLinking> URI getSelfLink(
             final T entity, final S describer) throws ResourceNotFoundException {
         try {
             return describer.getSelfLink(entity.getId()).toUri();
@@ -167,19 +181,31 @@ public final class SelfLinkHelper {
      * @return The self-link of the catalog.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Catalog catalog) throws ResourceNotFoundException {
-        return getSelfLink(catalog, CATALOG_ASSEMBLER);
+    public URI getSelfLink(final Catalog catalog) throws ResourceNotFoundException {
+        return getSelfLink(catalog, catalogAssembler);
     }
 
     /**
-     * Get self-link of resource.
+     * Get self-link of offered resource.
      *
-     * @param resource The resource.
-     * @return The self-link of the resource.
+     * @param resource The offered resource.
+     * @return The self-link of the offered resource.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Resource resource) throws ResourceNotFoundException {
-        return getSelfLink(resource, RESOURCE_ASSEMBLER);
+    public URI getSelfLink(final OfferedResource resource) throws ResourceNotFoundException {
+        return getSelfLink(resource, offeredResourceAssembler);
+    }
+
+    /**
+     * Get self-link of requested resource.
+     *
+     * @param resource The requested resource.
+     * @return The self-link of the requested resource.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public URI getSelfLink(final RequestedResource resource)
+            throws ResourceNotFoundException {
+        return getSelfLink(resource, requestedResourceAssembler);
     }
 
     /**
@@ -189,9 +215,9 @@ public final class SelfLinkHelper {
      * @return The self-link of the representation.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Representation representation)
+    public URI getSelfLink(final Representation representation)
             throws ResourceNotFoundException {
-        return getSelfLink(representation, REPRESENTATION_ASSEMBLER);
+        return getSelfLink(representation, representationAssembler);
     }
 
     /**
@@ -201,8 +227,8 @@ public final class SelfLinkHelper {
      * @return The self-link of the artifact.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Artifact artifact) throws ResourceNotFoundException {
-        return getSelfLink(artifact, ARTIFACT_ASSEMBLER);
+    public URI getSelfLink(final Artifact artifact) throws ResourceNotFoundException {
+        return getSelfLink(artifact, artifactAssembler);
     }
 
     /**
@@ -212,8 +238,8 @@ public final class SelfLinkHelper {
      * @return The self-link of the contract.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Contract contract) throws ResourceNotFoundException {
-        return getSelfLink(contract, CONTRACT_ASSEMBLER);
+    public URI getSelfLink(final Contract contract) throws ResourceNotFoundException {
+        return getSelfLink(contract, contractAssembler);
     }
 
     /**
@@ -223,8 +249,8 @@ public final class SelfLinkHelper {
      * @return The self-link of the rule.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final ContractRule rule) throws ResourceNotFoundException {
-        return getSelfLink(rule, RULE_ASSEMBLER);
+    public URI getSelfLink(final ContractRule rule) throws ResourceNotFoundException {
+        return getSelfLink(rule, ruleAssembler);
     }
 
     /**
@@ -234,8 +260,43 @@ public final class SelfLinkHelper {
      * @return The self-link of the agreement.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Agreement agreement) throws ResourceNotFoundException {
-        return getSelfLink(agreement, AGREEMENT_ASSEMBLER);
+    public URI getSelfLink(final Agreement agreement) throws ResourceNotFoundException {
+        return getSelfLink(agreement, agreementAssembler);
+    }
+
+    /**
+     * Get self-link of generic endpoint.
+     *
+     * @param endpoint the generic endpoint.
+     * @return the self-link of the generic endpoint.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private URI getSelfLink(final GenericEndpoint endpoint)
+            throws ResourceNotFoundException {
+        return getSelfLink(endpoint, genericEndpointAssembler);
+    }
+
+    /**
+     * Get self-link of app endpoint.
+     *
+     * @param endpoint the app endpoint.
+     * @return the self-link to the app endpoint.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private URI getSelfLink(final AppEndpoint endpoint)
+            throws ResourceNotFoundException {
+        return getSelfLink(endpoint, appEndpointAssembler);
+    }
+
+    /**
+     * Get self-link of route.
+     *
+     * @param route the route.
+     * @return the self-link to the route.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private URI getSelfLink(final Route route) throws ResourceNotFoundException {
+        return getSelfLink(route, routeAssembler);
     }
 
     /**
@@ -245,28 +306,8 @@ public final class SelfLinkHelper {
      * @return The self-link of the subscription.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Subscription subscription)
+    public URI getSelfLink(final Subscription subscription)
             throws ResourceNotFoundException {
-        return getSelfLink(subscription, SUBSCRIPTION_ASSEMBLER);
-    }
-
-    /**
-     * Get self-link of representation.
-     * @param app The app.
-     * @return The self-link of the app.
-     * @throws ResourceNotFoundException If the app could not be loaded.
-     */
-    public static URI getSelfLink(final App app) throws ResourceNotFoundException {
-        return getSelfLink(app, APP_ASSEMBLER);
-    }
-
-    /**
-     * Get self-link of representation.
-     * @param endpoint The endpoint.
-     * @return The self-link of the endpoint.
-     * @throws ResourceNotFoundException If the endpoint could not be loaded.
-     */
-    public static URI getSelfLink(final Endpoint endpoint) throws ResourceNotFoundException {
-        return getSelfLink(endpoint, ENDPOINT_ASSEMBLER);
+        return getSelfLink(subscription, subscriptionAssembler);
     }
 }

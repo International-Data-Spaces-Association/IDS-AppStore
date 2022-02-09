@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +51,7 @@ public abstract class IdsMessageBuilder<H extends Message, B> implements Process
      * To be implemented by sub classes.
      *
      * @param exchange the exchange.
-     * @return the {@link Request}
+     * @return the {@link Request}.
      */
     protected abstract Request<H, B, Optional<Jws<Claims>>> processInternal(Exchange exchange);
 

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +49,7 @@ public class ResourceUpdateMessageBuilder
     /**
      * Builds a ResourceUpdateMessage according to the exchange properties and creates a Request
      * with the message as header and the resource from the exchange body.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */

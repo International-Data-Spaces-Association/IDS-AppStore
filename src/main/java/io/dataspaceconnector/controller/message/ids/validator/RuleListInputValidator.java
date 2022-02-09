@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +32,7 @@ public class RuleListInputValidator extends IdsValidator {
 
     /**
      * Check if every rule in the list of rules contains a target.
+     *
      * @param exchange the exchange.
      */
     @Override

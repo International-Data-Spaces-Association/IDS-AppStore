@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +17,22 @@ package io.dataspaceconnector.controller.resource.relation;
 
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.base.BaseResourceChildController;
+import io.dataspaceconnector.controller.resource.base.BaseResourceChildRestrictedController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
-import io.dataspaceconnector.controller.resource.view.endpoint.EndpointView;
-import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.controller.resource.view.endpoint.AppEndpointView;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.service.resource.relation.AppEndpointLinker;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Offers the endpoints for managing the relations between apps and endpoints.
+ * Offers the endpoints for managing the relations between apps and app endpoints.
  */
 @RestController
 @RequestMapping(BasePath.APPS + "/{id}/" + BaseType.ENDPOINTS)
 @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
-public class AppsToEndpointsController extends BaseResourceChildController<AppEndpointLinker,
-        Endpoint, EndpointView> {
+public class AppsToEndpointsController extends BaseResourceChildRestrictedController<
+        AppEndpointLinker, AppEndpoint, AppEndpointView> {
 }

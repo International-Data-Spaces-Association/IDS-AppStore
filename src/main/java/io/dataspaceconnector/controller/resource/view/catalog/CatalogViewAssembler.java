@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view.catalog;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.relation.CatalogsToResourcesController;
+import io.dataspaceconnector.controller.resource.relation.CatalogsToOfferedResourcesController;
 import io.dataspaceconnector.controller.resource.type.CatalogController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.catalog.Catalog;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -29,8 +30,6 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
@@ -38,7 +37,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @Component
 @NoArgsConstructor
-public class CatalogViewAssembler
+public class CatalogViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Catalog, CatalogView>, SelfLinking {
     /**
      * Construct the CatalogView from a Catalog.
@@ -52,17 +51,17 @@ public class CatalogViewAssembler
         final var view = modelMapper.map(catalog, CatalogView.class);
         view.add(getSelfLink(catalog.getId()));
 
-        final var resourceLink = WebMvcLinkBuilder
-                .linkTo(methodOn(CatalogsToResourcesController.class)
+        final var offeredResLink = WebMvcLinkBuilder
+                .linkTo(methodOn(CatalogsToOfferedResourcesController.class)
                         .getResource(catalog.getId(), null, null))
-                .withRel(BaseType.RESOURCES);
-        view.add(resourceLink);
+                .withRel(BaseType.OFFERS);
+        view.add(offeredResLink);
 
         return view;
     }
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, CatalogController.class);
+        return getSelfLink(entityId, CatalogController.class);
     }
 }

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +16,8 @@
 package io.dataspaceconnector.model.template;
 
 import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,8 +44,13 @@ public class CatalogTemplate {
     private @NonNull CatalogDesc desc;
 
     /**
-     * List of resource templates.
+     * List of offered resource templates.
      */
-    private List<ResourceTemplate> resources;
+    private List<ResourceTemplate<OfferedResourceDesc>> offeredResources;
+
+    /**
+     * List of requested resource templates.
+     */
+    private List<ResourceTemplate<RequestedResourceDesc>> requestedResources;
 
 }

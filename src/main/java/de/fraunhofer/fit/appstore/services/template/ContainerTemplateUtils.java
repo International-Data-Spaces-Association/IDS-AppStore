@@ -118,8 +118,8 @@ public final class ContainerTemplateUtils {
                 }
                 // create String
                 final var protocol = "tcp";
-                final var portStr = String.format("%s:%s/%s", endpoint.getPort(),
-                        endpoint.getPort(), protocol);
+                final var portStr = String.format("%s:%s/%s", endpoint.getEndpointPort(),
+                        endpoint.getEndpointPort(), protocol);
 
                 if (!port.containsKey(portLabel)) {
                     port.put(portLabel, portStr);
@@ -141,8 +141,8 @@ public final class ContainerTemplateUtils {
      */
     public static ArrayList<Environment> getEnvVariablesFromApp(final App app) {
         final var environmentVariables = new ArrayList<Environment>();
-        if (!app.getEnvironmentVariables().isBlank()) {
-            final var envStr = app.getEnvironmentVariables().replaceAll("\\s+", "").split(";");
+        if (!app.getEnvVariables().isBlank()) {
+            final var envStr = app.getEnvVariables().replaceAll("\\s+", "").split(";");
             for (final var env : envStr) {
                 final var keyValue = env.split("=");
                 if (keyValue.length == 2) {

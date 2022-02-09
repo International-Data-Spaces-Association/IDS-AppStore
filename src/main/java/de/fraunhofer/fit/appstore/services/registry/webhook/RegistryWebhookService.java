@@ -24,6 +24,7 @@ import de.fraunhofer.fit.appstore.model.registry.webhook.ScanOverview;
 import de.fraunhofer.fit.appstore.services.template.ContainerTemplateService;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.app.AppDesc;
+import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.RepresentationService;
@@ -150,9 +151,15 @@ public class RegistryWebhookService {
         final var resourceId = UUID.fromString(repoName);
 
         // Get app by id. Throws ResourceNotFoundException if no app could be found.
-        // TODO: Here resource id ia the uuid. how to get the whole uri
+        // TODO: Here resource id is the uuid. how to get the whole uri
 
-        final var resource = resourceSvc.get(resourceId);
+        final var entity = resourceSvc.get(resourceId);
+        // Entities should be Resources
+        if(!(entity instanceof Resource)) {
+            // Should not happen
+            throw new TemplateException("RegistryWebhookService is not implemented for Entities which are not Resources");
+        }
+        final var resource = (Resource) entity;
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 
@@ -160,9 +167,9 @@ public class RegistryWebhookService {
         final var appDesc = new AppDesc();
         appDesc.setDocs(app.getDocs());
         appDesc.setRemoteId(app.getRemoteId());
-        appDesc.setEnvironmentVariables(app.getEnvironmentVariables());
+        appDesc.setEnvVariables(app.getEnvVariables());
         appDesc.setStorageConfig(app.getStorageConfig());
-        appDesc.setSupportedUsagePolicies(app.getSupportedUsagePolicies());
+        appDesc.setSupportedPolicies(app.getSupportedPolicies());
 
         appDesc.setSecurityScannerName(app.getSecurityScannerName());
         appDesc.setSecurityScannerVendor(app.getSecurityScannerVendor());
@@ -203,6 +210,7 @@ public class RegistryWebhookService {
             }
             throw new TemplateException("Failed to store template.");
         }
+
     }
 
     /**
@@ -266,7 +274,13 @@ public class RegistryWebhookService {
         final var resourceId = UUID.fromString(repoName);
 
         // Get app by id. Throws ResourceNotFoundException if no app could be found.
-        final var resource = resourceSvc.get(resourceId);
+        final var entity = resourceSvc.get(resourceId);
+        // Entities should be Resources
+        if(!(entity instanceof Resource)) {
+            // Should not happen
+            throw new WebhookException("RegistryWebhookService is not implemented for Entities which are not Resources");
+        }
+        final var resource = (Resource) entity;
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 
@@ -274,9 +288,9 @@ public class RegistryWebhookService {
         final var appDesc = new AppDesc();
         appDesc.setDocs(app.getDocs());
         appDesc.setRemoteId(app.getRemoteId());
-        appDesc.setEnvironmentVariables(app.getEnvironmentVariables());
+        appDesc.setEnvVariables(app.getEnvVariables());
         appDesc.setStorageConfig(app.getStorageConfig());
-        appDesc.setSupportedUsagePolicies(app.getSupportedUsagePolicies());
+        appDesc.setSupportedPolicies(app.getSupportedPolicies());
 
         final var summary = resourceScanOverview.getSummary();
         final var summarySummary = resourceScanOverview.getSummary().getSummary();
@@ -345,7 +359,13 @@ public class RegistryWebhookService {
         final var resourceId = UUID.fromString(repoName);
 
         // Get app by id. Throws ResourceNotFoundException if no app could be found.
-        final var resource = resourceSvc.get(resourceId);
+        final var entity = resourceSvc.get(resourceId);
+        // Entities should be Resources
+        if(!(entity instanceof Resource)) {
+            // Should not happen
+            throw new WebhookException("RegistryWebhookService is not implemented for Entities which are not Resources");
+        }
+        final var resource = (Resource) entity;
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 
@@ -353,9 +373,9 @@ public class RegistryWebhookService {
         final var appDesc = new AppDesc();
         appDesc.setDocs(app.getDocs());
         appDesc.setRemoteId(app.getRemoteId());
-        appDesc.setEnvironmentVariables(app.getEnvironmentVariables());
+        appDesc.setEnvVariables(app.getEnvVariables());
         appDesc.setStorageConfig(app.getStorageConfig());
-        appDesc.setSupportedUsagePolicies(app.getSupportedUsagePolicies());
+        appDesc.setSupportedPolicies(app.getSupportedPolicies());
 
         final var scanner = resourceScanOverview.getScanner();
         appDesc.setSecurityScannerCompletePercent(resourceScanOverview.getCompletePercent());

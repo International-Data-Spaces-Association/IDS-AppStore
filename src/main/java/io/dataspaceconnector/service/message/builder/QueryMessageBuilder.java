@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,16 +52,19 @@ public class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, Str
     /**
      * Builds a QueryMessage according to the exchange properties and creates a Request with the
      * message as header and a query from the exchange properties as payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */
-    @SuppressFBWarnings(value = "FORMAT_STRING_MANIPULATION")
+    @SuppressFBWarnings(value = {"FORMAT_STRING_MANIPULATION", "VA_FORMAT_STRING_USES_NEWLINE"})
     @Override
     protected Request<QueryMessageImpl, String, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {
         final var modelVersion = connectorService.getOutboundModelVersion();
         final var token = connectorService.getCurrentDat();
+        /* AppStore Extension */
         final var connector = connectorService.getAppStoreWithoutResources();
+        // final var connector = connectorService.getConnectorWithoutResources();
         final var connectorId = connector.getId();
         final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
@@ -89,8 +91,8 @@ public class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, Str
             final var offset = exchange
                     .getProperty(ParameterUtils.QUERY_OFFSET_PARAM, Integer.class);
 
-            payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY, searchTerm,
-                                    limit, offset);
+            payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY.replace("\n", "%n"),
+                    searchTerm, limit, offset);
         }
 
         return new Request<>((QueryMessageImpl) message, payload, Optional.empty());

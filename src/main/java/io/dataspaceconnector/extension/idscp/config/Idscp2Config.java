@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,7 +104,7 @@ public class Idscp2Config {
     @Bean
     public SSLContextParameters serverSslContext() {
         var ctx = new SSLContextParameters();
-//        ctx.setCertAlias(keyStoreAlias); TODO only 1.0.1 works as alias
+//        ctx.setCertAlias(keyStoreAlias); Note: Only 1.0.1 works as alias
         ctx.setCertAlias("1.0.1");
 
         final var keyStoreParameters = new KeyStoreParameters();

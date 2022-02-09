@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +15,11 @@
  */
 package io.dataspaceconnector.model.app;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.base.RemoteObject;
-import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.model.named.NamedEntity;
-import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -30,22 +28,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.springframework.data.annotation.Version;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
+/* AppStore Extension */
+import javax.persistence.ManyToMany;
+import io.dataspaceconnector.model.representation.Representation;
+
 /**
- * A resource describes offered or requested data.
+ * Data app, which is distributed via the App Store and can be deployed inside the Connector.
  */
 @javax.persistence.Entity
 @Table(name = "app")
@@ -55,7 +56,6 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-@Indexed
 public class App extends NamedEntity implements RemoteObject {
 
     /**
@@ -63,45 +63,130 @@ public class App extends NamedEntity implements RemoteObject {
      **/
     private static final long serialVersionUID = 1L;
 
+    /***********************************************************************************************
+     * Artifact attributes                                                                         *
+     ***********************************************************************************************
+
     /**
-     * The app id on connector side.
+     * The app id on appStore side.
      */
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**
-     * The documentation of the data app.
+     * The appStore's address for artifact request messages.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI remoteAddress;
+
+    /***********************************************************************************************
+     * App attributes                                                                              *
+     ***********************************************************************************************
+
+    /**
+     * Text documentation of the data app.
      */
     private String docs;
 
     /**
-     * The environment variables of the data app.
+     * Endpoints provided by the data app.
      */
-    private String environmentVariables;
+    @OneToMany
+    private List<AppEndpointImpl> endpoints;
 
     /**
-     * The storage configuration of the data app.
+     * Environment variables of the data app.
+     */
+    private String envVariables;
+
+    /**
+     * Storage configuration of the data app (e.g. path in the file system or volume name).
      */
     private String storageConfig;
 
     /**
-     * List of supported usage policies.
+     * Usage policy patterns supported by the data app.
      */
-    @Enumerated(EnumType.STRING)
     @ElementCollection
-    private List<PolicyPattern> supportedUsagePolicies;
+    private List<PolicyPattern> supportedPolicies;
+
+    /***********************************************************************************************
+     * Resource attributes                                                                         *
+     ***********************************************************************************************
 
     /**
-     * The endpoints of the data app.
+     * The keywords of the resource.
      */
-    @ManyToMany
-    private List<Endpoint> endpoints;
+    @ElementCollection
+    private List<String> keywords;
 
+    /**
+     * The publisher of the resource.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI publisher;
+
+    /**
+     * The owner of the resource.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI sovereign;
+
+    /**
+     * The language of the resource.
+     */
+    private String language;
+
+    /**
+     * The license of the resource.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI license;
+
+    /**
+     * The endpoint of the resource.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI endpointDocumentation;
+
+    /**
+     * The version of the resource.
+     */
+    @Version
+    private long version;
+
+    /***********************************************************************************************
+     * Representation attributes                                                                   *
+     ***********************************************************************************************
+
+    /**
+     * Distribution service, where the represented app can be downloaded.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI distributionService;
+
+    /**
+     * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
+     */
+    private String runtimeEnvironment;
+
+    /**
+     * Relation to app store.
+     */
+    @ManyToOne
+    private AppStore appStore;
+
+    /* AppStore Extension */
     /**
      * The representation of the data app.
      */
-    @JsonIgnore
     @ManyToMany(mappedBy = "dataApps")
     private List<Representation> representations;
 
@@ -172,5 +257,4 @@ public class App extends NamedEntity implements RemoteObject {
      * The repository digest.
      */
     private String repositoryDigest;
-
 }

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +17,6 @@ package io.dataspaceconnector.model.contract;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -28,7 +25,6 @@ import java.util.ArrayList;
 /**
  * Creates and updates a contract.
  */
-@Component
 public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc> {
 
     /**
@@ -76,7 +72,7 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
         final var hasUpdatedConsumer = this.updateConsumer(contract, desc.getConsumer());
         final var hasUpdatedProvider = this.updateProvider(contract, desc.getProvider());
 
-        final var hasUpdatedTime = this.updateTime(contract, contract.getStart(), desc.getEnd());
+        final var hasUpdatedTime = this.updateTime(contract, desc.getStart(), desc.getEnd());
 
         return hasUpdatedRemoteId || hasUpdatedConsumer || hasUpdatedProvider || hasUpdatedTime;
     }

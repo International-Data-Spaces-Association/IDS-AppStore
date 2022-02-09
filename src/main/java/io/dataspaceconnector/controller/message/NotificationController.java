@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +15,9 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import io.dataspaceconnector.common.net.ContentType;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
@@ -43,7 +45,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class NotificationController {
 
     /**
@@ -67,8 +69,8 @@ public class NotificationController {
      * @param elementId The entity id.
      * @return The response entity.
      */
-    @PutMapping("/notify")
-    @Operation(summary = "Notify all subscribers", description = "Can be used to manually notify "
+    @PutMapping(value = "/notify", produces = ContentType.JSON)
+    @Operation(summary = "Notify all subscribers.", description = "Can be used to manually notify "
             + "all subscribers about a resource offer, representation, or artifact update.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),

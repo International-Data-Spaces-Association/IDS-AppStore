@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +16,8 @@
 package io.dataspaceconnector.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.dataspaceconnector.common.net.HttpService;
+import io.dataspaceconnector.common.net.HttpAuthentication;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,7 +44,7 @@ import java.io.Serializable;
 @SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Table(name = "authentication")
-public abstract class Authentication implements HttpService.Authentication, Serializable {
+public abstract class Authentication implements HttpAuthentication, Serializable {
 
     /**
      * Serial version uid.
@@ -58,6 +58,7 @@ public abstract class Authentication implements HttpService.Authentication, Seri
     @GeneratedValue
     @JsonIgnore
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 

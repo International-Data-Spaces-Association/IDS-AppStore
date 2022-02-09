@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,41 +16,39 @@
 package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.exception.InvalidResourceException;
-import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.mapping.RdfConverter;
-import io.dataspaceconnector.common.net.EndpointUtils;
 import io.dataspaceconnector.common.net.QueryInput;
-import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.config.BasePath;
+import io.dataspaceconnector.common.exception.InvalidResourceException;
 import io.dataspaceconnector.model.agreement.Agreement;
-import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.service.resource.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsDataAppBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsEndpointBuilder;
 import io.dataspaceconnector.service.resource.ids.builder.IdsRepresentationBuilder;
 import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.resource.type.AgreementService;
-import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import io.dataspaceconnector.service.resource.type.ContractService;
-import io.dataspaceconnector.service.resource.type.EndpointService;
 import io.dataspaceconnector.service.resource.type.RepresentationService;
 import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.config.BasePath;
+import io.dataspaceconnector.common.net.EndpointUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -84,9 +81,15 @@ public class EntityResolver {
     private final @NonNull RepresentationService representationService;
 
     /**
-     * Service for resources.
+     * Service for offered resources.
      */
-    private final @NonNull ResourceService resourceService;
+    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+
+    /**
+     * Service for requested resources.
+     */
+    private final @NonNull ResourceService<RequestedResource, RequestedResourceDesc> requestService;
+
     /**
      * Service for catalogs.
      */
@@ -108,16 +111,6 @@ public class EntityResolver {
     private final @NonNull AgreementService agreementService;
 
     /**
-     * Service for endpoints.
-     */
-    private final @NonNull EndpointService endpointService;
-
-    /**
-     * Service for data apps.
-     */
-    private final @NonNull AppService appService;
-
-    /**
      * Service for building ids objects.
      */
     private final @NonNull IdsCatalogBuilder catalogBuilder;
@@ -125,7 +118,7 @@ public class EntityResolver {
     /**
      * Service for building ids resource.
      */
-    private final @NonNull IdsResourceBuilder resourceBuilder;
+    private final @NonNull IdsResourceBuilder<OfferedResource> offerBuilder;
 
     /**
      * Service for building ids artifact.
@@ -136,16 +129,6 @@ public class EntityResolver {
      * Service for building ids representation.
      */
     private final @NonNull IdsRepresentationBuilder representationBuilder;
-
-    /**
-     * Service for building ids dataApp.
-     */
-    private final @NonNull IdsDataAppBuilder dataAppBuilder;
-
-    /**
-     * Service for building ids endpoints.
-     */
-    private final @NonNull IdsEndpointBuilder endpointBuilder;
 
     /**
      * Service for building ids contract.
@@ -160,7 +143,7 @@ public class EntityResolver {
     /**
      * Performs a artifact requests.
      */
-    private final @NonNull BlockingArtifactReceiver artifactReceiver;
+    private final @NonNull ArtifactRetriever artifactReceiver;
 
     /**
      * Service for deserialization.
@@ -172,7 +155,10 @@ public class EntityResolver {
      *
      * @param elementId The entity id.
      * @return The respective object.
+     * @throws IllegalArgumentException If the resource is null or the elementId.
      */
+    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION",
+            justification = "exceptions are checked at a higher level")
     public Optional<Entity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);
 
@@ -185,8 +171,8 @@ public class EntityResolver {
                 return Optional.of(artifactService.get(entityId));
             } else if (basePath.contains(BasePath.REPRESENTATIONS)) {
                 return Optional.of(representationService.get(entityId));
-            } else if (basePath.contains(BasePath.RESOURCES)) {
-                return Optional.of(resourceService.get(entityId));
+            } else if (basePath.contains(BasePath.OFFERS)) {
+                return Optional.of(offerService.get(entityId));
             } else if (basePath.contains(BasePath.CATALOGS)) {
                 return Optional.of(catalogService.get(entityId));
             } else if (basePath.contains(BasePath.CONTRACTS)) {
@@ -195,10 +181,8 @@ public class EntityResolver {
                 return Optional.of(ruleService.get(entityId));
             } else if (basePath.contains(BasePath.AGREEMENTS)) {
                 return Optional.of(agreementService.get(entityId));
-            } else if (basePath.contains(BasePath.ENDPOINTS)) {
-                return Optional.of(endpointService.get(entityId));
-            } else if (basePath.contains(BasePath.APPS)) {
-                return Optional.of(appService.get(entityId));
+            } else if (basePath.contains(BasePath.REQUESTS)) {
+                return Optional.of(requestService.get(entityId));
             }
         } catch (Exception ignored) {
         }
@@ -212,6 +196,8 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
+    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION",
+            justification = "exceptions are checked at a higher level")
     public <T extends Entity> String getEntityAsRdfString(final T entity)
             throws InvalidResourceException {
         // NOTE Maybe the builder class could be found without the ugly if array?
@@ -219,8 +205,8 @@ public class EntityResolver {
             if (entity instanceof Artifact) {
                 final var artifact = artifactBuilder.create((Artifact) entity);
                 return RdfConverter.toRdf(Objects.requireNonNull(artifact));
-            } else if (entity instanceof Resource) {
-                final var resource = resourceBuilder.create((Resource) entity);
+            } else if (entity instanceof OfferedResource) {
+                final var resource = offerBuilder.create((OfferedResource) entity);
                 return RdfConverter.toRdf(Objects.requireNonNull(resource));
             } else if (entity instanceof Representation) {
                 final var representation = representationBuilder.create((Representation) entity);
@@ -237,12 +223,6 @@ public class EntityResolver {
             } else if (entity instanceof ContractRule) {
                 final var rule = (ContractRule) entity;
                 return rule.getValue();
-            } else if (entity instanceof App) {
-                final var app = dataAppBuilder.create((App) entity);
-                return RdfConverter.toRdf(Objects.requireNonNull(app));
-            } else if (entity instanceof Endpoint) {
-                final var endpoint = endpointBuilder.create((Endpoint) entity);
-                return RdfConverter.toRdf(Objects.requireNonNull(endpoint));
             }
         } catch (Exception exception) {
             // If we do not allow requesting an object type, respond with exception.
@@ -272,7 +252,8 @@ public class EntityResolver {
                                            final QueryInput queryInput)
             throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
-        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
+        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput,
+                null);
     }
 
     /**

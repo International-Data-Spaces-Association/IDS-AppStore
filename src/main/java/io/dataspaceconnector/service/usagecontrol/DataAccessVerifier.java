@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +15,18 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.common.exception.PolicyExecutionException;
-import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.ids.policy.ContractUtils;
 import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
-import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
-import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
-import io.dataspaceconnector.common.usagecontrol.VerificationResult;
+import io.dataspaceconnector.common.exception.PolicyExecutionException;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.EntityResolver;
+import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
+import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -62,6 +61,11 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
     private final @NonNull EntityResolver entityResolver;
 
     /**
+     * Helper for creating self links.
+     */
+    private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
      * Policy check on data access on consumer side. Ignore if unknown patterns are allowed.
      *
      * @param target      The requested artifact.
@@ -80,7 +84,7 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
                 PolicyPattern.USAGE_NOTIFICATION);
 
         try {
-            final var artifactId = SelfLinkHelper.getSelfLink(target);
+            final var artifactId = selfLinkHelper.getSelfLink(target);
             checkForAccess(patternsToCheck, artifactId, target.getRemoteId(), agreementId);
         } catch (PolicyRestrictionException exception) {
             // Unknown patterns cause an exception. Ignore if unsupported patterns are allowed.

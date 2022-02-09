@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +75,8 @@ public final class ArtifactRequestService
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
 
+        Utils.requireNonNull(token, ErrorMessage.DAT_NULL);
+
         final var recipient = desc.getRecipient();
         final var artifactId = desc.getRequestedArtifact();
         final var contractId = desc.getTransferContract();
@@ -92,7 +93,7 @@ public final class ArtifactRequestService
                 .build();
 
         // Log outgoing ArtifactRequestMessages in ClearingHouse
-        // TODO Message might not have been sent.
+        // Note: Message might not have been sent.
         clearingHouseService.logIdsMessage(message);
 
         return message;

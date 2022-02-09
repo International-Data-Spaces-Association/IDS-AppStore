@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +15,43 @@
  */
 package io.dataspaceconnector.controller.resource.view.representation;
 
+import java.util.UUID;
+
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.relation.RepresentationsToAppsController;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToArtifactsController;
-import io.dataspaceconnector.controller.resource.relation.RepresentationsToResourcesController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToOfferedResourcesController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToRequestsController;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToSubscriptionsController;
 import io.dataspaceconnector.controller.resource.type.RepresentationController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
+
+/* AppStore Extension */
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToAppsController;
+
 
 /**
  * Assembles the REST resource for an representation.
  */
 @Component
 @NoArgsConstructor
-public class RepresentationViewAssembler
+public class RepresentationViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Representation, RepresentationView>, SelfLinking {
     /**
-     * Construct the RepresentationView from an Representation.
+     * Construct the RepresentationView from a Representation.
      *
      * @param representation The representation.
      * @return The new view.
@@ -60,26 +67,45 @@ public class RepresentationViewAssembler
                 .withRel(BaseType.ARTIFACTS);
         view.add(artifactsLink);
 
-        final var resourceLink = linkTo(methodOn(RepresentationsToResourcesController.class)
-                .getResource(representation.getId(), null, null))
-                .withRel(BaseType.RESOURCES);
-        view.add(resourceLink);
+        final var resourceType = representation.getResources();
+        Link resourceLinker;
+        if (resourceType.isEmpty()) {
+            // No elements found, default to offered resources
+            resourceLinker = linkTo(methodOn(RepresentationsToOfferedResourcesController.class)
+                    .getResource(representation.getId(), null, null))
+                    .withRel(BaseType.OFFERS);
+        } else {
+            // Construct the link for the right resource type.
+            if (resourceType.get(0) instanceof OfferedResource) {
+                resourceLinker = linkTo(methodOn(RepresentationsToOfferedResourcesController.class)
+                        .getResource(representation.getId(), null, null))
+                        .withRel(BaseType.OFFERS);
+            } else if (resourceType.get(0) instanceof RequestedResource) {
+                resourceLinker = linkTo(methodOn(RepresentationsToRequestsController.class)
+                        .getResource(representation.getId(), null, null))
+                        .withRel(BaseType.REQUESTS);
+            } else {
+                throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
+            }
+        }
+
+        view.add(resourceLinker);
 
         final var subscriptionLink = linkTo(methodOn(RepresentationsToSubscriptionsController.class)
                 .getResource(representation.getId(), null, null))
                 .withRel(BaseType.SUBSCRIPTIONS);
         view.add(subscriptionLink);
 
+        /* AppStore Extension */
         final var appLink = linkTo(methodOn(RepresentationsToAppsController.class)
                 .getResource(representation.getId(), null, null))
                 .withRel(BaseType.APPS);
         view.add(appLink);
-
         return view;
     }
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, RepresentationController.class);
+        return getSelfLink(entityId, RepresentationController.class);
     }
 }

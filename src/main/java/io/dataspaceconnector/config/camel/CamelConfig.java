@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +44,7 @@ public class CamelConfig {
     @Bean
     public Unmarshaller unmarshaller() {
         try {
-            final var jaxb = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES);
-            return jaxb.createUnmarshaller();
+            return JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES).createUnmarshaller();
         } catch (JAXBException e) {
             throw new BeanCreationException("Failed to create Unmarshaller.", e);
         }

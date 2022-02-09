@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +28,6 @@ import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
-import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
@@ -40,6 +38,7 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
@@ -107,14 +106,14 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             if (log.isDebugEnabled()) {
-                log.debug("Built request message. [body=({})]", body);
+                log.debug("Built request message. [header=({}), payload=({})]", header, payload);
             }
 
             return idsHttpService.sendAndCheckDat(body, recipient);
-        } catch (SerializeException | ConstraintViolationException e) {
+        } catch (SerializeException | ConstraintViolationException | IllegalArgumentException e) {
             final var msg = ErrorMessage.MESSAGE_BUILDING_FAILED;
             if (log.isWarnEnabled()) {
-                log.warn(msg + "[exception=({})]", e.getMessage(), e);
+                log.warn(msg + " [exception=({})]", e.getMessage());
             }
             throw new MessageException(msg, e);
         } catch (MultipartParseException | DeserializeException | ShaclValidatorException e) {
@@ -133,6 +132,12 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var msg = ErrorMessage.INVALID_DAT;
             if (log.isDebugEnabled()) {
                 log.debug(msg + " [exception=({})]", e.getMessage(), e);
+            }
+            throw new MessageException(msg, e);
+        } catch (SSLHandshakeException e) {
+            final var msg = ErrorMessage.CERTIFICATE_NOT_TRUSTED;
+            if (log.isWarnEnabled()) {
+                log.warn(msg + " [exception=({})]", e.getMessage());
             }
             throw new MessageException(msg, e);
         } catch (IOException e) {
@@ -220,10 +225,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      *
      * @param message The message that should be validated.
      * @throws MessageEmptyException        if the message is empty.
-     * @throws VersionNotSupportedException if the message version is not supported.
      */
-    public void validateIncomingMessage(final Message message) throws MessageEmptyException,
-            VersionNotSupportedException {
+    public void validateIncomingMessage(final Message message) throws MessageEmptyException {
         MessageUtils.checkForEmptyMessage(message);
 
         final var modelVersion = MessageUtils.extractModelVersion(message);

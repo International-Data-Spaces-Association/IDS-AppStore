@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,14 +46,11 @@ public class UnexpectedResponseException extends Exception {
 
     /**
      * Create a new invalid response.
-     * @param responseContent The content of the invalid response.
-     * @param throwable The exception to wrap.
+     * @param response The content of the invalid response.
+     * @param cause The exception to wrap.
      */
-    public UnexpectedResponseException(
-            final Map<String, Object> responseContent,
-            final Throwable throwable
-    ) {
-        super(throwable);
-        this.content = responseContent;
+    public UnexpectedResponseException(final Map<String, Object> response, final Throwable cause) {
+        super(cause);
+        this.content = response;
     }
 }

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,393 +15,321 @@
  */
 package io.dataspaceconnector.model.app;
 
-import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.common.ids.policy.PolicyPattern;
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.model.artifact.LocalData;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
+
 /**
- * Base class for creating and updating resources.
+ * Creates and updates a data app.
  */
-@Component
 public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
 
     /**
      * The default remote id assigned to all apps.
      */
-    public static final URI DEFAULT_REMOTE_ID = URI.create("");
+    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
 
     /**
-     * The default storageConfiguration assigned to all apps.
+     * Default remote address assigned to all apps.
      */
-    public static final String DEFAULT_STORAGE_CONFIGURATION = "/data:/data";
+    public static final URI DEFAULT_REMOTE_ADDRESS = URI.create("genesis");
 
     /**
-     * The default environmentVariables assigned to all apps.
+     * The default value.
      */
-    public static final String DEFAULT_ENVIRONMENT_VARIABLES = "";
+    public static final String DEFAULT_VALUE = "";
 
     /**
-     * The default documentation assigned to all apps.
+     * Default access url.
      */
-    public static final String DEFAULT_DOCS = "";
+    public static final URI DEFAULT_URI = URI.create("https://app.com");
 
     /**
-     * The default supportedUsagePolicies assigned to all apps.
+     * The default keywords assigned to all apps.
      */
-    private static final List<PolicyPattern> DEFAULT_SUPPORTED_USAGE_POLICIES
-            = Util.asList(PolicyPattern.PROVIDE_ACCESS);
+    public static final List<String> DEFAULT_KEYWORDS = List.of("DSC");
 
     /**
-     * The default number of high issues.
-     */
-    private static final Integer DEFAULT_SECURITY_SCANNER_ISSUES_HIGH = 0;
-
-    /**
-     * The default number of medium issues.
-     */
-    private static final Integer DEFAULT_SECURITY_SCANNER_ISSUES_MEDIUM = 0;
-
-    /**
-     * The default number of low issues.
-     */
-    private static final Integer DEFAULT_SECURITY_SCANNER_ISSUES_LOW = 0;
-
-    /**
-     * The default number of fixable issues.
-     */
-    private static final Integer DEFAULT_SECURITY_SCANNER_ISSUES_FIXABLE = 0;
-
-    /**
-     * The default number of total issues.
-     */
-    private static final Integer DEFAULT_SECURITY_SCANNER_ISSUES_TOTAL = 0;
-
-    /**
-     * The default number of complete percent.
-     */
-    private static final Integer DEFAULT_SECURITY_SCANNER_COMPLETE_PERCENT = 0;
-
-    /**
-     * The default security scanner version.
-     */
-    private static final String DEFAULT_SECURITY_SCANNER_VERSION = "";
-
-    /**
-     * The default security scanner vendor.
-     */
-    private static final String DEFAULT_SECURITY_SCANNER_VENDOR = "";
-
-    /**
-     * The default security scanner name.
-     */
-    private static final String DEFAULT_SECURITY_SCANNER_NAME = "";
-
-    /**
-     * The default repository digest.
-     */
-    private static final String DEFAULT_REPOSITORY_DIGEST = "";
-
-    /**
-     * The default repository namespace.
-     */
-    @Value("${registry.url}")
-    private String defaultRepositoryNamespace = "";
-
-    /**
-     * The default repository name.
-     */
-    private static final String DEFAULT_REPOSITORY_NAME = "";
-
-    /**
-     * Create a new resource.
-     *
-     * @param desc The description of the new resource.
-     * @return The new resource.
-     * @throws IllegalArgumentException if desc is null.
+     * {@inheritDoc}
      */
     @Override
     protected App initializeEntity(final AppDesc desc) {
-        final var app = new App();
+        final var app = new AppImpl();
+
         app.setEndpoints(new ArrayList<>());
-        app.setRepresentations(new ArrayList<>());
 
         return app;
     }
 
     /**
-     * Update an app.
-     *
-     * @param app  The app to be updated.
-     * @param desc The new app description.
-     * @return True if the app has been modified.
-     * @throws IllegalArgumentException if any of the parameters is null.
+     * {@inheritDoc}
      */
     @Override
     protected boolean updateInternal(final App app, final AppDesc desc) {
-        final var hasRemoteIdUpdated = updateRemoteId(app, desc.getRemoteId());
-        final var hasDocumentationUpdated = updateDocs(app, desc.getDocs());
-        final var hasEnvironmentVariablesUpdated
-                = updateEnvironmentVariables(app, desc.getEnvironmentVariables());
-        final var hasStorageConfigurationUpdated
-                = updateStorageConfiguration(app, desc.getStorageConfig());
-        final var hasSupportedUsagePoliciesUpdated
-                = updateSupportedUsagePolicies(app, desc.getSupportedUsagePolicies());
-        final var hasSecurityScannerNameUpdated
-                = updateSecurityScannerName(app, desc.getSecurityScannerName());
-        final var hasSecurityScannerVendorUpdated
-                = updateSecurityScannerVendor(app, desc.getSecurityScannerVendor());
-        final var hasSecurityScannerVersionUpdated
-                = updateSecurityScannerVersion(app, desc.getSecurityScannerVersion());
-        final var hasSecurityScannerCompletePercentUpdated
-                = updateSecurityScannerCompletePercent(app,
-                desc.getSecurityScannerCompletePercent());
-        final var hasSecurityScannerIssuesTotalUpdated
-                = updateSecurityScannerIssuesTotal(app, desc.getSecurityScannerIssuesTotal());
-        final var hasSecurityScannerIssuesFixableUpdated
-                = updateSecurityScannerIssuesFixable(app, desc.getSecurityScannerIssuesFixable());
-        final var hasSecurityScannerIssuesLowUpdated
-                = updateSecurityScannerIssuesLow(app, desc.getSecurityScannerIssuesLow());
-        final var hasSecurityScannerIssuesMediumUpdated
-                = updateSecurityScannerIssuesMedium(app, desc.getSecurityScannerIssuesMedium());
-        final var hasSecurityScannerIssuesHighUpdated
-                = updateSecurityScannerIssuesHigh(app, desc.getSecurityScannerIssuesHigh());
-        final var hasRepositoryNameUpdated = updateRepositoryName(app, desc.getRepositoryName());
-        final var hasRepositoryNameSpaceUpdated
-                = updateRepositoryNameSpace(app, desc.getRepositoryNameSpace());
-        final var hasRepositoryDigestUpdated
-                = updateRepositoryDigest(app, desc.getRepositoryDigest());
+        final var hasUpdatedDocumentation = updateDocumentation(app, desc.getDocs());
+        final var hasUpdatedKeywords = updateKeywords(app, desc.getKeywords());
+        final var hadUpdatedPolicies = updatePolicies(app, desc.getSupportedPolicies());
+        final var hasUpdatedEnvVariables = updateEnvVariables(app, desc.getEnvVariables());
+        final var hasUpdatedStorageConfig = updateStorageConfig(app, desc.getStorageConfig());
+        final var hasUpdatedPublisher = updatePublisher(app, desc.getPublisher());
+        final var hasUpdatedSovereign = updateSovereign(app, desc.getSovereign());
+        final var hasUpdatedLanguage = updateLanguage(app, desc.getLanguage());
+        final var hasUpdatedLicense = updateLicense(app, desc.getLicense());
+        final var hasUpdatedEndpointDocs = updateEndpointDocs(app, desc.getEndpointDocumentation());
+        final var hasUpdatedDistributionService
+                = updateDistributionService(app, desc.getDistributionService());
+        final var hasUpdatedRuntimeEnvironment
+                = updateRuntimeEnvironment(app, desc.getRuntimeEnvironment());
+        final var hasUpdatedRemoteId = updateRemoteId(app, desc.getRemoteId());
+        final var hasUpdatedRemoteAddress = updateRemoteAddress(app, desc.getRemoteAddress());
 
-        return hasRemoteIdUpdated || hasDocumentationUpdated
-                || hasEnvironmentVariablesUpdated || hasStorageConfigurationUpdated
-                || hasSupportedUsagePoliciesUpdated
-                || hasSecurityScannerNameUpdated
-                || hasSecurityScannerVendorUpdated
-                || hasSecurityScannerVersionUpdated
-                || hasSecurityScannerCompletePercentUpdated
-                || hasSecurityScannerIssuesTotalUpdated
-                || hasSecurityScannerIssuesFixableUpdated
-                || hasSecurityScannerIssuesLowUpdated
-                || hasSecurityScannerIssuesMediumUpdated
-                || hasSecurityScannerIssuesHighUpdated
-                || hasRepositoryNameUpdated
-                || hasRepositoryNameSpaceUpdated
-                || hasRepositoryDigestUpdated;
-    }
+        final var hasUpdatedData = updateData((AppImpl) app, desc.getValue());
 
+        final var hasUpdated = hasUpdatedDocumentation || hasUpdatedEnvVariables
+                || hasUpdatedStorageConfig || hasUpdatedPublisher || hasUpdatedLanguage
+                || hasUpdatedSovereign || hasUpdatedLicense || hasUpdatedEndpointDocs
+                || hasUpdatedDistributionService || hasUpdatedRuntimeEnvironment
+                || hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedData
+                || hasUpdatedKeywords || hadUpdatedPolicies;
 
-    /**
-     * Update an app's documentation.
-     *
-     * @param app  The app.
-     * @param docs The new documentation.
-     * @return true if the app's documentation has been modified.
-     */
-    private boolean updateDocs(final App app, final String docs) {
-        final var newDocs =
-                FactoryUtils.updateString(app.getDocs(), docs, DEFAULT_DOCS);
-        newDocs.ifPresent(app::setDocs);
-
-        return newDocs.isPresent();
+        if (hasUpdated) {
+            app.setVersion(app.getVersion() + 1);
+        }
+        return hasUpdated;
     }
 
     /**
-     * Update an app's environmentVariables.
-     *
-     * @param app                  The app.
-     * @param environmentVariables The new environmentVariables.
-     * @return true if the app's environmentVariables has been modified.
+     * @param app the app to update.
+     * @param value updated data field.
+     * @return true, if update was successful.
      */
-    private boolean updateEnvironmentVariables(final App app, final String environmentVariables) {
-        final var newEnvironmentVariables =
-                FactoryUtils.updateString(app.getEnvironmentVariables(),
-                        environmentVariables, DEFAULT_ENVIRONMENT_VARIABLES);
-        newEnvironmentVariables.ifPresent(app::setEnvironmentVariables);
+    private boolean updateData(final AppImpl app, final String value) {
+        final var newData = new LocalData();
+        final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_8);
+        newData.setValue(data);
 
-        return newEnvironmentVariables.isPresent();
+        final var oldData = app.getData();
+        if (oldData instanceof LocalData) {
+            if (!oldData.equals(newData)) {
+                app.setData(newData);
+                return true;
+            }
+        } else {
+            app.setData(newData);
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * Update an app's storageConfiguration.
-     *
-     * @param app                  The app.
-     * @param storageConfiguration The new storageConfiguration.
-     * @return true if the app's storageConfiguration has been modified.
+     * @param app the app to update.
+     * @param remoteAddress new remoteAddress.
+     * @return true, if update was successful.
      */
-    private boolean updateStorageConfiguration(final App app, final String storageConfiguration) {
-        final var newStorageConfiguration =
-                FactoryUtils.updateString(app.getStorageConfig(), storageConfiguration,
-                        DEFAULT_STORAGE_CONFIGURATION);
-        newStorageConfiguration.ifPresent(app::setStorageConfig);
+    private boolean updateRemoteAddress(final App app, final URI remoteAddress) {
+        final var newUri = FactoryUtils.updateUri(app.getRemoteAddress(), remoteAddress,
+                DEFAULT_REMOTE_ADDRESS);
+        newUri.ifPresent(app::setRemoteAddress);
 
-        return newStorageConfiguration.isPresent();
+        return newUri.isPresent();
     }
 
     /**
-     * Update an app's supportedUsagePolicies.
-     *
-     * @param app                    The app.
-     * @param supportedUsagePolicies The new supportedUsagePolicies.
-     * @return true if the app's supportedUsagePolicies has been modified.
+     * @param app the app to update.
+     * @param keywords new keywords.
+     * @return true, if update was successful.
      */
-    private boolean updateSupportedUsagePolicies(final App app,
-                                                 final List<PolicyPattern> supportedUsagePolicies) {
-        final var newSupportedUsagePolicies =
-                FactoryUtils.updateEnumList(app.getSupportedUsagePolicies(),
-                        supportedUsagePolicies, DEFAULT_SUPPORTED_USAGE_POLICIES);
-        newSupportedUsagePolicies.ifPresent(app::setSupportedUsagePolicies);
-        return newSupportedUsagePolicies.isPresent();
+    private boolean updateKeywords(final App app, final List<String> keywords) {
+        final var newKeys =
+                FactoryUtils.updateStringList(app.getKeywords(), keywords, DEFAULT_KEYWORDS);
+        newKeys.ifPresent(app::setKeywords);
+
+        return newKeys.isPresent();
     }
 
-    private boolean updateSecurityScannerName(final App app, final String securityScannerName) {
-        final var newSecurityScannerName =
-                FactoryUtils.updateString(app.getSecurityScannerName(), securityScannerName,
-                        DEFAULT_SECURITY_SCANNER_NAME);
-        newSecurityScannerName.ifPresent(app::setSecurityScannerName);
+    /**
+     * @param app the app to update.
+     * @param policies new policies.
+     * @return true, if update was successful.
+     */
+    private boolean updatePolicies(final App app, final List<PolicyPattern> policies) {
+        final var newList = FactoryUtils.updatePolicyList(
+                app.getSupportedPolicies(), policies, new ArrayList<>());
+        newList.ifPresent(app::setSupportedPolicies);
 
-        return newSecurityScannerName.isPresent();
+        return newList.isPresent();
     }
 
-    private boolean updateSecurityScannerVendor(final App app, final String securityScannerVendor) {
-        final var newSecurityScannerVendor =
-                FactoryUtils.updateString(app.getSecurityScannerVendor(), securityScannerVendor,
-                        DEFAULT_SECURITY_SCANNER_VENDOR);
-        newSecurityScannerVendor.ifPresent(app::setSecurityScannerVendor);
-
-        return newSecurityScannerVendor.isPresent();
-    }
-
-    private boolean updateSecurityScannerVersion(final App app,
-                                                 final String securityScannerVersion) {
-        final var newSecurityScannerVersion =
-                FactoryUtils.updateString(app.getSecurityScannerVersion(), securityScannerVersion,
-                        DEFAULT_SECURITY_SCANNER_VERSION);
-        newSecurityScannerVersion.ifPresent(app::setSecurityScannerVersion);
-
-        return newSecurityScannerVersion.isPresent();
-    }
-
-    private boolean updateSecurityScannerCompletePercent(final App app, final Long percent) {
-        final var tmp = percent == 0 ? DEFAULT_SECURITY_SCANNER_COMPLETE_PERCENT : percent;
-
-        final var newValue
-                = FactoryUtils.updateNumber(app.getSecurityScannerCompletePercent(), tmp);
-        if (newValue == app.getSecurityScannerCompletePercent()) {
-            return false;
-        }
-        app.setSecurityScannerCompletePercent(newValue);
-        return true;
-    }
-
-    private boolean updateSecurityScannerIssuesTotal(final App app, final Long number) {
-        final var tmp = number == null ? DEFAULT_SECURITY_SCANNER_ISSUES_TOTAL : number;
-
-        final var newValue = FactoryUtils.updateNumber(app.getSecurityScannerIssuesTotal(), tmp);
-        if (newValue == app.getSecurityScannerIssuesTotal()) {
-            return false;
-        }
-        app.setSecurityScannerIssuesTotal(newValue);
-        return true;
-    }
-
-    private boolean updateSecurityScannerIssuesFixable(final App app, final Long number) {
-        final var tmp = number == null ? DEFAULT_SECURITY_SCANNER_ISSUES_FIXABLE : number;
-
-        final var newValue = FactoryUtils.updateNumber(app.getSecurityScannerIssuesFixable(), tmp);
-        if (newValue == app.getSecurityScannerIssuesFixable()) {
-            return false;
-        }
-        app.setSecurityScannerIssuesFixable(newValue);
-        return true;
-    }
-
-    private boolean updateSecurityScannerIssuesLow(final App app, final Long number) {
-        final var tmp = number == null ? DEFAULT_SECURITY_SCANNER_ISSUES_LOW : number;
-
-        final var newValue = FactoryUtils.updateNumber(app.getSecurityScannerIssuesLow(), tmp);
-        if (newValue == app.getSecurityScannerIssuesLow()) {
-            return false;
-        }
-        app.setSecurityScannerIssuesLow(newValue);
-        return true;
-    }
-
-    private boolean updateSecurityScannerIssuesMedium(final App app, final Long number) {
-        final var tmp = number == null ? DEFAULT_SECURITY_SCANNER_ISSUES_MEDIUM : number;
-
-        final var newValue = FactoryUtils.updateNumber(app.getSecurityScannerIssuesMedium(), tmp);
-        if (newValue == app.getSecurityScannerIssuesMedium()) {
-            return false;
-        }
-        app.setSecurityScannerIssuesMedium(newValue);
-        return true;
-    }
-
-    private boolean updateSecurityScannerIssuesHigh(final App app, final Long number) {
-        final var tmp = number == null ? DEFAULT_SECURITY_SCANNER_ISSUES_HIGH : number;
-
-        final var newValue = FactoryUtils.updateNumber(app.getSecurityScannerIssuesHigh(), tmp);
-        if (newValue == app.getSecurityScannerIssuesHigh()) {
-            return false;
-        }
-        app.setSecurityScannerIssuesHigh(newValue);
-        return true;
-    }
-
-    private boolean updateRepositoryName(final App app, final String value) {
-        final var newValue = FactoryUtils.updateString(app.getRepositoryName(),
-                value, DEFAULT_REPOSITORY_NAME);
-        newValue.ifPresent(app::setRepositoryName);
-
-        return newValue.isPresent();
-    }
-
-    private boolean updateRepositoryNameSpace(final App app, final String value) {
-        final var newValue = FactoryUtils.updateString(app.getRepositoryNameSpace(),
-                value, defaultRepositoryNamespace);
-        newValue.ifPresent(app::setRepositoryNameSpace);
-
-        return newValue.isPresent();
-    }
-
-    private boolean updateRepositoryDigest(final App app, final String digest) {
-        final var newValue = FactoryUtils.updateString(app.getRepositoryDigest(), digest,
-                DEFAULT_REPOSITORY_DIGEST);
-        newValue.ifPresent(app::setRepositoryDigest);
-
-        return newValue.isPresent();
-    }
-
-
+    /**
+     * @param app the app to update.
+     * @param remoteId new remoteId.
+     * @return true, if update was successful.
+     */
     private boolean updateRemoteId(final App app, final URI remoteId) {
-        final var newUri = FactoryUtils.updateUri(app.getRemoteId(), remoteId,
-                DEFAULT_REMOTE_ID);
+        final var newUri = FactoryUtils.updateUri(app.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(app::setRemoteId);
 
         return newUri.isPresent();
     }
 
     /**
-     * Get default repository namespace.
-     *
-     * @return The default repository namespace.
+     * @param app the app to update.
+     * @param runtimeEnvironment new runtimeEnvironment.
+     * @return true, if update was successful.
      */
-    public String getDefaultRepositoryNamespace() {
-        return defaultRepositoryNamespace;
+    private boolean updateRuntimeEnvironment(final App app, final String runtimeEnvironment) {
+        final var newValue = FactoryUtils.updateString(app.getRuntimeEnvironment(),
+                runtimeEnvironment, DEFAULT_VALUE);
+        newValue.ifPresent(app::setRuntimeEnvironment);
+
+        return newValue.isPresent();
+
     }
 
     /**
-     * Set default repository namespace.
-     *
-     * @param namespace The default repository namespace.
+     * @param app the app to update.
+     * @param distributionService new distributionService.
+     * @return true, if update was successful.
      */
-    public void setDefaultRepositoryNamespace(final String namespace) {
-        this.defaultRepositoryNamespace = defaultRepositoryNamespace;
+    private boolean updateDistributionService(final App app, final URI distributionService) {
+        final var newUri = FactoryUtils.updateUri(app.getDistributionService(),
+                distributionService, DEFAULT_URI);
+        newUri.ifPresent(app::setDistributionService);
+
+        return newUri.isPresent();
+    }
+
+    /**
+     * @param app the app to update.
+     * @param endpointDocumentation new endpointDocumentation.
+     * @return true, if update was successful.
+     */
+    private boolean updateEndpointDocs(final App app, final URI endpointDocumentation) {
+        final var newUri = FactoryUtils.updateUri(app.getEndpointDocumentation(),
+                endpointDocumentation, DEFAULT_URI);
+        newUri.ifPresent(app::setEndpointDocumentation);
+
+        return newUri.isPresent();
+    }
+
+    /**
+     * @param app the app to update.
+     * @param license new license.
+     * @return true, if update was successful.
+     */
+    private boolean updateLicense(final App app, final URI license) {
+        final var newUri = FactoryUtils.updateUri(app.getLicense(), license, DEFAULT_URI);
+        newUri.ifPresent(app::setLicense);
+
+        return newUri.isPresent();
+    }
+
+    /**
+     * @param app the app to update.
+     * @param language new language.
+     * @return true, if update was successful.
+     */
+    private boolean updateLanguage(final App app, final String language) {
+        final var newValue = FactoryUtils.updateString(app.getLanguage(), language, DEFAULT_VALUE);
+        newValue.ifPresent(app::setLanguage);
+
+        return newValue.isPresent();
+    }
+
+    /**
+     * @param app the app to update.
+     * @param sovereign new sovereign.
+     * @return true, if update was successful.
+     */
+    private boolean updateSovereign(final App app, final URI sovereign) {
+        final var newUri = FactoryUtils.updateUri(app.getSovereign(), sovereign, DEFAULT_URI);
+        newUri.ifPresent(app::setSovereign);
+
+        return newUri.isPresent();
+
+    }
+
+    /**
+     * @param app the app to update.
+     * @param publisher new publisher.
+     * @return true, if update was successful.
+     */
+    private boolean updatePublisher(final App app, final URI publisher) {
+        final var newUri = FactoryUtils.updateUri(app.getPublisher(), publisher, DEFAULT_URI);
+        newUri.ifPresent(app::setPublisher);
+
+        return newUri.isPresent();
+    }
+
+    /**
+     * @param app the app to update.
+     * @param storageConfig new storage configuration.
+     * @return true, if update was successful.
+     */
+    private boolean updateStorageConfig(final App app, final String storageConfig) {
+        final var newValue = FactoryUtils.updateString(app.getStorageConfig(),
+                storageConfig, DEFAULT_VALUE);
+        newValue.ifPresent(app::setStorageConfig);
+
+        return newValue.isPresent();
+    }
+
+    /**
+     * @param app the app to update.
+     * @param envVariables new environment variables.
+     * @return true, if update was successful.
+     */
+    private boolean updateEnvVariables(final App app, final String envVariables) {
+        final var newValue = FactoryUtils.updateString(app.getEnvVariables(), envVariables,
+                DEFAULT_VALUE);
+        newValue.ifPresent(app::setEnvVariables);
+
+        return newValue.isPresent();
+    }
+
+    /**
+     * @param app the app to update.
+     * @param docs new docs.
+     * @return true, if update was successful.
+     */
+    private boolean updateDocumentation(final App app, final String docs) {
+        final var newValue = FactoryUtils.updateString(app.getDocs(), docs, DEFAULT_VALUE);
+        newValue.ifPresent(app::setDocs);
+
+        return newValue.isPresent();
+    }
+
+    /**
+     * Set containerID to AppImpl.
+     *
+     * @param app         The app entity.
+     * @param containerId The id of the container which is set.
+     */
+    public void setContainerId(final AppImpl app, final String containerId) {
+        app.setContainerId(containerId);
+    }
+
+    /**
+     * Delete containerId from AppImpl.
+     *
+     * @param app The app entity.
+     */
+    public void deleteContainerId(final AppImpl app) {
+        app.setContainerId(null);
+    }
+
+    /**
+     * @param app The app entity.
+     * @param name The name of the container.
+     */
+    public void setContainerName(final AppImpl app, final String name) {
+        app.setContainerName(name);
     }
 }

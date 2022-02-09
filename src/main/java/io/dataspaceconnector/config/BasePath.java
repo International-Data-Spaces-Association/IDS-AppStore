@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +25,14 @@ public final class BasePath {
     }
 
     /**
-     * The resource endpoint's base path.
+     * The resource offer's endpoint's base path.
      */
-    public static final String RESOURCES = "/api/" + BaseType.RESOURCES;
+    public static final String OFFERS = "/api/" + BaseType.OFFERS;
+
+    /**
+     * The resource request's endpoint's base path.
+     */
+    public static final String REQUESTS = "/api/" + BaseType.REQUESTS;
 
     /**
      * The representation endpoint's base path.
@@ -61,6 +65,11 @@ public final class BasePath {
     public static final String AGREEMENTS = "/api/" + BaseType.AGREEMENTS;
 
     /**
+     * The routes' base path.
+     */
+    public static final String ROUTES = "/api/" + BaseType.ROUTES;
+
+    /**
      * The subscriptions' base path.
      */
     public static final String SUBSCRIPTIONS = "/api/" + BaseType.SUBSCRIPTIONS;
@@ -76,6 +85,11 @@ public final class BasePath {
     public static final String CONFIGURATIONS = "/api/" + BaseType.CONFIGURATIONS;
 
     /**
+     * The data sources' base path.
+     */
+    public static final String DATA_SOURCES = "/api/" + BaseType.DATA_SOURCES;
+
+    /**
      * The endpoints' base path.
      */
     public static final String ENDPOINTS = "/api/" + BaseType.ENDPOINTS;
@@ -84,4 +98,9 @@ public final class BasePath {
      * The apps' base path.
      */
     public static final String APPS = "/api/" + BaseType.APPS;
+
+    /**
+     * The app stores' base path.
+     */
+    public static final String APPSTORES = "/api/" + BaseType.APPSTORES;
 }

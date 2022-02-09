@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +18,7 @@ package io.dataspaceconnector.controller.resource.base.exceptionhandler;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @RestControllerAdvice
 @Log4j2
+@Order(1)
 public class RouteCreationExceptionHandler {
 
     /**

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +50,7 @@ public class ConnectorUnavailableMessageBuilder
      * Builds a ConnectorUnavailableMessage according to the exchange properties as well as the
      * connector object and creates a Request with the message as header and the connector as
      * payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */
@@ -59,7 +59,9 @@ public class ConnectorUnavailableMessageBuilder
     processInternal(final Exchange exchange) {
         final var modelVersion = connectorService.getOutboundModelVersion();
         final var token = connectorService.getCurrentDat();
+        /* AppStore Extension */
         final var connector = connectorService.getAppStoreWithoutResources();
+        // final var connector = connectorService.getConnectorWithoutResources();
         final var connectorId = connector.getId();
         final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
@@ -74,7 +76,7 @@ public class ConnectorUnavailableMessageBuilder
                 .build();
 
         return new Request<>((ConnectorUnavailableMessageImpl) message, connector,
-                             Optional.empty());
+                Optional.empty());
     }
 
 }

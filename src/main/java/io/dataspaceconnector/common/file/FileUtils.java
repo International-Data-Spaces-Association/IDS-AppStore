@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +34,7 @@ public final class FileUtils {
 
     /**
      * Return a list of all files in a directory.
+     *
      * @param directory The directory.
      * @return List of contained files.
      */
@@ -46,6 +46,7 @@ public final class FileUtils {
 
     /**
      * Open a file.
+     *
      * @param path The filepath.
      * @return The file.
      * @throws FileNotFoundException if the file does not exist.

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +15,29 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.resource.ResourceDesc;
-import io.dataspaceconnector.repository.ResourceRepository;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import io.dataspaceconnector.service.resource.base.RemoteResolver;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for resources.
+ *
+ * @param <T> The resource type.
+ * @param <D> The resource description type.
  */
-@Service
-@Transactional
-public class ResourceService extends BaseEntityService<Resource, ResourceDesc>
-        implements RemoteResolver {
+public class ResourceService<T extends Resource, D extends ResourceDesc>
+        extends BaseEntityService<T, D> {
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Optional<UUID> identifyByRemoteId(final URI remoteId) {
-        return ((ResourceRepository) getRepository()).identifyByRemoteId(remoteId);
-    }
-
-    /**
-     * Find requested resource by remote id.
+     * Constructor.
      *
-     * @param remoteId The remote id.
-     * @return The entity.
+     * @param repository The resource repository.
+     * @param factory    The resource factory.
      */
-    public Optional<Resource> getEntityByRemoteId(final URI remoteId) {
-        final var repo = (ResourceRepository) getRepository();
-        return repo.getByRemoteId(remoteId);
+    public ResourceService(final BaseEntityRepository<T> repository,
+                           final AbstractFactory<T, D> factory) {
+        super(repository, factory);
     }
 }
