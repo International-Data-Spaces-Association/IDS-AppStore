@@ -72,7 +72,7 @@ def create_representation():
         "description": "This is the docker representation for the DataProcessingApp",
         "language": "EN",
         "runtimeEnvironment": "docker",
-        "distributionService": "https://localhost:8080"
+        "distributionService": "https://app.registry.example.org"
     }
     loc = post_request_check_response(f"{combined_host}/api/representations", json)
     return loc
@@ -85,6 +85,7 @@ def create_dataApp():
         "docs": "App-related human-readable documentation.",
         "environmentVariables": "dbUser=sa;dbPasswd=passwd",
         "storageConfig": "-v /data",
+	"language": "EN",
         "supportedUsagePolicies": [
             "PROVIDE_ACCESS"
         ]
@@ -99,12 +100,12 @@ def create_endpoints():
         "description": "This is the input endpoint for the DataProcessingApp.",
         "location": "/input",
         "mediaType": "application/json",
-        "port": 5000,
+        "port": 8080,
         "protocol": "HTTP/1.1",
         "type": "Input",
         "docs": "https://app.swaggerhub.com/apis/app/1337",
         "info": "More information about the endpoint",
-        "path": "/input"
+        "path": "/input/"
     }
     loc = post_request_check_response(f"{combined_host}/api/endpoints", json)
     return loc
