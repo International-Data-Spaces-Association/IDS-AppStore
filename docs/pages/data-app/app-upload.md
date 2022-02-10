@@ -19,7 +19,7 @@ parent: Data App
 3. Once both steps have been performed, the image can be build and pushed to Docker Hub using the following commands: `docker build . -t {yourImage:tag, e.g., username/test:tagname}` and `docker push {yourImage:tag, e.g., username/test:tagname}`. Docker Hub will ask for your credentials. 
 
 ### Uploading process
-Currently, an app is uploaded using a [Python script]((https://github.com/International-Data-Spaces-Association/IDS-AppStore/blob/main/scripts/tests/create_resources_and_upload_app_local.py)). To upload an app using the Python script, perform the following three steps:
+Currently, an app is uploaded using a [Python script](https://github.com/International-Data-Spaces-Association/IDS-AppStore/blob/main/scripts/tests/create_resources_and_upload_app_local.py). To upload an app using the Python script, perform the following three steps:
 
 1. Make sure that you have the Python packages `docker` and `requests` installed. You can install them using the following commands:
 ```
@@ -78,7 +78,7 @@ def create_resource():
     loc = post_request_check_response(f"{combined_host}/api/resources", json)
     return loc
 ```
-Update the `create_representation()` method. The `distributionService` is your registry url. 
+Update the `create_representation()` method.
 ```python
 def create_representation():
     json = {
@@ -86,7 +86,7 @@ def create_representation():
         "description": "This is the docker representation for the DataProcessingApp",
         "language": "EN",
         "runtimeEnvironment": "docker",
-        "distributionService": "https://app.registry.example.org"
+        "distributionService": "https://localhost:8080"
     }
     loc = post_request_check_response(f"{combined_host}/api/representations", json)
     return loc

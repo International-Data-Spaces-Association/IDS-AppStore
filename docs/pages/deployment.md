@@ -23,6 +23,10 @@ Those main components are as follows:
 * **Connector**: Search/Download app metadata from App Store, download/run/configure app containers
 * **Portainer**: Management of Docker containers on client side (connector)
 
+The connections between the above components are shown in the following figure:
+
+![App Store Components](../assets/images/app-store-component-connection.png)
+
 It follows instructions on how to install each component.
 
 ## Installation  and Running of the Harbor Registry
@@ -50,8 +54,21 @@ sudo ./install.sh
 ## Installation and Running of the App Store
 The App Store can be installed from the following GitHub repository: <https://github.com/International-Data-Spaces-Association/IDS-AppStore>
 
-Instruction on how to install and run the App Store can be found [here](https://international-data-spaces-association.github.io/IDS-AppStore/getting-started).
+It follows instructions on how to install and run the App Store:
 
+Ensure that at least **Java 11** is installed. To build and run the IDS App Store locally, follow these steps:
+
+1. Clone this repository: `git clone https://github.com/International-Data-Spaces-Association/IDS-AppStore.git`
+2. Create /data/search folder on the root with `cd /` and `mkdir -p /data/search`. If required, change the directory in src/main/resources/application.properties: `spring.jpa.properties.hibernate.search.backend.directory.root = /data/search`.
+3. Execute `cd IDS-AppStore`, `chmod +x mvnw` and `./mvnw clean package -DskipTests -Dmaven.javadoc.skip=true`.
+4. Navigate to `/target` and run `java -jar appstore-{VERSION}.jar`.
+
+If everything worked fine, the application is available at <https://localhost:8080/>. The API can be accessed at <https://localhost:8080/api>. The Swagger UI can be found at <https://localhost:8080/api/docs>.
+
+For certain endpoints, you will be asked to log in. The default credentials are `admin` and `password`. Please take care to change these when deploying and hosting the App Store yourself.
+
+As a specialization of the Dataspace Connector, the App Store must be configured in the same way as the Connector. This means, the IDS certificate must be configured for the App Store in the same way as for the Dataspace Connector. 
+The configuration of the IDS certificate is explained [here](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/Configuration).
 
 ## Installation and Running of the Connector and Portainer: 
 
@@ -59,7 +76,7 @@ Instructions on how to install the Dataspace Connector can be found at the follo
 
 If both the Connector and the App Store are installed on the same machine, the running port must be changed in the `src/main/resources/application.properties` file. 8080 must be replaced with the number you choose, e.g., 8085.   
 
-Portainer can be installed via the following link: <https://docs.portainer.io/v/ce-2.11/start/install/server/docker>.
+Portainer can be installed via the following link: <https://docs.portainer.io/v/ce-2.6/start/install/server/docker>.
 The Connector is configured to connect to Portainer on port 9000.
 
 
