@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +16,7 @@
 package io.dataspaceconnector.model.auth;
 
 import io.dataspaceconnector.common.net.HttpService;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import okhttp3.Credentials;
 import org.junit.jupiter.api.Test;
 
@@ -30,18 +30,6 @@ class BasicAuthTest {
     private final HttpService.Pair authHeader = new HttpService.Pair("Authorization", credentials);
     private final BasicAuth            basicAuth = new BasicAuth(username, password);
     private final HttpService.HttpArgs args      = new HttpService.HttpArgs();
-
-    @Test
-    void getAuthPair_nullValue_nullValue() {
-        /* ARRANGE */
-
-        /* ACT */
-        var basicAuth = new BasicAuth();
-
-        /* ASSERT */
-        assertNull(basicAuth.getUsername());
-        assertNull(basicAuth.getPassword());
-    }
 
     @Test
     void getAuthPair_validContent_getAuthorization() {
@@ -135,5 +123,26 @@ class BasicAuthTest {
 
         /* ASSERT */
         assertEquals(authHeader, args.getAuth());
+    }
+
+    @Test
+    void equalsAndHash_willPass() {
+        EqualsVerifier.simple().forClass(BasicAuth.class)
+        .withIgnoredFields("id", "deleted")
+        .verify();
+    }
+
+    @Test
+    void basicauth_setter_willOverwrite() {
+        /* ARRANGE */
+        final var auth = new BasicAuth("", "");
+
+        /* ACT */
+        auth.setUsername(username);
+        auth.setPassword(password);
+
+        /* ASSERT */
+        assertEquals(username, auth.getUsername());
+        assertEquals(password, auth.getPassword());
     }
 }

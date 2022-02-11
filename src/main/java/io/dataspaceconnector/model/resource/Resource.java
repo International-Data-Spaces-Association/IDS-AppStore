@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.springframework.data.annotation.Version;
 
 import javax.persistence.Column;
@@ -58,6 +59,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Where(clause = "deleted = false")
 @Table(name = "resource")
 @RequiredArgsConstructor
+@Indexed
 public class Resource extends NamedEntity {
 
     /**

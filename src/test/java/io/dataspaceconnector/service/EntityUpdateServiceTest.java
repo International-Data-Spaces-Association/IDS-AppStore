@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +22,16 @@ import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.ids.messaging.endpoint.EndpointService;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.model.resource.ResourceDesc;
-import io.dataspaceconnector.model.resource.ResourceFactory;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.service.resource.ids.updater.ArtifactUpdater;
 import io.dataspaceconnector.service.resource.ids.updater.RepresentationUpdater;
-import io.dataspaceconnector.service.resource.ids.updater.ResourceUpdater;
+import io.dataspaceconnector.service.resource.ids.updater.RequestedResourceUpdater;
 import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
 import io.dataspaceconnector.service.resource.type.AgreementService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
@@ -62,12 +62,12 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {
         EntityUpdateService.class,
-        ResourceFactory.class
+        RequestedResourceFactory.class
 })
 public class EntityUpdateServiceTest {
 
     @MockBean
-    private ResourceUpdater resourceUpdater;
+    private RequestedResourceUpdater requestedResourceUpdater;
 
     @MockBean
     private RepresentationUpdater representationUpdater;
@@ -85,18 +85,18 @@ public class EntityUpdateServiceTest {
     private ArtifactService artifactService;
 
     @MockBean
-    private EndpointService endpointService;
+    private SelfLinkHelper selfLinkHelper;
 
     @Autowired
     private EntityUpdateService entityUpdateService;
 
     @Autowired
-    private ResourceFactory resourceFactory;
+    private RequestedResourceFactory requestedResourceFactory;
 
     @Test
     public void updateResource_inputNull_throwNullPointerException() {
         /* ARRANGE */
-        when(resourceUpdater.update(any())).thenCallRealMethod();
+        when(requestedResourceUpdater.update(any())).thenCallRealMethod();
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class, () -> entityUpdateService.updateResource(null));
@@ -109,7 +109,7 @@ public class EntityUpdateServiceTest {
         final var representation = resource.getRepresentation().get(0);
         final var artifact = representation.getInstance().get(0);
 
-        when(resourceUpdater.update(any())).thenReturn(getRequestedResource());
+        when(requestedResourceUpdater.update(any())).thenReturn(getRequestedResource());
         when(representationUpdater.update(any()))
                 .thenReturn(new io.dataspaceconnector.model.representation.Representation());
         when(artifactUpdater.update(any())).thenReturn(new ArtifactImpl());
@@ -118,7 +118,7 @@ public class EntityUpdateServiceTest {
         entityUpdateService.updateResource(resource);
 
         /* ASSERT */
-        verify(resourceUpdater, times(1)).update(resource);
+        verify(requestedResourceUpdater, times(1)).update(resource);
         verify(representationUpdater, times(1)).update(representation);
         verify(artifactUpdater, times(1)).update((Artifact) artifact);
     }
@@ -128,7 +128,7 @@ public class EntityUpdateServiceTest {
         /* ARRANGE */
         final var resource = getResource();
 
-        when(resourceUpdater.update(any())).thenThrow(ResourceNotFoundException.class);
+        when(requestedResourceUpdater.update(any())).thenThrow(ResourceNotFoundException.class);
 
         /* ACT */
         entityUpdateService.updateResource(resource);
@@ -143,7 +143,7 @@ public class EntityUpdateServiceTest {
         /* ARRANGE */
         final var resource = getResource();
 
-        when(resourceUpdater.update(any())).thenReturn(getRequestedResource());
+        when(requestedResourceUpdater.update(any())).thenReturn(getRequestedResource());
         when(representationUpdater.update(any())).thenThrow(ResourceNotFoundException.class);
 
         /* ACT */
@@ -275,7 +275,7 @@ public class EntityUpdateServiceTest {
                 .build();
     }
 
-    private io.dataspaceconnector.model.resource.Resource getRequestedResource() {
-        return resourceFactory.create(new ResourceDesc());
+    private RequestedResource getRequestedResource() {
+        return requestedResourceFactory.create(new RequestedResourceDesc());
     }
 }

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +15,42 @@
  */
 package io.dataspaceconnector.common.ids;
 
-import de.fraunhofer.iais.eis.*;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
+import de.fraunhofer.iais.eis.BaseConnectorBuilder;
+import de.fraunhofer.iais.eis.ConfigurationModel;
+import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
+import de.fraunhofer.iais.eis.ConfigurationModelImpl;
+import de.fraunhofer.iais.eis.Connector;
+import de.fraunhofer.iais.eis.ConnectorDeployMode;
+import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.ConnectorStatus;
+import de.fraunhofer.iais.eis.KeyType;
+import de.fraunhofer.iais.eis.LogLevel;
+import de.fraunhofer.iais.eis.PublicKeyBuilder;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.resource.type.CatalogService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mockito;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,32 +64,23 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ConnectorService.class})
 public class ConnectorServiceTest {
 
-    @MockBean
-    private DeserializationService deserializationService;
+    private ConfigContainer configContainer = Mockito.mock(ConfigContainer.class);
+    private CatalogService catalogService = Mockito.mock(CatalogService.class);
+    private IdsCatalogBuilder catalogBuilder = Mockito.mock(IdsCatalogBuilder.class);
+    @SuppressWarnings("unchecked")
+    private IdsResourceBuilder<OfferedResource> resourceBuilder = Mockito.mock(IdsResourceBuilder.class);
+    private OfferedResourceService offeredResourceService = Mockito.mock(OfferedResourceService.class);
 
-    @MockBean
-    private ConfigContainer configContainer;
-
-    @MockBean
-    private DapsTokenProvider tokenProvider;
-
-    @MockBean
-    private CatalogService catalogService;
-
-    @MockBean
-    private IdsCatalogBuilder catalogBuilder;
-
-    @MockBean
-    private IdsResourceBuilder resourceBuilder;
-
-    @MockBean
-    private ResourceService resourceService;
-
-    @Autowired
-    private ConnectorService connectorService;
+    private ConnectorService connectorService = new ConnectorService(
+            configContainer,
+            Mockito.mock(DapsTokenProvider.class),
+            catalogService,
+            catalogBuilder,
+            resourceBuilder,
+            offeredResourceService
+    );
 
     @Test
     public void getConnectorWithOfferedResources_returnConnectorWithCatalog() {
@@ -91,7 +94,7 @@ public class ConnectorServiceTest {
         when(catalogBuilder.create(eq(catalog), eq(0))).thenReturn(idsCatalog);
 
         /* ACT */
-        final var result = connectorService.getAppStoreWithAppResources();
+        final var result = connectorService.getConnectorWithOfferedResources();
 
         /* ASSERT */
         assertEquals(connector.getId(), result.getId());
@@ -119,7 +122,7 @@ public class ConnectorServiceTest {
         when(configContainer.getConnector()).thenReturn(connector);
 
         /* ACT */
-        final var result = connectorService.getAppStoreWithoutResources();
+        final var result = connectorService.getConnectorWithoutResources();
 
         /* ASSERT */
         assertEquals(connector.getId(), result.getId());
@@ -155,7 +158,7 @@ public class ConnectorServiceTest {
         connectorService.updateConfigModel();
 
         /* ASSERT */
-        final var connector = connectorService.getAppStoreWithAppResources();
+        final var connector = connectorService.getConnectorWithOfferedResources();
         final var configModelImpl = ((ConfigurationModelImpl) configModel);
         configModelImpl.setConnectorDescription(connector);
 
@@ -174,10 +177,10 @@ public class ConnectorServiceTest {
         /* ARRANGE */
         final var uuid = UUID.randomUUID();
         final var uri = URI.create("https://resource-id.com/" + uuid);
-        final var resource = getResource(uuid);
+        final var resource = getOfferedResource(uuid);
         final var idsResource = getIdsResource();
 
-        when(resourceService.getAll(Pageable.unpaged()))
+        when(offeredResourceService.getAll(Pageable.unpaged()))
                 .thenReturn(new PageImpl<>(List.of(resource)));
         when(resourceBuilder.create(resource)).thenReturn(idsResource);
 
@@ -194,9 +197,9 @@ public class ConnectorServiceTest {
         /* ARRANGE */
         final var uuid = UUID.randomUUID();
         final var uri = URI.create("https://resource-id.com/" + uuid);
-        final var resource = getResource(UUID.randomUUID());
+        final var resource = getOfferedResource(UUID.randomUUID());
 
-        when(resourceService.getAll(Pageable.unpaged()))
+        when(offeredResourceService.getAll(Pageable.unpaged()))
                 .thenReturn(new PageImpl<>(List.of(resource)));
 
         /* ACT */
@@ -211,7 +214,7 @@ public class ConnectorServiceTest {
      *************************************************************************/
 
     private Connector getConnector() {
-        return new AppStoreBuilder(URI.create("https://connector-id.com"))
+        return new BaseConnectorBuilder(URI.create("https://connector-id.com"))
                 ._maintainer_(URI.create("https://example.com"))
                 ._curator_(URI.create("https://example.com"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
@@ -269,8 +272,8 @@ public class ConnectorServiceTest {
     }
 
     @SneakyThrows
-    private Resource getResource(final UUID id) {
-        final var resourceConstructor = Resource.class.getDeclaredConstructor();
+    private OfferedResource getOfferedResource(final UUID id) {
+        final var resourceConstructor = OfferedResource.class.getDeclaredConstructor();
         resourceConstructor.setAccessible(true);
 
         final var resource = resourceConstructor.newInstance();
@@ -278,7 +281,7 @@ public class ConnectorServiceTest {
         return resource;
     }
 
-    private de.fraunhofer.iais.eis.Resource getIdsResource() {
+    private Resource getIdsResource() {
         return new ResourceBuilder(URI.create("https://resource-id.com")).build();
     }
 

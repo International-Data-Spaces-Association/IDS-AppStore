@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +15,49 @@
  */
 package io.dataspaceconnector.service;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.ArtifactBuilder;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractOfferBuilder;
+import de.fraunhofer.iais.eis.RepresentationBuilder;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.common.exception.InvalidResourceException;
-import io.dataspaceconnector.common.ids.DeserializationService;
-import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.common.net.QueryInput;
-import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.common.exception.InvalidResourceException;
+import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.service.resource.ids.builder.*;
-import io.dataspaceconnector.service.resource.type.*;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.ids.builder.IdsArtifactBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsContractBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsRepresentationBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
+import io.dataspaceconnector.service.resource.type.CatalogService;
+import io.dataspaceconnector.service.resource.type.ContractService;
+import io.dataspaceconnector.service.resource.type.RepresentationService;
+import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -46,10 +67,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -64,7 +88,10 @@ public class EntityResolverTest {
     private RepresentationService representationService;
 
     @MockBean
-    private ResourceService resourceService;
+    private ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+
+    @MockBean
+    private ResourceService<RequestedResource, RequestedResourceDesc> requestedService;
 
     @MockBean
     private CatalogService catalogService;
@@ -82,7 +109,7 @@ public class EntityResolverTest {
     private IdsCatalogBuilder catalogBuilder;
 
     @MockBean
-    private IdsResourceBuilder resourceBuilder;
+    private IdsResourceBuilder<OfferedResource> offerBuilder;
 
     @MockBean
     private IdsArtifactBuilder artifactBuilder;
@@ -97,15 +124,12 @@ public class EntityResolverTest {
     private AllowAccessVerifier allowAccessVerifier;
 
     @MockBean
-    private BlockingArtifactReceiver artifactReceiver;
+    private MultipartArtifactRetriever artifactReceiver;
 
     @MockBean
     private DeserializationService deserializationService;
 
-    @MockBean
-    private EndpointService endpointService;
-
-    @MockBean
+    @Autowired
     private EntityResolver resolver;
 
     private final UUID resourceId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
@@ -116,7 +140,22 @@ public class EntityResolverTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertEquals(Optional.empty(), resolver.getEntityById(null));
+        assertThrows(IllegalArgumentException.class, () -> resolver.getEntityById(null));
+    }
+
+    @Test
+    public void getEntityById_validArtifact_returnArtifact() {
+        /* ARRANGE */
+        final var resourceUri = URI.create("https://localhost:8080/api/artifacts/" + resourceId);
+        final var resource = getArtifact();
+        Mockito.doReturn(resource).when(artifactService).get(resourceId);
+
+        /* ACT */
+        final var result = resolver.getEntityById(resourceUri);
+
+        /* ASSERT */
+        assertTrue(result.isPresent());
+        assertEquals(resource, result.get());
     }
 
     @Test
@@ -139,8 +178,8 @@ public class EntityResolverTest {
     public void getEntityById_validOfferedResource_returnOfferedResource() {
         /* ARRANGE */
         final var resourceUri = URI.create("https://localhost:8080/api/offers/" + resourceId);
-        final var resource = getResource();
-        Mockito.doReturn(resource).when(resourceService).get(resourceId);
+        final var resource = getOfferedResource();
+        Mockito.doReturn(resource).when(offerService).get(resourceId);
 
         /* ACT */
         final var result = resolver.getEntityById(resourceUri);
@@ -259,9 +298,9 @@ public class EntityResolverTest {
     @Test
     public void getEntityAsRdfString_offeredResource_returnRdfString() {
         /* ARRANGE */
-        final var resource = getResource();
+        final var resource = getOfferedResource();
         final var idsResource = getIdsResource();
-        when(resourceBuilder.create(resource)).thenReturn(idsResource);
+        when(offerBuilder.create(resource)).thenReturn(idsResource);
 
         /* ACT */
         final var result = resolver.getEntityAsRdfString(resource);
@@ -353,7 +392,8 @@ public class EntityResolverTest {
         final var queryInput = new QueryInput();
         final var expect = new ByteArrayInputStream(new byte[]{});
 
-        Mockito.doReturn(expect).when(artifactService).getData(any(), any(), eq(endpointId), eq(queryInput));
+        Mockito.doReturn(expect).when(artifactService)
+                .getData(any(), any(), eq(endpointId), eq(queryInput), any());
 
         /* ACT */
         final var result = resolver.getDataByArtifactId(requestedArtifact, queryInput);
@@ -405,8 +445,8 @@ public class EntityResolverTest {
     }
 
     @SneakyThrows
-    private Resource getResource() {
-        final var constructor = Resource.class.getDeclaredConstructor();
+    private OfferedResource getOfferedResource() {
+        final var constructor = OfferedResource.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         final var output = constructor.newInstance();
         ReflectionTestUtils.setField(output, "id", resourceId);
@@ -476,12 +516,12 @@ public class EntityResolverTest {
                 .build();
     }
 
-    private de.fraunhofer.iais.eis.Resource getIdsResource() {
+    private Resource getIdsResource() {
         return new ResourceBuilder().build();
     }
 
-    private de.fraunhofer.iais.eis.AppRepresentation getIdsRepresentation() {
-        return new AppRepresentationBuilder().build();
+    private de.fraunhofer.iais.eis.Representation getIdsRepresentation() {
+        return new RepresentationBuilder().build();
     }
 
     private ResourceCatalog getIdsCatalog() {

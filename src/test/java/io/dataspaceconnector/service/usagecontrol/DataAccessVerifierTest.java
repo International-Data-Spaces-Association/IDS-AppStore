@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +28,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -62,6 +62,9 @@ public class DataAccessVerifierTest {
 
     @MockBean
     private EntityResolver entityResolver;
+
+    @MockBean
+    private SelfLinkHelper selfLinkHelper;
 
     @Autowired
     private DataAccessVerifier verifier;

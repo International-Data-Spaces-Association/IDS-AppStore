@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +19,7 @@ import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.config.ConnectorConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
 
 import java.net.URI;
 
@@ -32,11 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MockitoExtension.class)
 class SubscriptionFactoryTest {
 
-    @Mock
-    private ConnectorConfig connectorConfig;
+    private ConnectorConfig connectorConfig = Mockito.mock(ConnectorConfig.class);
 
     private final SubscriptionDesc desc = new SubscriptionDesc();
     private SubscriptionFactory factory;

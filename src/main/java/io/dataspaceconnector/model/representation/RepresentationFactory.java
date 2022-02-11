@@ -60,7 +60,7 @@ public class RepresentationFactory
      * The default distribution service assigned to all representations.
      */
     @Value("${registry.host}")
-    private URI defaultDistributionService = URI.create("set registry.host in application.properties");
+    private URI defaultDistributionService;
     /* AppStore Extension End */
 
     /**

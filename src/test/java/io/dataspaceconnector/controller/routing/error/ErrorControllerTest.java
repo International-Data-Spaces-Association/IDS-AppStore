@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +45,7 @@ class ErrorControllerTest {
 
     @Test
     void unauthorizedGetRouteErrors() throws Exception {
-        mockMvc.perform(get("/api/configmanager/route/error")).andExpect(status().isUnauthorized()).andReturn();
+        mockMvc.perform(get("/api/routes/error")).andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
@@ -70,6 +69,6 @@ class ErrorControllerTest {
     @Test
     @WithMockUser("ADMIN")
     void getRouteErrors() throws Exception {
-        mockMvc.perform(get("/api/configmanager/route/error")).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(get("/api/camel/routes/error")).andExpect(status().isOk()).andReturn();
     }
 }

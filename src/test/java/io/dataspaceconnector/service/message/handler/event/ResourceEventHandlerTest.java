@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +16,9 @@
 package io.dataspaceconnector.service.message.handler.event;
 
 import de.fraunhofer.iais.eis.ResourceBuilder;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.RequestedResourceService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,7 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
 class ResourceEventHandlerTest {
 
     @MockBean
-    private ResourceService requestedResourceService;
+    private RequestedResourceService requestedResourceService;
 
     @MockBean
     private SubscriberNotificationService subscriberNotificationSvc;
@@ -47,7 +46,7 @@ class ResourceEventHandlerTest {
     void handleResourceUpdateEvent_willCallNotifySubscriber() {
         /* ARRANGE */
         final var resource = new ResourceBuilder().build();
-        final var requestedResource = createResource();
+        final var requestedResource = createRequestedResource();
 
         Mockito.doReturn(Optional.of(requestedResource)).when(requestedResourceService).getEntityByRemoteId(eq(resource.getId()));
 
@@ -59,8 +58,8 @@ class ResourceEventHandlerTest {
     }
 
     @SneakyThrows
-    private Resource createResource() {
-        final var constructor = Resource.class.getDeclaredConstructor();
+    private RequestedResource createRequestedResource() {
+        final var constructor = RequestedResource.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         return constructor.newInstance();
     }

@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +21,14 @@ import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
-import de.fraunhofer.ids.messaging.endpoint.EndpointService;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
-import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.service.message.handler.ClearingHouseLoggingProcessor;
-import io.dataspaceconnector.service.resource.type.ResourceService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.annotation.DirtiesContext;
 
 import javax.xml.datatype.DatatypeFactory;
 import java.io.InputStream;
@@ -46,7 +39,6 @@ import java.util.GregorianCalendar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ArtifactRequestHandlerTest {
 
     @MockBean
@@ -66,31 +58,6 @@ class ArtifactRequestHandlerTest {
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
-    }
-
-    @SneakyThrows
-    @Test
-    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
-        /* ARRANGE */
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-
-        final var message = new ArtifactRequestMessageBuilder()
-                ._senderAgent_(URI.create("https://localhost:8080"))
-                ._issuerConnector_(URI.create("https://localhost:8080"))
-                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
-                ._modelVersion_("tetris")
-                ._issued_(xmlCalendar)
-                ._correlationMessage_(URI.create("https://somecorrelationMessage"))
-                ._requestedArtifact_(URI.create("https://someArtifact"))
-                .build();
-
-        /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ArtifactRequestMessageImpl) message, null);
-
-        /* ASSERT */
-        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
     }
 
     @SneakyThrows

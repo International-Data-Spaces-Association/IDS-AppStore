@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +15,11 @@
  */
 package io.dataspaceconnector.controller;
 
-import de.fraunhofer.iais.eis.AppStoreBuilder;
+import javax.validation.ConstraintViolationException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
@@ -28,13 +31,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.validation.ConstraintViolationException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class MainControllerTest {
 
     @MockBean
@@ -54,7 +50,7 @@ public class MainControllerTest {
     @Test
     public void getPublicSelfDescription_nothing_returnDescriptionWithOutDescription() throws Exception {
         /* ARRANGE */
-        final var connector = new AppStoreBuilder()
+        final var connector = new BaseConnectorBuilder()
                 ._curator_(URI.create("someCurator"))
                 ._outboundModelVersion_("9999")
                 ._maintainer_(URI.create("someMaintainer"))
@@ -64,7 +60,7 @@ public class MainControllerTest {
                         ._accessURL_(URI.create("https://accessUrl"))
                         .build())
                 .build();
-        Mockito.doReturn(connector).when(connectorService).getAppStoreWithoutResources();
+        Mockito.doReturn(connector).when(connectorService).getConnectorWithoutResources();
 
         /* ACT */
         final var result = mockMvc.perform(get("/")).andExpect(status().isOk()).andReturn();
@@ -76,10 +72,10 @@ public class MainControllerTest {
     @Test
     public void getPublicSelfDescription_serviceFails_InternalServerError() throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(ConstraintViolationException.class).when(connectorService).getAppStoreWithoutResources();
+        Mockito.doThrow(ConstraintViolationException.class).when(connectorService).getConnectorWithoutResources();
 
         /* ACT */
-        final var result = mockMvc.perform(get("/public"))
+        final var result = mockMvc.perform(get("/"))
                 .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
@@ -96,7 +92,7 @@ public class MainControllerTest {
     @WithMockUser("ADMIN")
     public void getPrivateSelfDescription_nothing_returnDescription() throws Exception {
         /* ARRANGE */
-        final var connector = new AppStoreBuilder()
+        final var connector = new BaseConnectorBuilder()
                 ._curator_(URI.create("someCurator"))
                 ._outboundModelVersion_("9999")
                 ._maintainer_(URI.create("someMaintainer"))
@@ -106,7 +102,7 @@ public class MainControllerTest {
                         ._accessURL_(URI.create("https://accessUrl"))
                         .build())
                 .build();
-        Mockito.doReturn(connector).when(connectorService).getAppStoreWithAppResources();
+        Mockito.doReturn(connector).when(connectorService).getConnectorWithOfferedResources();
 
         /* ACT */
         final var result =
@@ -121,7 +117,7 @@ public class MainControllerTest {
     @WithMockUser("ADMIN")
     public void getPrivateSelfDescription_serviceFails_InternalServerError() throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(ConstraintViolationException.class).when(connectorService).getAppStoreWithAppResources();
+        Mockito.doThrow(ConstraintViolationException.class).when(connectorService).getConnectorWithOfferedResources();
 
         /* ACT */
         final var result = mockMvc.perform(get("/api/connector"))
@@ -146,22 +142,38 @@ public class MainControllerTest {
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api")).andExpect(status().isOk()).andReturn();
 
-        assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"},"
-                     + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\","
-                     + "\"templated\":true},\"apps\":{\"href\":\"http://localhost/api/apps{?page,size}\",\"templated\":true},"
-                     + "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\",\"templated\":true},"
-                     + "\"catalogs\":{\"href\":\"http://localhost/api/catalogs{?page,size}\",\"templated\":true},"
-                     + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\","
-                     + "\"templated\":true},"
-                     + "\"endpoints\":{\"href\":\"http://localhost/api/endpoints{?page,size}\","
-                     + "\"templated\":true},"
-                     + "\"resources\":{\"href\":\"http://localhost/api/resources{?page,size}\",\"templated\":true},"
-                     + "\"representations\":{\"href\":\"http://localhost/api/representations"
-                     + "{?page,size}\",\"templated\":true},"
-                     + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
-                     + "\"templated\":true},"
-                     + "\"subscriptions\":{\"href\":\"http://localhost/api/subscriptions{?page,size}\","
-                     + "\"templated\":true}}}", result.getResponse().getContentAsString());
+        assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"}," +
+                        "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"apps\":{\"href\":\"http://localhost/api/apps{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"appstores\":{\"href\":\"http://localhost/api/appstores{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"brokers\":{\"href\":\"http://localhost/api/brokers{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"catalogs\":{\"href\":\"http://localhost/api/catalogs{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"datasources\":{\"href\":\"http://localhost/api/datasources{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"endpoints\":{\"href\":\"http://localhost/api/endpoints{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"offers\":{\"href\":\"http://localhost/api/offers{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"representations\":{\"href\":\"http://localhost/api/representations{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"routes\":{\"href\":\"http://localhost/api/routes{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"subscriptions\":{\"href\":\"http://localhost/api/subscriptions{?page,size}\"," +
+                        "\"templated\":true}}}",
+                result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
     }
 }

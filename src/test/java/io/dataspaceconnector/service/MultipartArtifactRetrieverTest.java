@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +15,9 @@
  */
 package io.dataspaceconnector.service;
 
+import de.fraunhofer.iais.eis.RejectionReason;
 import io.dataspaceconnector.common.exception.DataRetrievalException;
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -41,8 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {BlockingArtifactReceiver.class})
-public class BlockingArtifactReceiverTest {
+@SpringBootTest(classes = {MultipartArtifactRetriever.class})
+public class MultipartArtifactRetrieverTest {
 
     @MockBean
     private ArtifactRequestService messageService;
@@ -57,7 +58,7 @@ public class BlockingArtifactReceiverTest {
     private CamelContext camelContext;
 
     @Autowired
-    private BlockingArtifactReceiver blockingArtifactReceiver;
+    private MultipartArtifactRetriever multipartArtifactRetriever;
 
     @MockBean
     private ConnectorConfig connectorConfig;
@@ -71,7 +72,7 @@ public class BlockingArtifactReceiverTest {
         when(artifactService.get(any())).thenCallRealMethod();
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> blockingArtifactReceiver.retrieve(
+        assertThrows(IllegalArgumentException.class, () -> multipartArtifactRetriever.retrieve(
                 null, recipient, transferContract, null));
     }
 
@@ -95,7 +96,7 @@ public class BlockingArtifactReceiverTest {
         when(messageService.validateResponse(response)).thenReturn(true);
 
         /* ACT */
-        final var result = blockingArtifactReceiver.retrieve(
+        final var result = multipartArtifactRetriever.retrieve(
                 artifactId, recipient, transferContract, null);
 
         /* ASSERT */
@@ -116,14 +117,18 @@ public class BlockingArtifactReceiverTest {
         final var response = new HashMap<String, String>();
         response.put("payload", data);
 
+        final var exception = new UnexpectedResponseException(new HashMap<>() {{
+            put("reason", RejectionReason.BAD_PARAMETERS);
+        }});
+
         when(artifactService.get(artifactId)).thenReturn(artifact);
         when(messageService.sendMessage(recipient, artifact.getRemoteId(), transferContract,
-                null)).thenThrow(DataRetrievalException.class);
+                null)).thenThrow(exception);
         when(messageService.validateResponse(response)).thenReturn(false);
         when(messageService.getResponseContent(response)).thenReturn(new HashMap<>());
 
         /* ACT && ASSERT */
-        assertThrows(DataRetrievalException.class, () -> blockingArtifactReceiver
+        assertThrows(DataRetrievalException.class, () -> multipartArtifactRetriever
                 .retrieve(artifactId, recipient, transferContract, null));
     }
 

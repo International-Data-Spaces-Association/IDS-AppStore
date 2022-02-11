@@ -28,7 +28,7 @@ import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.RepresentationService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -50,7 +50,7 @@ public class RegistryWebhookService {
     /**
      * The app resource service.
      */
-    private final @NonNull ResourceService resourceSvc;
+    private final @NonNull OfferedResourceService resourceSvc;
 
     /**
      * The representation service.
@@ -153,13 +153,7 @@ public class RegistryWebhookService {
         // Get app by id. Throws ResourceNotFoundException if no app could be found.
         // TODO: Here resource id is the uuid. how to get the whole uri
 
-        final var entity = resourceSvc.get(resourceId);
-        // Entities should be Resources
-        if(!(entity instanceof Resource)) {
-            // Should not happen
-            throw new TemplateException("RegistryWebhookService is not implemented for Entities which are not Resources");
-        }
-        final var resource = (Resource) entity;
+        final var resource = resourceSvc.get(resourceId);
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 
@@ -274,13 +268,7 @@ public class RegistryWebhookService {
         final var resourceId = UUID.fromString(repoName);
 
         // Get app by id. Throws ResourceNotFoundException if no app could be found.
-        final var entity = resourceSvc.get(resourceId);
-        // Entities should be Resources
-        if(!(entity instanceof Resource)) {
-            // Should not happen
-            throw new WebhookException("RegistryWebhookService is not implemented for Entities which are not Resources");
-        }
-        final var resource = (Resource) entity;
+        final var resource = resourceSvc.get(resourceId);
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 
@@ -359,13 +347,7 @@ public class RegistryWebhookService {
         final var resourceId = UUID.fromString(repoName);
 
         // Get app by id. Throws ResourceNotFoundException if no app could be found.
-        final var entity = resourceSvc.get(resourceId);
-        // Entities should be Resources
-        if(!(entity instanceof Resource)) {
-            // Should not happen
-            throw new WebhookException("RegistryWebhookService is not implemented for Entities which are not Resources");
-        }
-        final var resource = (Resource) entity;
+        final var resource = resourceSvc.get(resourceId);
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 

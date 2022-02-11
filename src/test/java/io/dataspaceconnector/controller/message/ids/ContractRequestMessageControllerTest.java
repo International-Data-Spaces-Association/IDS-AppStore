@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +15,12 @@
  */
 package io.dataspaceconnector.controller.message.ids;
 
-import io.dataspaceconnector.service.resource.type.ResourceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,12 +32,6 @@ public class ContractRequestMessageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    RequestMappingHandlerMapping requestMappingHandlerMapping;
-
-    @MockBean
-    ResourceService resourceService;
 
     @Test
     @WithMockUser("ADMIN")

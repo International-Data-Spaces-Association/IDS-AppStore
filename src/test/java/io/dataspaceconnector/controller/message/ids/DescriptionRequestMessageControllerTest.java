@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +48,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -64,7 +62,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {DescriptionRequestMessageController.class, DefaultCamelContext.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class DescriptionRequestMessageControllerTest {
 
     @Mock
@@ -82,13 +79,11 @@ public class DescriptionRequestMessageControllerTest {
     @MockBean
     private ProducerTemplate producerTemplate;
 
-    @MockBean
+    @Autowired
     private DescriptionRequestMessageController controller;
 
     @MockBean
     private ConnectorConfig connectorConfig;
-
-
 
     @Test
     @SneakyThrows

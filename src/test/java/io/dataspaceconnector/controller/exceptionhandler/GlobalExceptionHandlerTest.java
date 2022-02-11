@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +33,7 @@ public class GlobalExceptionHandlerTest {
         final var exception = new RuntimeException("Some problem");
 
         /* ACT */
-        final var result = handler.handleAnyException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
@@ -46,7 +45,7 @@ public class GlobalExceptionHandlerTest {
         final var exception = new RuntimeException("Some problem");
 
         /* ACT */
-        final var result = handler.handleAnyException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertTrue(result.getHeaders().containsKey("X-Error"));
@@ -59,7 +58,7 @@ public class GlobalExceptionHandlerTest {
         final var exception = new RuntimeException("Some problem");
 
         /* ACT */
-        final var result = handler.handleAnyException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(MediaType.APPLICATION_JSON, result.getHeaders().getContentType());
@@ -74,7 +73,7 @@ public class GlobalExceptionHandlerTest {
         final var exception = new RuntimeException("Some problem");
 
         /* ACT */
-        final var result = handler.handleAnyException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(body, result.getBody());
@@ -87,7 +86,7 @@ public class GlobalExceptionHandlerTest {
         body.put("message", "An error occurred. Please try again later.");
 
         /* ACT */
-        final var result = handler.handleAnyException(null);
+        final var result = handler.handleException(null);
 
         /* ASSERT */
         assertEquals(body, result.getBody());

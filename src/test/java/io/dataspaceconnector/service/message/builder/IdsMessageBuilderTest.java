@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +15,8 @@
  */
 package io.dataspaceconnector.service.message.builder;
 
-import de.fraunhofer.iais.eis.AppStore;
-import de.fraunhofer.iais.eis.AppStoreBuilder;
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ConnectorUnavailableMessage;
@@ -101,7 +100,7 @@ public class IdsMessageBuilderTest {
 
     private final URI resourceId = URI.create("https://resource.com");
 
-    private final AppStore connector = getConnector();
+    private final BaseConnector connector = getConnector();
 
     private final Resource resource = getResource();
 
@@ -111,7 +110,7 @@ public class IdsMessageBuilderTest {
 
         when(connectorService.getOutboundModelVersion()).thenReturn("version");
         when(connectorService.getCurrentDat()).thenReturn(token);
-        when(connectorService.getAppStoreWithoutResources()).thenReturn(connector);
+        when(connectorService.getConnectorWithoutResources()).thenReturn(connector);
         when(connectorService.getConnectorId()).thenReturn(URI.create("https://connector.com"));
 
         when(exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class))
@@ -232,8 +231,8 @@ public class IdsMessageBuilderTest {
                 .build();
     }
 
-    private AppStore getConnector() {
-        return new AppStoreBuilder()
+    private BaseConnector getConnector() {
+        return new BaseConnectorBuilder()
                 ._curator_(URI.create("https://connector.com"))
                 ._outboundModelVersion_("version")
                 ._maintainer_(URI.create("https://connector.com"))

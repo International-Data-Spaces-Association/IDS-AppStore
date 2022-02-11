@@ -26,8 +26,10 @@
 <!--        <Logger name="org.springframework" level="debug">-->
 <!--            <AppenderRef ref="ConsoleAppender"/>-->
 <!--        </Logger>-->
-        <Logger name="org.hibernate" level="error"/>
-        <Logger name="io.dataspaceconnector" level="debug">
+        <Logger name="org.hibernate" level="error">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Logger name="io.dataspaceconnector" level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="camel-route-logger" level="debug"/>

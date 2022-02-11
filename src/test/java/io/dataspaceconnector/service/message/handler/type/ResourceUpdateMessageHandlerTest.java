@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +29,7 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.service.EntityUpdateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -55,13 +54,16 @@ import java.util.GregorianCalendar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ResourceUpdateMessageHandlerTest {
 
     @SpyBean
     EntityUpdateService updateService;
+
+    @SpyBean
+    ConnectorService connectorService;
 
     @Autowired
     ResourceUpdateMessageHandler handler;
@@ -80,19 +82,6 @@ class ResourceUpdateMessageHandlerTest {
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
-    }
-
-    @SneakyThrows
-    @Test
-    public void handleMessage_invalidVersion_returnVersionNotSupported() {
-        /* ARRANGE */
-        final var message = getResourceUpdateMessageWithInvalidVersion();
-
-        /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message, null);
-
-        /* ASSERT */
-        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
     }
 
     @SneakyThrows
@@ -227,6 +216,10 @@ class ResourceUpdateMessageHandlerTest {
 
         Mockito.doNothing().when(updateService).updateResource(Mockito.any());
         Mockito.doNothing().when(publisher).publishEvent(Mockito.any());
+        when(connectorService.getCurrentDat()).thenReturn(new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.JWT)
+                ._tokenValue_("value")
+                .build());
 
         /* ACT */
         final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message, payload);

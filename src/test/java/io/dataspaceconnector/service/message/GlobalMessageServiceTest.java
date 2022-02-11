@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +30,7 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
-import io.dataspaceconnector.service.resource.relation.BrokerResourceLinker;
+import io.dataspaceconnector.service.resource.relation.BrokerOfferedResourceLinker;
 import io.dataspaceconnector.service.resource.type.BrokerService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -64,7 +63,7 @@ class GlobalMessageServiceTest {
     private BrokerFactory brokerFactory;
 
     @MockBean
-    private BrokerResourceLinker brokerOfferedResourceLinker;
+    private BrokerOfferedResourceLinker brokerOfferedResourceLinker;
 
     @MockBean
     private BrokerService dscBrokerService;

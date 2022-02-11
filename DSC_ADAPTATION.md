@@ -3,6 +3,12 @@
 Changes in DSC code are marked with the comment
 `/* AppStore Extension */`
 
+## io.dsc.controller.MainController
+
+needs to be deleted, replace by MainController in de.fraunhofer.fit.appstore
+
+Test io.dataspaceconnector.controller.resource.view.ViewEqualsTest refers to MainController, needs also to be deleted
+
 ## io.dsc.common.ids.mapping.RdfConverter
 
 * Added 3 implementations of toRdf method:
@@ -74,11 +80,21 @@ final var appLink = linkTo(methodOn(RepresentationsToAppsController.class)
 view.add(appLink);
 ```
 
+## io.dsc.model.resource.Resource
+Add annotation `@Indexed` to enable Hibernate Full Text Search
+
+
 ## io.dsc.model.app.App
 
 Added property `representations`
 
+Add annotation `@Indexed` to enable Hibernate Full Text Search
+
 Added properties for SecurityScan and Registry
+
+## io.dsc.model.app.AppDesc
+
+similar as before
 
 ## io.dsc.model.endpoint
 
@@ -156,6 +172,9 @@ with
 final var connector = connectorService.getAppStoreWithAppResources();
 ```
 
+## io.dsc.service.message.handler.processor.DataRequestProcessor
+
+Added code in processInternal to contact RegistryService
 
 ## io.dsc.service.resource.ids.builder.IdsCatalogBuilder
 

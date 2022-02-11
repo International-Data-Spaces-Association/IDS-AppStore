@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.springframework.data.annotation.Version;
 
 import javax.persistence.Column;
@@ -56,6 +57,7 @@ import io.dataspaceconnector.model.representation.Representation;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
+@Indexed
 public class App extends NamedEntity implements RemoteObject {
 
     /**

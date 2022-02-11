@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +34,7 @@ public class JsonProcessingExceptionHandlerTest {
         final var exception = new JsonProcessingException("Some problem"){};
 
         /* ACT */
-        final var result = handler.handleJsonProcessingException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
@@ -47,7 +46,7 @@ public class JsonProcessingExceptionHandlerTest {
         final var exception = new JsonProcessingException("Some problem"){};
 
         /* ACT */
-        final var result = handler.handleJsonProcessingException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(MediaType.APPLICATION_JSON, result.getHeaders().getContentType());
@@ -62,7 +61,7 @@ public class JsonProcessingExceptionHandlerTest {
         final var exception = new JsonProcessingException("Some problem"){};
 
         /* ACT */
-        final var result = handler.handleJsonProcessingException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(body, result.getBody());
@@ -75,7 +74,7 @@ public class JsonProcessingExceptionHandlerTest {
         body.put("message", "Invalid input.");
 
         /* ACT */
-        final var result = handler.handleJsonProcessingException(null);
+        final var result = handler.handleException(null);
 
         /* ASSERT */
         assertEquals(body, result.getBody());

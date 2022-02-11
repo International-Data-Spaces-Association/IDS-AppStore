@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +21,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import org.apache.commons.codec.CharEncoding;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +59,9 @@ public class ExampleControllerIT {
                 ._description_(Util.asList(new TypedLiteral("provide-access")))
                 ._action_(Util.asList(Action.USE))
                 .build();
+        final var expectedResult = new JSONObject() {{
+            put("value", "PROVIDE_ACCESS");
+        }};
 
         Mockito.doReturn(permission).when(deserializationService).getRule(eq(permission.toRdf()));
 
@@ -68,7 +71,8 @@ public class ExampleControllerIT {
                                                                 .content(permission.toRdf()))
                                             .andExpect(status().isOk())
                                             .andReturn();
+        final var resultString = result.getResponse().getContentAsString();
 
-        assertEquals("\"PROVIDE_ACCESS\"", result.getResponse().getContentAsString());
+        assertEquals(expectedResult.toString(), resultString);
     }
 }

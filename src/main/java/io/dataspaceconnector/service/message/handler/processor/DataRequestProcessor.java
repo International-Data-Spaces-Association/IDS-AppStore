@@ -33,6 +33,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
+/* AppStore Extension */
+import com.fasterxml.jackson.annotation.JsonInclude;
+import de.fraunhofer.fit.appstore.model.portainer.Template;
+import de.fraunhofer.fit.appstore.services.registry.RegistryService;
+
 /**
  * Fetches the data of an artifact as the response to an ArtifactRequestMessage.
  */
@@ -51,6 +56,13 @@ class DataRequestProcessor extends IdsProcessor<
      * Service for resolving entities.
      */
     private final @NonNull EntityResolver entityResolver;
+
+    /* AppStore Extension */
+    /**
+     * Service for registry management.
+     */
+    private final @NonNull RegistryService registryService;
+    /* AppStore Extension  End */
 
     /**
      * Fetches the data of the requested artifact as the response payload and creates an
@@ -73,10 +85,30 @@ class DataRequestProcessor extends IdsProcessor<
         final var queryInput = getQueryInputFromPayload(msg.getBody());
         final var data = entityResolver.getDataByArtifactId(artifact, queryInput);
 
+        /* AppStore Extension */
+        // Add user credentials to template.
+        final var userCreds = registryService.createUserCredentialsForPullingImages();
+        userCreds.setEmail(null);
+        userCreds.setRealname(null);
+
+        final var objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        final var dataTmp = objectMapper.readValue(data.readAllBytes(), Template.class);
+        dataTmp.setRegistryUser(userCreds);
+
+        // TODO: EXCEPTION HANDLING FOR OBJECT MAPPING (JSON TO OBJECT AND OBJECT TO JSON)
+        final var newData
+                = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dataTmp);
+
+
+        /* AppStore Extension End */
         final var desc = new ArtifactResponseMessageDesc(issuer, messageId, transferContract);
         final var responseHeader = messageService.buildMessage(desc);
 
-        return new Response(responseHeader, Base64Utils.encodeToString(data.readAllBytes()));
+        // AppStore Extension
+        // return new Response(responseHeader, Base64Utils.encodeToString(data.readAllBytes()));
+        return new Response(responseHeader, newData);
     }
 
     /**

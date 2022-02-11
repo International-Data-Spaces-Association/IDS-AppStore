@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +15,18 @@
  */
 package io.dataspaceconnector.common.exception;
 
+import io.dataspaceconnector.service.routing.exception.NoSuitableTemplateException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExceptionTest {
+    @Test
+    void testNoSuitableTemplateException() {
+        final var exception = new NoSuitableTemplateException("test");
+        assertEquals("test", exception.getMessage());
+        assertEquals(exception.getClass(), NoSuitableTemplateException.class);
+    }
 
     @Test
     void testRouteCreationException() {

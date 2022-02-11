@@ -17,11 +17,10 @@ package de.fraunhofer.fit.appstore.services.template;
 
 import de.fraunhofer.fit.appstore.exceptions.TemplateException;
 import de.fraunhofer.fit.appstore.model.portainer.Template;
-import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.Resource;
-import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -45,7 +44,7 @@ public class ContainerTemplateService {
     /**
      * The resource service.
      */
-    private final @NonNull ResourceService resourceService;
+    private final @NonNull OfferedResourceService resourceService;
 
     /**
      * The registry host.
@@ -62,14 +61,7 @@ public class ContainerTemplateService {
      */
     public Template createContainerTemplate(final UUID resourceId)
             throws TemplateException {
-        final var entity = resourceService.get(resourceId);
-        // We should have a Resource
-        if(!(entity instanceof Resource)) {
-            // Should not happen
-            throw new TemplateException("ContainerTemplateService is not implemented for Entities which are not Resources");
-        }
-
-        final var resource = (Resource) entity;
+        final var resource = resourceService.get(resourceId);
         final var representation = resource.getRepresentations().get(0);
         final var app = representation.getDataApps().get(0);
 

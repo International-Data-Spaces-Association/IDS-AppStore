@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +15,30 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
-import io.dataspaceconnector.model.resource.ResourceDesc;
-import io.dataspaceconnector.model.resource.ResourceFactory;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.template.ResourceTemplate;
-import io.dataspaceconnector.service.resource.TemplateBuilder;
+import io.dataspaceconnector.service.message.AppStoreCommunication;
 import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
+import io.dataspaceconnector.service.resource.templatebuilder.AppTemplateBuilder;
+import io.dataspaceconnector.service.resource.templatebuilder.RequestedResourceTemplateBuilder;
 import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -38,27 +47,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = EntityPersistenceService.class)
+@SpringBootTest(classes = {
+        EntityPersistenceService.class
+})
 public class EntityPersistenceServiceTest {
 
     @MockBean
     private DeserializationService deserializationService;
 
     @MockBean
-    private TemplateBuilder templateBuilder;
+    private RequestedResourceTemplateBuilder templateBuilder;
+
+    @MockBean
+    private AppTemplateBuilder appTemplateBuilder;
 
     @MockBean
     private ArtifactService artifactService;
@@ -72,10 +79,14 @@ public class EntityPersistenceServiceTest {
     @MockBean
     private ContractManager contractManager;
 
+    @MockBean
+    private AppService appService;
+
+    @MockBean
+    private AppStoreCommunication appStoreCommunication;
+
     @Autowired
     private EntityPersistenceService entityPersistenceService;
-
-    private final ResourceService resourceService = new ResourceService();
 
     @Test
     @SuppressWarnings("unchecked")
@@ -122,8 +133,8 @@ public class EntityPersistenceServiceTest {
         return new ResourceBuilder().build();
     }
 
-    private io.dataspaceconnector.model.resource.Resource getRequestedResource() {
-        return new ResourceFactory().create(new ResourceDesc());
+    private RequestedResource getRequestedResource() {
+        return new RequestedResourceFactory().create(new RequestedResourceDesc());
     }
 
     private Artifact getArtifact(final String value) {

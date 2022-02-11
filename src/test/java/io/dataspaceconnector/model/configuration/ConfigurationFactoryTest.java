@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -256,8 +255,8 @@ public class ConfigurationFactoryTest {
         final var desc = new ConfigurationDesc();
         final var keystoreSettings = new KeystoreDesc();
         keystoreSettings.setPassword("RANDOM");
-        desc.setKeystoreSettings(keystoreSettings);
-        final var expected = keystoreFactory.create(desc.getKeystoreSettings());
+        desc.setKeystore(keystoreSettings);
+        final var expected = keystoreFactory.create(desc.getKeystore());
 
         /* ACT */
         final var result = factory.update(config, desc);
@@ -274,8 +273,8 @@ public class ConfigurationFactoryTest {
         final var desc = new ConfigurationDesc();
         final var truststoreSettings = new TruststoreDesc();
         truststoreSettings.setPassword("RANDOM");
-        desc.setTruststoreSettings(truststoreSettings);
-        final var expected = truststoreFactory.create(desc.getTruststoreSettings());
+        desc.setTruststore(truststoreSettings);
+        final var expected = truststoreFactory.create(desc.getTruststore());
 
         /* ACT */
         final var result = factory.update(config, desc);
@@ -439,9 +438,9 @@ public class ConfigurationFactoryTest {
     void update_sameKeystore_willNotUpdate() {
         /* ARRANGE */
         final var desc = new ConfigurationDesc();
-        desc.setKeystoreSettings(new KeystoreDesc());
+        desc.setKeystore(new KeystoreDesc());
         final var config = factory.create(desc);
-        final var expected = keystoreFactory.create(desc.getKeystoreSettings());
+        final var expected = keystoreFactory.create(desc.getKeystore());
 
         /* ACT */
         final var result = factory.update(config, desc);
@@ -455,9 +454,9 @@ public class ConfigurationFactoryTest {
     void update_sameTruststore_willNotUpdate() {
         /* ARRANGE */
         final var desc = new ConfigurationDesc();
-        desc.setTruststoreSettings(new TruststoreDesc());
+        desc.setTruststore(new TruststoreDesc());
         final var config = factory.create(desc);
-        final var expected = truststoreFactory.create(desc.getTruststoreSettings());
+        final var expected = truststoreFactory.create(desc.getTruststore());
 
         /* ACT */
         final var result = factory.update(config, desc);
@@ -471,7 +470,7 @@ public class ConfigurationFactoryTest {
     void update_newNullProxy_willUpdate() {
         /* ARRANGE */
         final var desc = new ConfigurationDesc();
-        desc.setProxySettings(new ProxyDesc());
+        desc.setProxy(new ProxyDesc());
         final var config = factory.create(desc);
 
         /* ACT */
@@ -486,9 +485,9 @@ public class ConfigurationFactoryTest {
     void update_newProxy_willUpdate() {
         /* ARRANGE */
         final var desc = new ConfigurationDesc();
-        desc.setProxySettings(new ProxyDesc());
+        desc.setProxy(new ProxyDesc());
         final var config = factory.create(new ConfigurationDesc());
-        final var expected = proxyFactory.create(desc.getProxySettings());
+        final var expected = proxyFactory.create(desc.getProxy());
 
         /* ACT */
         final var result = factory.update(config, desc);

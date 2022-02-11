@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +16,10 @@
 package io.dataspaceconnector.common.ids.mapping;
 
 import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.AppStore;
-import de.fraunhofer.iais.eis.AppStoreBuilder;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
@@ -247,7 +246,7 @@ public class RdfConverterTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(null);
+        final var result = MappingUtils.getKeywordsAsString(null);
 
         /* ASSERT */
         assertEquals(0, result.size());
@@ -256,7 +255,7 @@ public class RdfConverterTest {
     @Test
     public void getKeywordsAsString_keywordsEmpty_returnsEmptyList() {
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(new ArrayList<>());
+        final var result = MappingUtils.getKeywordsAsString(new ArrayList<>());
 
         /* ASSERT */
         assertTrue(result.isEmpty());
@@ -270,7 +269,7 @@ public class RdfConverterTest {
         final var keywords = new ArrayList<>(Collections.singletonList(keyword));
 
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(keywords);
+        final var result = MappingUtils.getKeywordsAsString(keywords);
 
         /* ASSERT */
         assertEquals(1, result.size());
@@ -287,7 +286,7 @@ public class RdfConverterTest {
         final var keywords = new ArrayList<>(Arrays.asList(keyword1, keyword2));
 
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(keywords);
+        final var result = MappingUtils.getKeywordsAsString(keywords);
 
         /* ASSERT */
         assertEquals(2, result.size());
@@ -301,7 +300,7 @@ public class RdfConverterTest {
         final var keywords = new ArrayList<>(Collections.singletonList(keyword));
 
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(keywords);
+        final var result = MappingUtils.getKeywordsAsString(keywords);
 
         /* ASSERT */
         assertEquals(1, result.size());
@@ -356,8 +355,8 @@ public class RdfConverterTest {
         return listValues.containsAll(values);
     }
 
-    private AppStore getBaseConnector() {
-        return new AppStoreBuilder(URI.create("https://w3id.org/idsa/autogen/baseConnector" +
+    private BaseConnector getBaseConnector() {
+        return new BaseConnectorBuilder(URI.create("https://w3id.org/idsa/autogen/baseConnector" +
                 "/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._maintainer_(URI.create("https://example.com"))
                 ._curator_(URI.create("https://example.com"))
