@@ -61,7 +61,7 @@ Ensure that at least **Java 11** is installed. To build and run the IDS App Stor
 1. Clone this repository: `git clone https://github.com/International-Data-Spaces-Association/IDS-AppStore.git`
 2. Create /data/search folder on the root with `cd /` and `mkdir -p /data/search`. If required, change the directory in src/main/resources/application.properties: `spring.jpa.properties.hibernate.search.backend.directory.root = /data/search`.
 3. Execute `cd IDS-AppStore`, `chmod +x mvnw` and `./mvnw clean package -DskipTests -Dmaven.javadoc.skip=true`.
-4. Navigate to `/target` and run `java -jar appstore-{VERSION}.jar`.
+4. Navigate to `/target` and run `sudo java -jar appstore-{VERSION}.jar`.
 
 If everything worked fine, the application is available at <https://localhost:8080/>. The API can be accessed at <https://localhost:8080/api>. The Swagger UI can be found at <https://localhost:8080/api/docs>.
 
