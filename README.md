@@ -21,7 +21,7 @@ If you want to build and run locally, ensure that at least Java 11 is installed.
 1.  Clone this repository.
 2.  Create /data/search folder on the root with `cd /` and `mkdir -p /data/search`
 3.  Execute `cd IDS-AppStore`, `chmod +x mvnw` and `./mvnw clean package -DskipTests -Dmaven.javadoc.skip=true`.
-5.  Navigate to `/target` and run `java -jar appstore-{VERSION}.jar`.
+5.  Navigate to `/target` and run `sudo java -jar appstore-{VERSION}.jar`.
 
 If everything worked fine, the application is available at https://localhost:8080/. The API can be accessed at https://localhost:8080/api. The Swagger UI can be found at https://localhost:8080/api/docs.
 
