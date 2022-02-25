@@ -105,9 +105,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Object> create(final EndpointDesc desc) {
-        if (isAppEndpoint(desc)) {
-            throw new MethodNotAllowed();
-        }
+//        if (isAppEndpoint(desc)) {
+//            throw new MethodNotAllowed();
+//        }
         return respondCreated(service.create(desc));
     }
 

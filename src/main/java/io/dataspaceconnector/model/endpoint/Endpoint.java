@@ -74,4 +74,11 @@ public class Endpoint extends Entity {
      * The type information.
      */
     private String type;
+
+    //TOTest  a solution for endpoint language =Null
+    /**
+     * The language of the endpoint.
+     */
+    private String language;
+
 }

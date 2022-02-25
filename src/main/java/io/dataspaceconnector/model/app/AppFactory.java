@@ -63,6 +63,8 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
         final var app = new AppImpl();
 
         app.setEndpoints(new ArrayList<>());
+        // TOTest a solution for endpoint language =Null
+        app.setRepresentations(new ArrayList<>());
 
         return app;
     }

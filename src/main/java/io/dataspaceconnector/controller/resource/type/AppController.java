@@ -22,10 +22,12 @@ import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
+import io.dataspaceconnector.controller.resource.base.BaseResourceNotificationController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.app.AppView;
+import io.dataspaceconnector.controller.resource.view.resource.OfferedResourceView;
 import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
@@ -33,10 +35,13 @@ import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.service.AppRouteResolver;
 import io.dataspaceconnector.service.appstore.portainer.PortainerService;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
+import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -90,21 +95,29 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      */
     private static final int DEFAULT_HTTPS_PORT = 443;
 
-    @Hidden
-    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-            description = ResponseDescription.METHOD_NOT_ALLOWED)
-    @Override
-    public final ResponseEntity<AppView> create(final AppDesc desc) {
-        throw new MethodNotAllowed();
-    }
+//    @Hidden
+//    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+//            description = ResponseDescription.METHOD_NOT_ALLOWED)
+//    @Override
+//    public final ResponseEntity<AppView> create(final AppDesc desc) {
+//            //    throw new MethodNotAllowed();
+//    }
 
-    @Hidden
-    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-            description = ResponseDescription.METHOD_NOT_ALLOWED)
-    @Override
-    public final ResponseEntity<AppView> update(final UUID resourceId, final AppDesc desc) {
-        throw new MethodNotAllowed();
-    }
+//    @RestController
+//    @RequestMapping(BasePath.APPS)
+//    @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
+//    public class OfferedResourceController extends BaseResourceNotificationController<App,
+//            AppDesc, AppView, AppService<App,AppDesc>> {
+//    }
+
+
+//    @Hidden
+//    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+//            description = ResponseDescription.METHOD_NOT_ALLOWED)
+//    @Override
+//    public final ResponseEntity<AppView> update(final UUID resourceId, final AppDesc desc) {
+//        throw new MethodNotAllowed();
+//    }
 
     /**
      * Get the AppStores related to the given app.

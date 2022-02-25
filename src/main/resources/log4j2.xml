@@ -20,7 +20,7 @@
         </RollingFile>-->
     </Appenders>
     <Loggers>
-        <Root level="info">
+        <Root level="debug">
             <AppenderRef ref="ConsoleAppender"/>
         </Root>
 <!--        <Logger name="org.springframework" level="debug">-->

@@ -15,7 +15,6 @@ Test io.dataspaceconnector.controller.resource.view.ViewEqualsTest refers to Mai
   * for AppStore
   * for DataApp
   * for Endpoint
-
 TODO: check whether toRdf(BaseConnector) needs to be deleted
 
 TODO: can we move additional methods to separate class?
@@ -23,6 +22,7 @@ TODO: can we move additional methods to separate class?
 ## io.dsc.common.ids.mapping.ToIdsObjectMapper
 
 * Added 3 methods
+--Ahmad yes, used in different locations
   * getAppEndpointType (currently not used, do we need it? Mapping of EndpointType to AppEndpointType not easy, why do we need it?)
   * getUsagePolicyClass
   * getListOfUsagePolicyClasses
@@ -30,6 +30,7 @@ TODO: can we move additional methods to separate class?
 TODO: can we move additional methods to separate class? --> should be possible, but requires change in caller's code
 
 TODO: requires also change of io.dsc.model.endpoint.EndpointType, which side effects?
+==============================================
 
 ## io.dsc.common.ids.ConnectorService
 
@@ -51,7 +52,6 @@ TODO: can we move additional methods to separate class? --> should be possible, 
 TODO: do we need to delete getConnectorWithOfferedResources and getConnectorWithoutResource?
 
 ## io.dsc.common.net.SelfLinkHelper
-
 TODO: probably needs adaptation for App, Endpoint, GenericEndpoint, ConnectorEndpoint, Route
 
 
@@ -60,7 +60,7 @@ TODO: probably needs adaptation for App, Endpoint, GenericEndpoint, ConnectorEnd
 Added Classes:
 * AppsToRepresentationsController
 * RepresentationsToAppsController
-
+--Ahmad yes that is needed and also we link them using the python script
 TODO: really required?
 
 ## io.dsc.controller.resource.view.representation.RepresentationView
@@ -83,6 +83,8 @@ view.add(appLink);
 ## io.dsc.model.resource.Resource
 Add annotation `@Indexed` to enable Hibernate Full Text Search
 
+--Ahmad Maybe we need to do the above for the io.dsc.model.resource.offeredResource
+
 
 ## io.dsc.model.app.App
 
@@ -97,7 +99,7 @@ Added properties for SecurityScan and Registry
 similar as before
 
 ## io.dsc.model.endpoint
-
+--Ahmed TOCheck
 Do we need to add mediaType, port, protocol, type?
 If yes, then Endpoint, EndpointDesc, EndpointFactory have to be updated.
 
@@ -214,3 +216,53 @@ TODO: Probably needs also updates...
 ## io.dsc.ConnectorApplication
 
 Add `"de.fraunhofer.fit.appstore.*"` to ComponentScan
+
+##Ahmad changes
+(1)
+comment parts to allow post /api/apps
+io.dataspaceconnector.controller.resource.type.AppController
+
+(2)
+io.dataspaceconnector.controller.resource.relation.AppsToEndpointsController
+Change BaseResourceChildRestrictedController to BaseResourceChildController to allow link the apps with endpoints
+
+(3)
+comment parts to allow post /api/apps
+io.dataspaceconnector.controller.resource.type.EndpointController
+
+(4)
+add some lines to find a solution when download an app and the endpoint language is Null
+the lines are titled with the comment "TOTest  a solution for endpoint language =Null"
+
+## io.dataspaceconnector.model.endpoint.EndpointFactory
+Added:
+public static final String DEFAULT_LANGUAGE = "EN";
+
+and
+protected final boolean updateLanguage(final Endpoint  endpoint, final String language) {
+final var newLanguage =
+FactoryUtils.updateString(endpoint.getLanguage(), language, DEFAULT_LANGUAGE);
+newLanguage.ifPresent(endpoint::setLanguage);
+        return newLanguage.isPresent();
+    }
+
+
+## io.dataspaceconnector.model.app.AppFactory
+
+Added:
+app.setRepresentations(new ArrayList<>());
+
+## io.dataspaceconnector.model.endpoint.Endpoint
+Added:
+private String language;
+
+
+
+(5)
+Update the python script to work with the new appstore version
+api/resources to api/offers also adding new properties of api/apps
+the current python is found under scripts/tests/
+
+TODO:
+#de.fraunhofer.fit.appstore.controller.ui.UiController
+# to replace component scan the assigned URLs of the VM servers.
