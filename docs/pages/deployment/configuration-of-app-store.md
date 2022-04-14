@@ -36,7 +36,7 @@ docker build . -t appstoreimage:latest
     66 container_name: appstore
     67 hostname: appstore
     68 image: ghcr.io/international-data-spaces-association/ids-appstore:main
-    ```
+```
 4. Install IDS certificate under (src/main/resources/conf)[https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/src/main/resources/conf] folder and update the following values in config.json:
 idsc:TEST_DEPLOYMENT will be replaced with idsc:PRODUCTIVE_DEPLOYMENT 
 keystore-localhost.p12 to be replaced with your IDS certificate, e.g., appstrore.srv.com.p12
