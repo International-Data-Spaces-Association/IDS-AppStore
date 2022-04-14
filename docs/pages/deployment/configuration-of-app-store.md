@@ -30,9 +30,21 @@ For enabling SSL for the Appstore server, we will use the folder deploy/local un
 ```
 docker build . -t appstoreimage:latest
 ```
-2. Change the Appstore docker  image
-3. Install IDS certificate under src/main/resources/conf folder and update values in config.json Productive mode and application.properties
-4. Change the docker image in docker-composer
-5. Insert you SSL certificates under deploy/local/SSL
-6. Update some values in INGex.conf 
-7. Run docker-compser 
+2. Replace the Appstore docker image in (docker-compose.yml)[https://github.com/International-Data-Spaces-Association/IDS-AppStore/blob/main/deploy/local/docker-compose.yml] at line 68 with your genereated Appstore docker image, e.g., appstoreimage:latest will replace ghcr.io/international-data-spaces-association/ids-appstore:main value, If the above docker command is used. 
+ ```
+    65 appstore:
+    66 container_name: appstore
+    67 hostname: appstore
+    68 image: ghcr.io/international-data-spaces-association/ids-appstore:main
+    ```
+4. Install IDS certificate under (src/main/resources/conf)[https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/src/main/resources/conf] folder and update the following values in config.json:
+idsc:TEST_DEPLOYMENT will be replaced with idsc:PRODUCTIVE_DEPLOYMENT 
+keystore-localhost.p12 to be replaced with your IDS certificate, e.g., appstrore.srv.com.p12
+*and application.properties
+6. Insert you SSL certificates under (deploy/local/SSL)[https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/ssl] folder
+7. Update some values in INGex.conf 
+8. Run docker-compser 
+ ```
+ docker-compose up 
+ ```
+ 9. Then, you will be access your app store sever with https://yourAppStoreURL
