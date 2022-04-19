@@ -32,6 +32,8 @@ It follows instructions on how to install each component.
 ## Installation  and Running of the Harbor Registry
 Make sure that your Harbor Registry installation is on a machine with a domain name (e.g., srv.registry.de), not on localhost. The full tutorial can be found under the following link: <https://goharbor.io/docs/2.5.0/install-config/>
 
+ Also Docker and Docker-compose are needed for Harbor Registry deployment. You can using this link [here](https://docs.docker.com/engine/install/) to install docker and for docker-compose installation [this link](https://docs.docker.com/compose/install/) can be used. 
+
 1. **Download**: 
 Download the latest Harbor release from the following website: <https://github.com/goharbor/harbor/releases> (currently version 2.5.0)
 
