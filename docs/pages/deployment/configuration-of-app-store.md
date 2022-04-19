@@ -48,7 +48,7 @@ docker build . -t appstoreimage:latest
  - `configuration.keyStorePassword=password` password to be replaced with your IDS certificate password. 
  - `idscp2.keystore=./src/main/resources/conf/keystore-localhost.p12` keystore-localhost.p12 to be changed with IDS certificate, e.g., appstrore.srv.com.p12
  - `server.ssl.enabled=true` true to be replaced with false to disable the default setting of enabling SSL using the IDS certificate, since it will be replaced with the SSL certificate configuration.
-4. Insert you SSL certificate files under [deploy/local/SSL](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/ssl) folder. Delete also the exsiting files `server.cert` and `server.key` and rename the given SSL certificate with server.cert and the given private key with `server.key`.
+4. Insert you SSL certificate files under [deploy/local/SSL](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/ssl) folder. Delete also the exsiting files `server.cert` and `server.key` and rename the given SSL certificate, e.g., cert.pem with `server.cert` and the given private key, e.g., key.pem with `server.key`.
 5. Run docker-composer command 
  ```
  docker-compose up 
