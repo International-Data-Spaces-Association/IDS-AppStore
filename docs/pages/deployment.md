@@ -46,7 +46,7 @@ Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect
 * Change the `hostname` to the domain name of your harbor registry.
 * Specify the location of your server certificate `cert.pem` and you private key `key.pem` under `certificate` and `private_key` values simultaneously.
 ```
-hostname: reg.mydomain.com #change to your harbor registry domain name,
+hostname: `**`reg.mydomain.com`**` #change to your harbor registry domain name,
 e.g., srv.registry.de
 
 # http related config
