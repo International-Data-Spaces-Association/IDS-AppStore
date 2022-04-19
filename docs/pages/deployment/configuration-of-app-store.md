@@ -45,7 +45,7 @@ docker build . -t appstoreimage:latest
 - keystore-localhost.p12 to be replaced with your IDS certificate, e.g., appstrore.srv.com.p12
  and application.properties
 4. Insert you SSL certificates under [deploy/local/SSL](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/ssl) folder
-5. Specify the location of your server certificate and you private in nginx.conf under deploy/local/config/ folder
+5. Specify the location of your server certificate and you private in [nginx.conf](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/config) under deploy/local/config/ folder
 6. Run docker-composer command 
  ```
  docker-compose up 
