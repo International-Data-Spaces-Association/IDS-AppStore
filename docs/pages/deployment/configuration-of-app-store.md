@@ -20,11 +20,11 @@ To link the App Store to the Harbor Registry, the `src/main/resources/applicatio
 You need to change `appstore.example.org` to your **Harbor Registry URL**.  
 
 
-# Deployment App Store as a SSL/HTTPS Standalone Server
+# Deployment App Store as an SSL/HTTPS Standalone Server
 
-To have Appstore working with its full-functionalities, AppStore needs to be installed on a separate server with correct IDS certificate and an SSL certificate which is generated for this server with its specific domain name.  An SSL certificate can be created from any of the internet Certificate Authorities or maybe you can contact your network Admin if you have one at your company.
+To have Appstore working with its full-functionalities, AppStore needs to be installed on a standalone server with a valid IDS certificate and a valid SSL certificate which are generated for this server with its specific domain name.  An SSL certificate can be created from any of the Internet Certificate Authorities or maybe you can contact your network/system admin at your company for this purpose.
 
-For enabling SSL for the Appstore server, we will use the folder deploy/local under the GitHub AppStore repo. Docker and Docker-compose will be used for deployment. You can using this link [here](https://docs.docker.com/engine/install/) to install docker and for docker-compose installation [this link](https://docs.docker.com/compose/install/) can be used. 
+For enabling SSL on Appstore server, we will use the folder deploy/local under the GitHub AppStore repo. Docker and Docker-compose will be used for deployment. You can using this link [here](https://docs.docker.com/engine/install/) to install docker and for docker-compose installation [this link](https://docs.docker.com/compose/install/) can be used. 
 
 1. After finishing the configurations under application.properties, a docker image for this AppStore needs to be created. You can use the following command on the root directory of the AppStore directory:
 ```
