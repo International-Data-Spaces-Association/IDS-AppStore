@@ -73,7 +73,7 @@ sudo ./install.sh
 
 ## Installation and Running of the App Store
 **Prerequisites:**
-- In order to have all of the functionalities of IDS App Store working, deployment on a separate server with HTTPS-enabled is required. Those deployment will be tackled in the [following section](https://international-data-spaces-association.github.io/IDS-AppStore/deployment/configuration-of-app-store).  
+- In order to have all of the functionalities of IDS App Store working, then IDS App Store deployment on a separate server with HTTPS-enabled is required. Those deployment steps will be tackled in the [following section](https://international-data-spaces-association.github.io/IDS-AppStore/deployment/configuration-of-app-store).  
 
 The App Store can be installed from the following GitHub repository: <https://github.com/International-Data-Spaces-Association/IDS-AppStore>
 
