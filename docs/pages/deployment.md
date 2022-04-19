@@ -102,18 +102,13 @@ If both the Connector and the App Store are installed on the same machine, the r
 
 Portainer can be installed via the following link: <https://docs.portainer.io/v/ce-2.6/start/install/server/docker>. Also, you can use the following two commands to run portainer, if you are using a Linux-based OS:
 ```
-
-```
 docker volume create portainer_data 
 ```
+```
 docker run -d -p 8000:8000 -p 9000:9000 -p 9443:9443 --name portainer \ 
-
 --network=host --restart=always \ 
-
 -v /var/run/docker.sock:/var/run/docker.sock \ 
-
 -v portainer_data:/data \ 
-
 portainer/portainer-ce:2.6.2 
 ```
 
