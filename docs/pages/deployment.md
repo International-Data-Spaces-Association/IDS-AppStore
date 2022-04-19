@@ -44,9 +44,9 @@ If there is an old installation, remove the old harbor data folders: `rm -r /dat
 4. **Configure the Harbor yml file**: 
 Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect when you run the `install.sh` script to install or reconfigure Harbor. The following information must be edited in the file: 
 * Change the `hostname` to the domain name of your harbor registry.
-* Specify the location of your server certificate `cert.pem` and you private key `key.pem` under `certificate` and `private_key` values simultaneously.
+* Specify the location of your server certificate `cert.pem` and you private key `key.pem` files under `certificate` and `private_key` values simultaneously, as follows.
 ```
-hostname: `**`reg.mydomain.com`**` #change to your harbor registry domain name,
+hostname: reg.mydomain.com #change to your harbor registry domain name,
 e.g., srv.registry.de
 
 # http related config
@@ -59,8 +59,10 @@ https:
   # https port for harbor, default is 443
   port: 443
   # The path of cert and key files for nginx
-  certificate: /your/certificate/path
-  private_key: /your/private/key/path
+  certificate: /your/certificate/path # give your certificate path, e.g.,
+  /data/harborkeys/cert.pem
+  private_key: /your/private/key/path # give your key path, e.g., 
+  /data/harborkeys/key.pem
 ```
 
 5. **Run the installer script**:
