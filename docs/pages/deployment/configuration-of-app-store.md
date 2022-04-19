@@ -20,7 +20,7 @@ To link the App Store to the Harbor Registry, the `src/main/resources/applicatio
 You need to change `appstore.example.org` to your **Harbor Registry URL**.  
 
 
-# Deployment App Store with SSL Certificates
+# Deployment App Store as a Standalone Server with HTTPS
 
 To have Appstore working with its full-functionalities, AppStore needs to be installed on a separate server with correct IDS certificate and an SSL certificate which is generated for this server with its specific domain name.  An SSL certificate can be created from any of the internet Certificate Authorities or maybe you can contact your network Admin if you have one at your company.
 
