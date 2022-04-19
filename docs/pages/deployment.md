@@ -39,11 +39,11 @@ Download the latest Harbor release from the following website: <https://github.c
 Extract the downloaded file: `sudo tar xvf harbor-offline-installer-version.tgz`. 
 If there is an old installation, remove the old harbor data folders: `rm -r /data/database rm -r /data/registry` 
 
-3. **[Configure HTTPS Access to Harbor](https://goharbor.io/docs/2.5.0/install-config/configure-https/)**: A valid SSL certificate is required to enable https on the registry server.
+3. **[Configure HTTPS Access to Harbor](https://goharbor.io/docs/2.5.0/install-config/configure-https/)**: A valid SSL certificate is required to enable https on the registry server. An SSL certificate can be created from any of the internet Certificate Authorities or maybe you can contact your network Admin if you have one at your company. Normally, you will have two files: the certificate, e.g., `cert.pem` and the  private key, e.g., `key.pem`.
 
 4. **Configure the Harbor yml file**: 
 Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect when you run the `install.sh` script to install or reconfigure Harbor. The following information must be edited in the file: 
-* Changed the hostname to the domain name of your harbor registry.
+* Change the hostname to the domain name of your harbor registry.
 * Specify the location of your server certificate `cert.pem` and you private key `key.pem`.
 
 5. **Run the installer script**:
