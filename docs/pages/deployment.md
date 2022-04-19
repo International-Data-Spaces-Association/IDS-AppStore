@@ -51,11 +51,9 @@ Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect
 ```
 hostname: reg.mydomain.com #change to your harbor registry domain name,
 e.g., srv.registry.de
-
 http:
   # port for http, default is 80. If https enabled, this port will redirect to https port
   port: 80
-
 https:
   # https port for harbor, default is 443
   port: 443
@@ -102,7 +100,6 @@ Portainer can be installed via the following link: <https://docs.portainer.io/v/
 ```
 docker volume create portainer_data 
 ```
-and 
 ```
 docker run -d -p 8000:8000 -p 9000:9000  --name portainer  --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:2.6.2 
 ```
