@@ -30,19 +30,21 @@ The connections between the above components are shown in the following figure:
 It follows instructions on how to install each component.
 
 ## Installation  and Running of the Harbor Registry
-It is advisable to have the registry install on a machine which have a domain name, not on localhost. Here the core instructions to install the Harbor Registry is given, using `sudo`. The full tutorial can be found under the following link: <https://goharbor.io/docs/2.4.0/install-config/>
+Make sure that your Harbor Registry installation is on a machine with a domain name (e.g., srv.registry.de), not on localhost. The full tutorial can be found under the following link: <https://goharbor.io/docs/2.5.0/install-config/>
 
 1. **Download**: 
-Download the latest Harbor release from the following website: <https://github.com/goharbor/harbor/releases> (currently version 2.4.1)
+Download the latest Harbor release from the following website: <https://github.com/goharbor/harbor/releases> (currently version 2.5.0)
 
 2. **Extract**: 
 Extract the downloaded file: `sudo tar xvf harbor-offline-installer-version.tgz`. 
 If there is an old installation, remove the old harbor data folders: `rm -r /data/database rm -r /data/registry` 
 
-3. **[Configure HTTPS Access to Harbor](https://goharbor.io/docs/2.4.0/install-config/configure-https/)**
+3. **[Configure HTTPS Access to Harbor](https://goharbor.io/docs/2.5.0/install-config/configure-https/)**: A valid SSL certificate is required to enable https on the registry server.
 
 4. **Configure the Harbor yml file**: 
-Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect when you run the `install.sh` script to install or reconfigure Harbor.
+Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect when you run the `install.sh` script to install or reconfigure Harbor. The following information must be edited in the file: 
+* Changed the hostname to the domain name of your harbor registry.
+* Specify the location of your server certificate `cert.pem` and you private key `key.pem`.
 
 5. **Run the installer script**:
 Run the following commands:
