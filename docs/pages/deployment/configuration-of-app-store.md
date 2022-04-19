@@ -24,25 +24,25 @@ You need to change `appstore.example.org` to your **Harbor Registry URL**.
 
 To have Appstore working with its full-functionalities, AppStore needs to be installed on a separate server with correct IDS certificate and an SSL certificate which is generated for this server with its specific domain name.  An SSL certificate can be created from any of the internet Certificate Authorities or maybe you can contact your network Admin if you have one at your company.
 
-For enabling SSL for the Appstore server, we will use the folder deploy/local under the GitHub AppStore repo. Docker and Docker-compose will be used for deployment. You can using this link here to install docker and for docker-compose installation this link can be used. 
+For enabling SSL for the Appstore server, we will use the folder deploy/local under the GitHub AppStore repo. Docker and Docker-compose will be used for deployment. You can using this link [here](https://docs.docker.com/engine/install/) to install docker and for docker-compose installation [this link](https://docs.docker.com/compose/install/) can be used. 
 
 1. After finishing the configurations under application.properties, a docker image for this AppStore needs to be created. You can use the following command on the root directory of the AppStore directory:
 ```
 docker build . -t appstoreimage:latest
 ```
-2. Replace the Appstore docker image in (docker-compose.yml)[https://github.com/International-Data-Spaces-Association/IDS-AppStore/blob/main/deploy/local/docker-compose.yml] at line 68 with your genereated Appstore docker image, e.g., appstoreimage:latest will replace ghcr.io/international-data-spaces-association/ids-appstore:main value, If the above docker command is used. 
+2. Replace the Appstore docker image in [docker-compose.yml](https://github.com/International-Data-Spaces-Association/IDS-AppStore/blob/main/deploy/local/docker-compose.yml) at line 68 with your genereated Appstore docker image, e.g., appstoreimage:latest will replace ghcr.io/international-data-spaces-association/ids-appstore:main value, If the above docker command is used. 
  ```
     65 appstore:
     66 container_name: appstore
     67 hostname: appstore
     68 image: ghcr.io/international-data-spaces-association/ids-appstore:main
 ```
-4. Install IDS certificate under (src/main/resources/conf)[https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/src/main/resources/conf] folder and update the following values in config.json:
+4. Install IDS certificate under [src/main/resources/conf](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/src/main/resources/conf) folder and update the following values in config.json:
 idsc:TEST_DEPLOYMENT will be replaced with idsc:PRODUCTIVE_DEPLOYMENT 
 keystore-localhost.p12 to be replaced with your IDS certificate, e.g., appstrore.srv.com.p12
 *and application.properties
-6. Insert you SSL certificates under (deploy/local/SSL)[https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/ssl] folder
-7. Update some values in INGex.conf 
+6. Insert you SSL certificates under [deploy/local/SSL](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/ssl) folder
+7. Update some values in deploy/local/config/nginx.conf 
 8. Run docker-compser 
  ```
  docker-compose up 
