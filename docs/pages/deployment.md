@@ -73,7 +73,7 @@ Run the following commands:
 sudo ./prepare 
 sudo ./install.sh
 ```
-6. **Access the harbor registry server with HTTPS**: you will be able to access your server with under `https://yourHarborRegistryDomainName` e.g., `https://srv.registry.de`. In this configurations we assumed that you are running this server with the default https port number `443`. In case, another port number is used, then you can access it under the template URL `https://yourHarborRegistryDomainName:yourPortNumber`. Also, make sure that you allow the access to your server from outside, if it is running behind a firewall or a proxy server. 
+6. **Access the harbor registry server with HTTPS**: you will be able to access your server with under `https://yourHarborRegistryDomainName` e.g., `https://srv.registry.de`. In this configurations, we assumed that you are running this server with the default https port number `443`. In case, another port number is used, then you can access it under the template URL `https://yourHarborRegistryDomainName:yourPortNumber`. Also, make sure that you allow the access to your server from outside, if it is running behind a firewall or a proxy server. 
 
 ## Installation and Running of the App Store
 The App Store can be installed from the following GitHub repository: <https://github.com/International-Data-Spaces-Association/IDS-AppStore>
@@ -100,8 +100,24 @@ Instructions on how to install the Dataspace Connector can be found at the follo
 
 If both the Connector and the App Store are installed on the same machine, the running port must be changed in the `src/main/resources/application.properties` file. 8080 must be replaced with the number you choose, e.g., 8085.   
 
-Portainer can be installed via the following link: <https://docs.portainer.io/v/ce-2.6/start/install/server/docker>.
-The Connector is configured to connect to Portainer on port 9000.
+Portainer can be installed via the following link: <https://docs.portainer.io/v/ce-2.6/start/install/server/docker>. Also, you can use the following two commands to run portainer, if you are using a Linux-based OS:
+```
+
+```
+docker volume create portainer_data 
+```
+docker run -d -p 8000:8000 -p 9000:9000 -p 9443:9443 --name portainer \ 
+
+--network=host --restart=always \ 
+
+-v /var/run/docker.sock:/var/run/docker.sock \ 
+
+-v portainer_data:/data \ 
+
+portainer/portainer-ce:2.6.2 
+```
+
+The Connector is configured to connect to Portainer on port 9000, e.g., <http://localhost:9000>
 
 
 
