@@ -26,7 +26,7 @@ To have Appstore working with its full-functionalities, AppStore needs to be ins
 
 For enabling SSL on Appstore server, we will use the folder deploy/local under the  [AppStore repo](https://github.com/International-Data-Spaces-Association/IDS-AppStore). Also, Docker and Docker-compose will be used for deployment. You can using this link [here](https://docs.docker.com/engine/install/) to install docker and for docker-compose installation [this link](https://docs.docker.com/compose/install/) can be used. 
 
-It is assumed that have started with [Installation and Running of the App Store](https://international-data-spaces-association.github.io/IDS-AppStore/deployment#installation-and-running-of-the-app-store) steps and the above [Configuration of App Store](https://international-data-spaces-association.github.io/IDS-AppStore/deployment/configuration-of-app-store#configuration-of-app-store) according to your required configurations. 
+It is assumed that have started with [Installation and Running of the App Store](https://international-data-spaces-association.github.io/IDS-AppStore/deployment#installation-and-running-of-the-app-store) steps and the above [Configuration of App Store](https://international-data-spaces-association.github.io/IDS-AppStore/deployment/configuration-of-app-store#configuration-of-app-store) according to your settings and configurations. 
 
 
 1. After finishing the configurations under application.properties, a docker image for this AppStore needs to be created. You can use the following command at the root  of the AppStore directory:
