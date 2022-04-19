@@ -45,8 +45,8 @@ If there is an old installation, remove the old harbor data folders: `rm -r /dat
 
 - **Configure the Harbor yml file**: 
 Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect when you run the `install.sh` script to install or reconfigure Harbor. The following information must be edited in the file: 
--- Change the `hostname` to the domain name of your harbor registry.
--- Specify the location of your server certificate `cert.pem` and you private key `key.pem` files under `certificate` and `private_key` values simultaneously, as follows.
+ -- Change the `hostname` to the domain name of your harbor registry.
+ -- Specify the location of your server certificate `cert.pem` and you private key `key.pem` files under `certificate` and `private_key` values simultaneously, as follows.
 
 ```
 hostname: reg.mydomain.com #change to your harbor registry domain name,
