@@ -72,6 +72,9 @@ sudo ./install.sh
 - **Access the harbor registry server with HTTPS**: you will be able to access your server with under `https://yourHarborRegistryDomainName` e.g., `https://srv.registry.de`. In this configurations, we assumed that you are running this server with the default https port number `443`. In case, another port number is used, then you can access it under the template URL `https://yourHarborRegistryDomainName:yourPortNumber`. Also, make sure that you allow the access to your server from outside, if it is running behind a firewall or a proxy server. 
 
 ## Installation and Running of the App Store
+**Prerequisites:**
+- In order to have all of the functionalities of IDS App Store working, deployment on a separate server with HTTPS-enabled is required. Those deployment will be tackled in the [following section](https://international-data-spaces-association.github.io/IDS-AppStore/deployment/configuration-of-app-store).  
+
 The App Store can be installed from the following GitHub repository: <https://github.com/International-Data-Spaces-Association/IDS-AppStore>
 
 It follows instructions on how to install and run the App Store:
