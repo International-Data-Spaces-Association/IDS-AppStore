@@ -48,16 +48,14 @@ Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect
 * Change the `hostname` to the domain name of your harbor registry.
 * Specify the location of your server certificate `cert.pem` and you private key `key.pem` files under `certificate` and `private_key` values simultaneously, as follows.
 
-`
+```
 hostname: reg.mydomain.com #change to your harbor registry domain name,
 e.g., srv.registry.de
 
-# http related config
 http:
   # port for http, default is 80. If https enabled, this port will redirect to https port
   port: 80
 
-# https related config
 https:
   # https port for harbor, default is 443
   port: 443
@@ -66,7 +64,7 @@ https:
   /data/harborkeys/cert.pem
   private_key: /your/private/key/path # give your key path, e.g., 
   /data/harborkeys/key.pem
-`
+```
 
 5. **Run the installer script**:
 Run the following commands:
