@@ -65,7 +65,6 @@ https:
   private_key: /your/private/key/path # give your key path, e.g., 
   /data/harborkeys/key.pem
 ```
-
 5. **Run the installer script**:
 Run the following commands:
 ```
