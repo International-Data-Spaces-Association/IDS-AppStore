@@ -37,14 +37,14 @@ docker build . -t appstoreimage:latest
     67 hostname: appstore
     68 image: ghcr.io/international-data-spaces-association/ids-appstore:main
 ```
-4. Install IDS certificate under [src/main/resources/conf](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/src/main/resources/conf) folder and update the following values in config.json:
+3. Install IDS certificate under [src/main/resources/conf](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/src/main/resources/conf) folder and update the following values in config.json:
 idsc:TEST_DEPLOYMENT will be replaced with idsc:PRODUCTIVE_DEPLOYMENT 
 keystore-localhost.p12 to be replaced with your IDS certificate, e.g., appstrore.srv.com.p12
  and application.properties
-6. Insert you SSL certificates under [deploy/local/SSL](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/ssl) folder
-7. Update some values in deploy/local/config/nginx.conf 
-8. Run docker-compser 
+4. Insert you SSL certificates under [deploy/local/SSL](https://github.com/International-Data-Spaces-Association/IDS-AppStore/tree/main/deploy/local/ssl) folder
+5. Update some values in deploy/local/config/nginx.conf 
+6. Run docker-compser 
  ```
  docker-compose up 
  ```
- 9. Then, you will be access your app store sever with `https://yourAppStoreURL`
+ 7. Then, you will be access your app store sever with `https://yourAppStoreURL`
