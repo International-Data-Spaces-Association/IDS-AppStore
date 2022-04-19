@@ -10,14 +10,14 @@ parent: Deployment
 
 To link the App Store to the Harbor Registry, the `src/main/resources/application.properties` file must be configured. Adjust the following properties according to your registry URL:
 
-* The container registry hostname, use the **Harbor Registry Hostname** <br> `registry.host=appstore.example.org`
-* The container registry url, use the **Harbor Registry URL** <br> `registry.url=https://appstore.example.org`
+* The container registry hostname, use the **Harbor Registry Hostname** <br> `registry.host=registry.example.org`
+* The container registry url, use the **Harbor Registry URL** <br> `registry.url=https://registry.example.org`
 * The container registry project to use for this appstore instance <br> `registry.project=projectName`
-* The container registry api url <br> `registry.api.url=https://appstore.example.org/api/v2.0`
+* The container registry api url <br> `registry.api.url=https://registry.example.org/api/v2.0`
 * The container registry api username <br> `registry.client.user=apiUser`
 * The container registry api password <br> `registry.client.password=password`
 
-You need to change `appstore.example.org` to your **Harbor Registry Hostname**.  
+You need to change `registry.example.org` to your **Harbor Registry Hostname**.  
 
 
 # Deployment App Store as an SSL/HTTPS Standalone Server
