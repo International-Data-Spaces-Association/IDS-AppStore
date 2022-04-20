@@ -32,21 +32,23 @@ It follows instructions on how to install each component.
 ## Installation  and Running of the Harbor Registry
 Make sure that your Harbor Registry installation is on a machine with a domain name (e.g., srv.registry.de), not on localhost. The full tutorial can be found under the following link: <https://goharbor.io/docs/2.5.0/install-config/>
 
- Also Docker and Docker-compose are needed for Harbor Registry deployment. You can using this link [here](https://docs.docker.com/engine/install/) to install docker and for docker-compose installation [this link](https://docs.docker.com/compose/install/) can be used. 
+Docker and Docker-compose are also required for Harbor Registry deployment. To install Docker, you can use [this link](https://docs.docker.com/engine/install/). To install Docker-compose, you can use [this link](https://docs.docker.com/compose/install/).
 
-- **Download**: 
+1. **Download**: 
 Download the latest Harbor release from the following website: <https://github.com/goharbor/harbor/releases> (currently version 2.5.0)
 
-- **Extract**: 
+2. **Extract**: 
 Extract the downloaded file: `sudo tar xvf harbor-offline-installer-version.tgz`. 
 If there is an old installation, remove the old harbor data folders: `rm -r /data/database rm -r /data/registry` 
 
-- **[Configure HTTPS Access to Harbor](https://goharbor.io/docs/2.5.0/install-config/configure-https/)**: A valid SSL certificate is required to enable https on the registry server. An SSL certificate can be created from any of the internet Certificate Authorities or maybe you can contact your network Admin if you have one at your company. Normally, you will have two files: the certificate, e.g., `cert.pem` and the  private key, e.g., `key.pem`.
+3. **[Configure HTTPS Access to Harbor](https://goharbor.io/docs/2.5.0/install-config/configure-https/)**: A valid SSL certificate is required to enable https on the registry server. An SSL certificate can be created by any certificate authority on the Internet. Alternatively, you can contact your company's network administrator. Usually you have two files: (1) a certificate (e.g., `cert.pem`), (2) a private key (e.g., `key.pem`).
 
-- **Configure the Harbor yml file**: 
+4. **Configure the Harbor yml file**: 
 Edit `harbor.yml.tmpl` and rename it to `harbor.yml`. The parameters take effect when you run the `install.sh` script to install or reconfigure Harbor. The following information must be edited in the file: 
    <br />-- Change the `hostname` to the domain name of your harbor registry.
-   <br />-- Specify the location of your server certificate `cert.pem` and you private key `key.pem` files under `certificate` and `private_key` values simultaneously, as follows.
+   <br />-- Specify the location of your server certificate `cert.pem` and your private key `key.pem`.
+   
+You can see below the corresponding section of the `harbor.yml` file.
 
 ```
 hostname: reg.mydomain.com #change to your harbor registry domain name,
@@ -63,17 +65,21 @@ https:
   private_key: /your/private/key/path # give your key path, e.g., 
   /data/harborkeys/key.pem
 ```
-- **Run the installer script**:
+
+5. **Run the installer script**:
 Run the following commands:
 ```
 sudo ./prepare 
 sudo ./install.sh
 ```
-- **Access the harbor registry server with HTTPS**: you will be able to access your server with under `https://yourHarborRegistryDomainName` e.g., `https://srv.registry.de`. In this configurations, we assumed that you are running this server with the default https port number `443`. In case, another port number is used, then you can access it under the template URL `https://yourHarborRegistryDomainName:yourPortNumber`. Also, make sure that you allow the access to your server from outside, if it is running behind a firewall or a proxy server. 
+
+6. **Access the harbor registry server with HTTPS**: You can access your server at `https://yourHarborRegistryDomainName`, which is `https://srv.registry.de` in the example given in this documentation. In this configuration, we assume that you are running the server with the default `443`. If you are using a different port number, you can access it at the template URL `https://yourHarborRegistryDomainName:yourPortNumber`. Make sure that you allow access to your server from outside if it is running behind a firewall or proxy server.
+
 
 ## Installation and Running of the App Store
+
 **Prerequisites:**
-- In order to have all of the functionalities of IDS App Store working, then IDS App Store deployment on a separate server with HTTPS-enabled is required. Those deployment steps will be tackled in the [following section](https://international-data-spaces-association.github.io/IDS-AppStore/deployment/configuration-of-app-store).  
+To use all the features of the IDS App Store, the IDS App Store must be deployed on a separate server with HTTPS enabled. The deployment steps are covered in the section [Configuration of App Store](https://international-data-spaces-association.github.io/IDS-AppStore/deployment/configuration-of-app-store).  
 
 The App Store can be installed from the following GitHub repository: <https://github.com/International-Data-Spaces-Association/IDS-AppStore>
 
