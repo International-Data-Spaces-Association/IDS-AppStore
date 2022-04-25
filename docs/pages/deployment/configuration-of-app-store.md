@@ -53,4 +53,4 @@ docker build . -t appstoreimage:latest
  ```
  docker-compose up 
  ```
- 6. Then, you will be access your app store sever with `https://yourAppStoreURL`. Also, make sure that you allow the access to your server from outside, if it is running behind a firewall or a proxy server.
+ 6. Then, you will be access your app store UI with `https://yourAppStoreHostname`, e.g., https://appstrore.srv.com. The app store APIs can be accessed at https://yourAppStoreHostname/api. As well as, the app store swagger UI can be found at https://yourAppStoreHostname/api/docs. Also, make sure that you allow the access to your server from outside, if it is running behind a firewall or a proxy server.
