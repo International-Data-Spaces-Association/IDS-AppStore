@@ -46,6 +46,7 @@ In the example given in this documentation, the value `ghcr.io/international-dat
 3. Install the IDS certificate in the `src/main/resources/conf` folder and update the following values in the config.json file:
 - Replace `idsc:TEST_DEPLOYMENT` with `idsc:PRODUCTIVE_DEPLOYMENT`.
 - Replace `keystore-localhost.p12` with your IDS certificate.
+
 Other values in the `application.properties` file must be updated as follows:
  - `configuration.keyStorePassword=password`: Replace `password` with your IDS certificate password.
  - `idscp2.keystore=./src/main/resources/conf/keystore-localhost.p12`: Replace `keystore-localhost.p12` with the name of your IDS certificate.
