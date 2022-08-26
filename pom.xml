@@ -81,7 +81,7 @@
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
 		<camel.version>3.11.1</camel.version>
-		<idscp2.version>0.5.0</idscp2.version>
+		<idscp2.version>0.11.1</idscp2.version>
 		<!-- PROPS FOR Hibernate Search -->
 		<hibernate.search.version>6.0.0.Final</hibernate.search.version>
 		<log4j2.version>2.17.1</log4j2.version>
