@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package io.dataspaceconnector.controller.resource.relation;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.base.BaseResourceChildController;
-import io.dataspaceconnector.controller.resource.base.BaseResourceChildRestrictedController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.endpoint.AppEndpointView;

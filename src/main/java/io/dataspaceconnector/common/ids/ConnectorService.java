@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,7 @@
  */
 package io.dataspaceconnector.common.ids;
 
-import de.fraunhofer.iais.eis.BaseConnector;
-import de.fraunhofer.iais.eis.BaseConnectorImpl;
-import de.fraunhofer.iais.eis.ConfigurationModelImpl;
-import de.fraunhofer.iais.eis.DynamicAttributeToken;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
@@ -49,10 +44,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-/* AppStore Extension */
-import de.fraunhofer.iais.eis.AppStore;
-import de.fraunhofer.iais.eis.AppStoreImpl;
 
 /**
  * This service offers different methods related to the connector configuration, like e.g. getting
@@ -213,6 +204,39 @@ public class ConnectorService {
         return connectorImpl;
     }
 
+
+    /**
+     * Build a app store object with all app resources.
+     *
+     * @return The ids base connector object.
+     */
+    public AppStore getAppStoreWithAppResources() throws ConstraintViolationException {
+        // Get a local copy of the current connector.
+        final var connector = configContainer.getConnector();
+        final var catalogs = getAllCatalogsWithOfferedResources();
+
+        // Create a connector with a list of app resources.
+        final var appStore = (AppStoreImpl) connector;
+        appStore.setResourceCatalog(catalogs);
+        return appStore;
+    }
+
+    /**
+     * Build a base connector object without resources.
+     *
+     * @return The ids base connector object.
+     */
+    public AppStore getAppStoreWithoutResources() throws ConstraintViolationException {
+        // Get a local copy of the current connector.
+        final var connector = configContainer.getConnector();
+
+        // Create a connector without any resources.
+        final var appStore = (AppStoreImpl) connector;
+        appStore.setResourceCatalog(null);
+        return appStore;
+    }
+
+
     /**
      * Updates the connector object in the ids messaging service's config container.
      *
@@ -221,9 +245,7 @@ public class ConnectorService {
     @Transactional
     public void updateConfigModel() throws ConfigUpdateException {
         try {
-            /* AppStore Adaptation */
-            // final var connector = getConnectorWithOfferedResources();
-            final var connector = getAppStoreWithAppResources();
+            final var connector = getConnectorWithOfferedResources();
             final var configModel = (ConfigurationModelImpl) configContainer
                     .getConfigurationModel();
             configModel.setConnectorDescription(connector);
@@ -265,38 +287,4 @@ public class ConnectorService {
 
         return resource.map(resourceBuilder::create);
     }
-
-    /* AppStore Extension */
-    /**
-     * Build an app store object with all app resources.
-     *
-     * @return The ids base connector object.
-     */
-    public AppStore getAppStoreWithAppResources() throws ConstraintViolationException {
-        // Get a local copy of the current connector.
-        final var connector = configContainer.getConnector();
-        final var catalogs = getAllCatalogsWithOfferedResources();
-
-        // Create a connector with a list of app resources.
-        final var appStore = (AppStoreImpl) connector;
-        appStore.setResourceCatalog(catalogs);
-        return appStore;
-    }
-
-    /**
-     * Build a base connector object without resources.
-     *
-     * @return The ids base connector object.
-     */
-    public AppStore getAppStoreWithoutResources() throws ConstraintViolationException {
-        // Get a local copy of the current connector.
-        final var connector = configContainer.getConnector();
-
-        // Create a connector without any resources.
-        final var appStore = (AppStoreImpl) connector;
-        appStore.setResourceCatalog(null);
-        return appStore;
-    }
-
-
 }

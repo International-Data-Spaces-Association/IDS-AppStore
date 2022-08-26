@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package io.dataspaceconnector.model.endpoint;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.util.FactoryUtils;
 
 import java.net.URI;
@@ -45,12 +44,6 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      */
     public static final String DEFAULT_LOCATION = "https://location";
 
-    //TOTest  a solution for endpoint language =Null
-    /**
-     * The default language assigned to all endpoints.
-     */
-    public static final String DEFAULT_LANGUAGE = "EN";
-
     /**
      * Update an endpoint. Implement type specific stuff here.
      *
@@ -73,7 +66,6 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
         final var hasUpdatedLocation = updateLocation(endpoint, desc.getLocation());
         final var hasUpdatedDocs = updateDocs(endpoint, desc.getDocs());
         final var hasUpdatedInfo = updateInfo(endpoint, desc.getInfo());
-
         final var updatedInternal = updateInternal(endpoint, desc);
 
         return hasParentUpdated || hasUpdatedLocation || hasUpdatedDocs || hasUpdatedInfo
@@ -121,22 +113,4 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 
         return newLocation.isPresent();
     }
-
-    // TOTest a solution for endpoint language =Null
-    /**
-     * Update a endpoint's language.
-     *
-     * @param endpoint The endpoint entity.
-     * @param language The new language.
-     * @return true if the resource's language has been modified.
-     */
-    protected final boolean updateLanguage(final Endpoint  endpoint, final String language) {
-        final var newLanguage =
-                FactoryUtils.updateString(endpoint.getLanguage(), language, DEFAULT_LANGUAGE);
-        newLanguage.ifPresent(endpoint::setLanguage);
-
-        return newLanguage.isPresent();
-    }
-
-
 }

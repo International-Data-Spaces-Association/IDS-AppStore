@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ class PolicyRestrictionProcessor extends IdsHelperProcessor {
     protected void processInternal(final Exchange exchange) throws Exception {
         final var exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
 
-        if (exception instanceof InvalidResponseException) {
-            final var content = ((InvalidResponseException) exception).getResponse();
+        if (exception instanceof InvalidResponseException invalidResponseException) {
+            final var content = invalidResponseException.getResponse();
             if (log.isDebugEnabled()) {
                 log.debug("Data could not be loaded. [content=({})]", content);
             }

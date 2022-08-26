@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,7 +153,7 @@ public abstract class AbstractRelationService<K extends Entity, W extends Entity
      * @throws ResourceNotFoundException if any of the entities is unknown.
      */
     private void throwIfEntityDoesNotExist(final Set<UUID> entities) {
-        if (!doesExist(entities, (x) -> manyService.doesExist(x))) {
+        if (!doesExist(entities, x -> manyService.doesExist(x))) {
             throw new ResourceNotFoundException("Could not find resource.");
         }
     }
@@ -168,7 +168,7 @@ public abstract class AbstractRelationService<K extends Entity, W extends Entity
     private boolean doesExist(
             final Set<UUID> entities, final Function<UUID, Boolean> doesElementExist) {
         for (final var entity : entities) {
-            if (!doesElementExist.apply(entity)) {
+            if (Boolean.FALSE.equals(doesElementExist.apply(entity))) {
                 return false;
             }
         }

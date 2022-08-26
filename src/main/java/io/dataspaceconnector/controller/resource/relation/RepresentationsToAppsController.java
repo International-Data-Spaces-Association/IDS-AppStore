@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,15 @@ import io.dataspaceconnector.controller.resource.base.BaseResourceChildControlle
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.app.AppView;
+import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
 import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.resource.relation.RepresentationAppLinker;
+import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * Offers the endpoints for managing the relations between representations and apps.
@@ -36,3 +40,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class RepresentationsToAppsController extends BaseResourceChildController<
         RepresentationAppLinker, App, AppView> {
 }
+

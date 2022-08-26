@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,19 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.net.URI;
+import java.util.Optional;
 
 /**
  * The repository containing all objects of type {@link OfferedResource}.
  */
 @Repository
 public interface OfferedResourcesRepository extends BaseEntityRepository<OfferedResource> {
+
+
+
 }

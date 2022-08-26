@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,10 @@ import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
-import io.dataspaceconnector.controller.resource.base.BaseResourceNotificationController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.app.AppView;
-import io.dataspaceconnector.controller.resource.view.resource.OfferedResourceView;
 import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
@@ -35,13 +33,10 @@ import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
-import io.dataspaceconnector.model.resource.OfferedResource;
-import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.service.AppRouteResolver;
 import io.dataspaceconnector.service.appstore.portainer.PortainerService;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -52,6 +47,7 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,22 +91,20 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      */
     private static final int DEFAULT_HTTPS_PORT = 443;
 
+    /**
+     * The network of the connector to join apps in.
+     */
+    @Value("${portainer.application.connector.network:local}")
+    private String connectorNetwork;
+//
 //    @Hidden
 //    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
 //            description = ResponseDescription.METHOD_NOT_ALLOWED)
 //    @Override
 //    public final ResponseEntity<AppView> create(final AppDesc desc) {
-//            //    throw new MethodNotAllowed();
+//        throw new MethodNotAllowed();
 //    }
-
-//    @RestController
-//    @RequestMapping(BasePath.APPS)
-//    @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
-//    public class OfferedResourceController extends BaseResourceNotificationController<App,
-//            AppDesc, AppView, AppService<App,AppDesc>> {
-//    }
-
-
+//
 //    @Hidden
 //    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
 //            description = ResponseDescription.METHOD_NOT_ALLOWED)
@@ -289,17 +283,19 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         final var containerId = portainerSvc.createContainer(template, volumeMap,
                 app.getEndpoints());
 
-        // 5. Get container description from portainer (e.g. randomly created container-name).
+        // 5. Get container description from portainer.
         final var containerDesc = portainerSvc.getDescriptionByContainerId(containerId);
         persistContainerData(app, containerId, containerDesc);
 
-        // 6. Get "bride" network-id in Portainer
-        final var networkId = portainerSvc.getNetworkId("bridge");
+        // 6. Get "bride" network-id in Portainer and join app in network
+        final var networkIdBridge = portainerSvc.getNetworkId("bridge");
+        portainerSvc.joinNetwork(containerId, networkIdBridge);
 
-        // 7. Join container into the new created network.
-        portainerSvc.joinNetwork(containerId, networkId);
+        // 7. Get setting for connector network and join app in network
+        final var networkIdConnector = portainerSvc.getNetworkId(connectorNetwork);
+        portainerSvc.joinNetwork(containerId, networkIdConnector);
 
-        // 8. Delete registry (credentials are one-time-usage)
+        // 8. Delete registry (credentials should be one-time-usage)
         portainerSvc.deleteRegistry(registryId);
 
         return containerId;
@@ -329,17 +325,16 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
             // Generate endpoint accessURLs depending on deployment information.
             for (final var endpoint : app.getEndpoints()) {
+                final var port = endpoint.getEndpointPort();
+
                 // Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints).
-                final var protocol =
-                        endpoint.getEndpointPort() == DEFAULT_HTTPS_PORT ? "https://" : "http://";
+                final var protocol = port == DEFAULT_HTTPS_PORT ? "https://" : "http://";
 
                 // Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints).
                 final var suffix =
                         endpoint.getPath() != null ? endpoint.getPath() : "";
 
-                final var exposedPort = endpoint.getExposedPort();
-
-                final var location = protocol + containerName + ":" + exposedPort + suffix;
+                final var location = protocol + containerName + ":" + port + suffix;
                 appEndpointSvc.setLocation(endpoint, location);
             }
         }

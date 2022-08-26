@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,8 +145,8 @@ public class SubscriberNotificationService {
             for (final var rep : representations) {
                 notifyOnUpdate(rep);
             }
-        } else if (entity instanceof Representation) {
-            final var artifacts = ((Representation) entity).getArtifacts();
+        } else if (entity instanceof Representation representation) {
+            final var artifacts = representation.getArtifacts();
             for (final var artifact : artifacts) {
                 notifyOnUpdate(artifact);
             }
@@ -264,28 +264,28 @@ public class SubscriberNotificationService {
 
     private List<Resource> getIdsResourcesFromEntity(final Entity entity) {
         var updatedResources = new ArrayList<Resource>();
-        if (entity instanceof OfferedResource) {
-            updatedResources.add(resourceBuilder.create((OfferedResource) entity));
-        } else if (entity instanceof Representation) {
+        if (entity instanceof OfferedResource offeredResource) {
+            updatedResources.add(resourceBuilder.create(offeredResource));
+        } else if (entity instanceof Representation representation) {
             // Get all resources linked to given representation.
-            final var resources = ((Representation) entity).getResources();
+            final var resources = representation.getResources();
             for (final var resource : resources) {
                 // Don't add requested resources to that list as ids participants should only know
                 // about offered resources.
-                if (resource instanceof OfferedResource) {
-                    updatedResources.add(resourceBuilder.create((OfferedResource) resource));
+                if (resource instanceof OfferedResource offeredResource) {
+                    updatedResources.add(resourceBuilder.create(offeredResource));
                 }
             }
-        } else if (entity instanceof Artifact) {
+        } else if (entity instanceof Artifact artifact) {
             // Get all representations linked to given representation.
-            final var representations = ((Artifact) entity).getRepresentations();
+            final var representations = artifact.getRepresentations();
             for (final var representation : representations) {
                 final var resources = representation.getResources();
                 for (final var resource : resources) {
                     // Don't add requested resources to that list as ids participants should only
                     // know about offered resources.
-                    if (resource instanceof OfferedResource) {
-                        updatedResources.add(resourceBuilder.create((OfferedResource) resource));
+                    if (resource instanceof OfferedResource offeredResource) {
+                        updatedResources.add(resourceBuilder.create(offeredResource));
                     }
                 }
             }

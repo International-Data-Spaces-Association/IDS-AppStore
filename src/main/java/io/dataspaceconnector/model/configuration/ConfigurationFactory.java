@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,12 +78,12 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     /**
      * The default maintainer.
      */
-    public static final URI DEFAULT_MAINTAINER = URI.create("https://www.isst.fraunhofer.de/");
+    public static final URI DEFAULT_MAINTAINER = URI.create("https://sovity.de/");
 
     /**
      * The default curator.
      */
-    public static final URI DEFAULT_CURATOR = URI.create("https://www.isst.fraunhofer.de/");
+    public static final URI DEFAULT_CURATOR = URI.create("https://example.org/");
 
     /**
      * The default security profile.

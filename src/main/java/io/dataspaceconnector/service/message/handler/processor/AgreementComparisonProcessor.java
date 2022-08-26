@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,11 @@ import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
+import io.dataspaceconnector.service.message.handler.dto.payload.AgreementClaimsContainer;
 import io.dataspaceconnector.service.message.handler.exception.UnconfirmedAgreementException;
 import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -81,7 +84,8 @@ class AgreementComparisonProcessor extends IdsProcessor<
      */
     @Override
     protected Response processInternal(
-            final RouteMsg<ContractAgreementMessageImpl, ContractAgreement> msg) throws Exception {
+            final RouteMsg<ContractAgreementMessageImpl, ContractAgreement> msg,
+            final Jws<Claims> claims) throws Exception {
         final var agreement = msg.getBody();
         final var entity = entityResolver.getEntityById(agreement.getId());
         if (entity.isEmpty()) {
@@ -100,8 +104,10 @@ class AgreementComparisonProcessor extends IdsProcessor<
                     "Could not confirm agreement.");
         }
 
+        var agreementContainer = new AgreementClaimsContainer(agreement, claims);
+
         // Publish the agreement so that the designated event handler sends it to the CH.
-        publisher.publishEvent(agreement);
+        publisher.publishEvent(agreementContainer);
 
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());

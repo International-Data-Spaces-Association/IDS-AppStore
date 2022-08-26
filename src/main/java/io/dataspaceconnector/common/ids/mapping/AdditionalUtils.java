@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -230,9 +230,9 @@ public final class AdditionalUtils {
     private static void addListToAdditional(final List<?> list,
                                             final Map<String, String> additional,
                                             final String key) {
-        if (list.size() >= 1 && list.get(0) instanceof ConnectorEndpointImpl) {
+        if (!list.isEmpty() && list.get(0) instanceof ConnectorEndpointImpl) {
             additional.put(key, ((ConnectorEndpointImpl) list.get(0)).getAccessURL().toString());
-        } else if (list.size() >= 1 && list.get(0) instanceof RepresentationInstance) {
+        } else if (!list.isEmpty() && list.get(0) instanceof RepresentationInstance) {
             // Note: Some attributes will get lost.
             additional.put("ids:checkSum", ((Artifact) list.get(0)).getCheckSum());
             additional.put("ids:byteSize", ((Artifact) list.get(0)).getByteSize().toString());

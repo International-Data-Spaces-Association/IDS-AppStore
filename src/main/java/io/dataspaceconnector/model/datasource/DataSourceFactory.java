@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,10 +119,8 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      */
     private boolean updateDatabaseProperties(final DataSource dataSource,
                                              final DataSourceDesc desc) {
-        if (dataSource instanceof DatabaseDataSource && desc instanceof DatabaseDataSourceDesc) {
-            final var databaseDataSource = (DatabaseDataSource) dataSource;
-            final var databaseDataSourceDesc = (DatabaseDataSourceDesc) desc;
-
+        if (dataSource instanceof DatabaseDataSource databaseDataSource
+                && desc instanceof DatabaseDataSourceDesc databaseDataSourceDesc) {
             final var updatedUrl = updateDatabaseUrl(databaseDataSource,
                     databaseDataSourceDesc.getUrl());
             final var updatedDriver = updateDriverClass(databaseDataSource,

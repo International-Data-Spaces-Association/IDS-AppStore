@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,8 @@ public class EndpointViewAssemblerProxy
      */
     @Override
     public RepresentationModel<?> toModel(final Endpoint endpoint) {
-        if (endpoint instanceof AppEndpoint) {
-            return appEndpointViewAssembler.toModel((AppEndpoint) endpoint);
+        if (endpoint instanceof AppEndpoint appEndpoint) {
+            return appEndpointViewAssembler.toModel(appEndpoint);
         }
 
         assert endpoint instanceof GenericEndpoint;

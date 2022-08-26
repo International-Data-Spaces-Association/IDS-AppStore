@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 package io.dataspaceconnector.extension.idscp.config;
 
 import de.fhg.aisec.ids.camel.idscp2.Utils;
-import de.fhg.aisec.ids.camel.idscp2.processors.IdsMessageTypeExtractionProcessor;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.Processor;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -92,8 +92,8 @@ public class Idscp2Config {
      * @return the processor.
      */
     @Bean("TypeExtractionProcessor")
-    public IdsMessageTypeExtractionProcessor idsMessageTypeExtractionProcessor() {
-        return new IdsMessageTypeExtractionProcessor();
+    public Processor getTypeExtractionProcessor() {
+        return new TypeExtractionProcessor();
     }
 
     /**

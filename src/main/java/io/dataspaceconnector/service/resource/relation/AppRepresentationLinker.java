@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 package io.dataspaceconnector.service.resource.relation;
 
 import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.service.resource.base.NonOwningRelationService;
+import io.dataspaceconnector.service.resource.base.OwningRelationService;
+import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.RepresentationService;
 import lombok.NoArgsConstructor;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,9 @@ public class BeanReDeployer {
     public void recreateDataSourceBeans() {
         final var dataSources = repository.findAll();
         for (var dataSource : dataSources) {
-            if (dataSource instanceof DatabaseDataSource) {
+            if (dataSource instanceof DatabaseDataSource databaseDataSource) {
                 try {
-                    beanManager.createDataSourceBean((DatabaseDataSource) dataSource);
+                    beanManager.createDataSourceBean(databaseDataSource);
                     if (log.isDebugEnabled()) {
                         log.debug("Added datasource bean to the application context."
                                 + " [id=({})]", dataSource.getId());

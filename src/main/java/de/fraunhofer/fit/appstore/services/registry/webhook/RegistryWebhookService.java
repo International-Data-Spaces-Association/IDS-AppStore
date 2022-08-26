@@ -24,11 +24,12 @@ import de.fraunhofer.fit.appstore.model.registry.webhook.ScanOverview;
 import de.fraunhofer.fit.appstore.services.template.ContainerTemplateService;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.app.AppDesc;
-import io.dataspaceconnector.model.resource.Resource;
+//import io.dataspaceconnector.service.resource.type.;
+//import io.dataspaceconnector.service.resource.type.;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
-import io.dataspaceconnector.service.resource.type.RepresentationService;
 import io.dataspaceconnector.service.resource.type.OfferedResourceService;
+import io.dataspaceconnector.service.resource.type.RepresentationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,8 +48,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RegistryWebhookService {
 
+    /***
+     Change to the new version of appstore
+     from ResourceService to RequestedResourceService
+     */
+
+
     /**
-     * The app resource service.
+     * The resource service.
      */
     private final @NonNull OfferedResourceService resourceSvc;
 
@@ -151,7 +158,7 @@ public class RegistryWebhookService {
         final var resourceId = UUID.fromString(repoName);
 
         // Get app by id. Throws ResourceNotFoundException if no app could be found.
-        // TODO: Here resource id is the uuid. how to get the whole uri
+        // TODO: Here resource id ia the uuid. how to get the whole uri
 
         final var resource = resourceSvc.get(resourceId);
         final var representation = resource.getRepresentations().get(0);
@@ -204,7 +211,6 @@ public class RegistryWebhookService {
             }
             throw new TemplateException("Failed to store template.");
         }
-
     }
 
     /**
@@ -279,6 +285,7 @@ public class RegistryWebhookService {
         appDesc.setEnvVariables(app.getEnvVariables());
         appDesc.setStorageConfig(app.getStorageConfig());
         appDesc.setSupportedPolicies(app.getSupportedPolicies());
+
 
         final var summary = resourceScanOverview.getSummary();
         final var summarySummary = resourceScanOverview.getSummary().getSummary();

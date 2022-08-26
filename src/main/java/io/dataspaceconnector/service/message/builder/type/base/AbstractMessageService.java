@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import okhttp3.MultipartBody;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -90,6 +91,19 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     protected abstract Class<?> getResponseMessageType();
 
     /**
+     * Creates the multipart request body with given header and payload parts.
+     *
+     * @param header the header.
+     * @param payload the payload.
+     * @return the multipart body.
+     * @throws SerializeException if the multipart message could not be built.
+     */
+    protected MultipartBody buildMultipartBody(final Message header, final Object payload)
+            throws SerializeException {
+        return MessageUtils.buildIdsMultipartMessage(header, payload);
+    }
+
+    /**
      * Build and sent a multipart message with header and payload.
      *
      * @param desc    Type-specific message parameter.
@@ -104,7 +118,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(desc);
 
-            final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
+            final var body = buildMultipartBody(header, payload);
             if (log.isDebugEnabled()) {
                 log.debug("Built request message. [header=({}), payload=({})]", header, payload);
             }
@@ -211,8 +225,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         map.put("type", idsMessage.getClass());
 
         // If the message is of type exception, add the reason to the response object.
-        if (idsMessage instanceof RejectionMessage) {
-            final var rejectionMessage = (RejectionMessage) idsMessage;
+        if (idsMessage instanceof RejectionMessage rejectionMessage) {
             map.put("reason", MessageUtils.extractRejectionReason(rejectionMessage));
         }
 

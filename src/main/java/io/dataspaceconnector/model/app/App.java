@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
+import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.named.NamedEntity;
+import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -31,20 +33,11 @@ import org.hibernate.annotations.Where;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.springframework.data.annotation.Version;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.net.URI;
 import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
-
-/* AppStore Extension */
-import javax.persistence.ManyToMany;
-import io.dataspaceconnector.model.representation.Representation;
 
 /**
  * Data app, which is distributed via the App Store and can be deployed inside the Connector.
@@ -111,6 +104,7 @@ public class App extends NamedEntity implements RemoteObject {
     /**
      * Usage policy patterns supported by the data app.
      */
+    @Enumerated(EnumType.STRING)
     @ElementCollection
     private List<PolicyPattern> supportedPolicies;
 
@@ -185,12 +179,15 @@ public class App extends NamedEntity implements RemoteObject {
     @ManyToOne
     private AppStore appStore;
 
-    /* AppStore Extension */
+    /***
+    Change to the new version of appstore
+    */
     /**
      * The representation of the data app.
      */
     @ManyToMany(mappedBy = "dataApps")
     private List<Representation> representations;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // SecurityScan Extensions                                                                    //
@@ -240,6 +237,7 @@ public class App extends NamedEntity implements RemoteObject {
      * Security scanner high issues.
      */
     private long securityScannerIssuesHigh;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Registry Extensions                                                                        //

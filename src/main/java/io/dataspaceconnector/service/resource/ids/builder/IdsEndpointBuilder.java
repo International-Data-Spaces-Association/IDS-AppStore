@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,6 +125,13 @@ public final class IdsEndpointBuilder
 
         } else if (endpoint instanceof AppEndpoint) {
 
+            final var protocol = ((AppEndpoint) endpoint).getProtocol();
+            final var type = ((AppEndpoint) endpoint).getEndpointType();
+            final var port = ((AppEndpoint) endpoint).getEndpointPort();
+            final var information = endpoint.getInfo();
+            final var path = ((AppEndpoint) endpoint).getPath();
+            final var mediaType =
+                    new IANAMediaTypeBuilder()._filenameExtension_(((AppEndpoint) endpoint).getMediaType());
             final var appEndpoint = (AppEndpoint) endpoint;
 
             idsEndpoint = new AppEndpointBuilder(getAbsoluteSelfLink(endpoint))

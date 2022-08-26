@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/api/ids/data").anonymous()
+                .antMatchers("/", "/public", "/api/ids/data", "/api/webhook/**").permitAll()
                 .antMatchers("/api/subscriptions/**").authenticated()
                 .antMatchers("/api/**").hasRole("ADMIN")
                 .antMatchers("/actuator/**").hasRole("ADMIN")

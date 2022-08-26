@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,7 +172,7 @@ public final class Utils {
                 for (final var lObj : lSet) {
                     var found = false;
                     for (final var rObj : rSet) {
-                        if (compare.apply(lObj, rObj)) {
+                        if (Boolean.TRUE.equals(compare.apply(lObj, rObj))) {
                             final var lType = lObj.getClass();
                             final var rType = rObj.getClass();
 
@@ -204,7 +204,7 @@ public final class Utils {
         for (int x = 0; x < output.size(); x++) {
             final var obj = output.get(x);
             for (int y = x + 1; y < output.size(); y++) {
-                if (compare.apply(obj, output.get(y))) {
+                if (Boolean.TRUE.equals(compare.apply(obj, output.get(y)))) {
                     output.remove(y);
                     --y;
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.dataspaceconnector.service.resource.relation;
 
 import java.net.URISyntaxException;
@@ -183,8 +182,8 @@ public class ArtifactRouteService {
      */
     public void removeRouteLink(final ArtifactImpl artifact) {
         try {
-            if (artifact.getData() instanceof RemoteData) {
-                final var url = ((RemoteData) artifact.getData()).getAccessUrl();
+            if (artifact.getData() instanceof RemoteData remoteData) {
+                final var url = remoteData.getAccessUrl();
                 if (apiReferenceHelper.isRouteReference(url)) {
                     final var routeId = UUIDUtils.uuidFromUri(url.toURI());
                     routeSvc.removeOutput(routeId);

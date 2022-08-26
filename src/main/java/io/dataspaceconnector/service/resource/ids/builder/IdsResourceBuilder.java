@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder;
 
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
-import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
@@ -33,7 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -80,7 +80,7 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
     }
 
     @Override
-    protected de.fraunhofer.iais.eis.Resource createInternal(final Resource resource,
+    protected de.fraunhofer.iais.eis.AppResource createInternal(final Resource resource,
                                                              final int currentDepth,
                                                              final int maxDepth)
             throws ConstraintViolationException {
@@ -129,7 +129,7 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
             return null;
         }
 
-        final var builder = new ResourceBuilder(selfLink)
+        final var builder = new AppResourceBuilder(selfLink)
                 ._created_(created)
                 ._description_(Util.asList(new TypedLiteral(description, languageCode)))
                 ._language_(Util.asList(idsLanguage))
@@ -147,7 +147,9 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
             builder._sample_(samples);
         }
 
-        representations.ifPresent(builder::_representation_);
+        Optional<List<Representation>> rep
+                = Optional.of(List.copyOf(representations.get()));
+        rep.ifPresent(builder::_representation_);
         contracts.ifPresent(builder::_contractOffer_);
 
         return builder.build();

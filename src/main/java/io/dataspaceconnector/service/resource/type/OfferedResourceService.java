@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,20 @@ package io.dataspaceconnector.service.resource.type;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.model.resource.OfferedResource;
-import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.model.resource.OfferedResourceFactory;
+import io.dataspaceconnector.model.resource.*;
 import io.dataspaceconnector.repository.BaseEntityRepository;
+import io.dataspaceconnector.repository.OfferedResourcesRepository;
+import io.dataspaceconnector.service.resource.base.RemoteResolver;
+import io.dataspaceconnector.repository.RequestedResourcesRepository;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for offered resources.
  */
-public class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {
+public class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc>    {
 
     /**
      * Constructor.
@@ -49,4 +54,44 @@ public class OfferedResourceService extends ResourceService<OfferedResource, Off
             final AbstractFactory<OfferedResource, OfferedResourceDesc> factory) {
         super(repository, factory);
     }
+
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public Optional<UUID> identifyByRemoteId(final URI remoteId) {
+//        return ((OfferedResourcesRepository) getRepository()).identifyByRemoteId(remoteId);
+//    }
+//
+//    /**
+//     * Find offered resource by remote id.
+//     *
+//     * @param remoteId The remote id.
+//     * @return The entity.
+//     */
+//    public Optional<OfferedResource> getEntityByRemoteId(final URI remoteId) {
+//        final var repo = (OfferedResourcesRepository) getRepository();
+//        return repo.getByRemoteId(remoteId);
+//    }
+
+//    // ToCheck
+//    @Override
+//    public Optional<UUID> identifyByRemoteId(URI remoteId) {
+////        return Optional.empty();
+////        return ((RequestedResourcesRepository) getRepository()).identifyByRemoteId(remoteId);
+//        return ( this.getRepository()).identifyByRemoteId(remoteId);
+//
+//    }
+//
+//    /**
+//     * Find requested resource by remote id.
+//     *
+//     * @param remoteId The remote id.
+//     * @return The entity.
+//     */
+//    public Optional<Resource> getEntityByRemoteId(final URI remoteId) {
+//        final var repo = (RequestedResourcesRepository) getRepository();
+//        return repo.getByRemoteId(remoteId);
+//    }
+
 }

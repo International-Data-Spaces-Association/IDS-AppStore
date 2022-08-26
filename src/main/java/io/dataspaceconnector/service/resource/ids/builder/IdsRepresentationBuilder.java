@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
-import de.fraunhofer.iais.eis.RepresentationBuilder;
+import de.fraunhofer.iais.eis.AppRepresentationBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
@@ -42,20 +42,26 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
     private final @NonNull IdsArtifactBuilder artifactBuilder;
 
     /**
+     * The builder for ids data apps.
+     */
+    private final @NonNull IdsDataAppBuilder dataAppBuilder;
+
+    /**
      * Constructs an IdsRepresentationBuilder.
-     *
-     * @param selfLinkHelper the self link helper.
+     *  @param selfLinkHelper the self link helper.
      * @param idsArtifactBuilder the artifact builder.
+     * @param dataAppBuilder
      */
     @Autowired
     public IdsRepresentationBuilder(final SelfLinkHelper selfLinkHelper,
-                                    final IdsArtifactBuilder idsArtifactBuilder) {
+                                    final IdsArtifactBuilder idsArtifactBuilder, @NonNull IdsDataAppBuilder dataAppBuilder) {
         super(selfLinkHelper);
         this.artifactBuilder = idsArtifactBuilder;
+        this.dataAppBuilder = dataAppBuilder;
     }
 
     @Override
-    protected de.fraunhofer.iais.eis.Representation createInternal(
+    protected de.fraunhofer.iais.eis.AppRepresentation createInternal(
             final Representation representation, final int currentDepth,
             final int maxDepth) throws ConstraintViolationException {
         // Build children.
@@ -66,6 +72,15 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
         if (artifacts.isEmpty() || artifacts.get().isEmpty()) {
             return null;
         }
+        final var apps
+                = create(dataAppBuilder, representation.getDataApps(), currentDepth, maxDepth);
+
+        // Build representation only if at least one artifact and one data app is present.
+        if (artifacts.isEmpty() || artifacts.get().isEmpty() || apps.isEmpty()
+                || apps.get().isEmpty()) {
+            return null;
+        }
+
 
         // Prepare representation attributes.
         final var modified = ToIdsObjectMapper.getGregorianOf(representation
@@ -77,15 +92,21 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
                 new IANAMediaTypeBuilder()._filenameExtension_(representation.getMediaType())
                         .build();
         final var standard = URI.create(representation.getStandard());
+        final var distributionService = representation.getDistributionService();
+        final var runtimeEnvironment = representation.getRuntimeEnvironment();
 
-        final var builder = new RepresentationBuilder(getAbsoluteSelfLink(representation))
+        final var builder = new AppRepresentationBuilder(getAbsoluteSelfLink(representation))
                 ._created_(created)
                 ._language_(language)
+                ._dataAppDistributionService_(distributionService)
+                ._dataAppRuntimeEnvironment_(runtimeEnvironment)
                 ._mediaType_(mediaType)
                 ._modified_(modified)
                 ._representationStandard_(standard);
 
         artifacts.ifPresent(x -> builder._instance_(Collections.unmodifiableList(x)));
+        // FIXME: First element because DataApp is a list
+        apps.ifPresent(x -> builder._dataAppInformation_(Collections.unmodifiableList(x).get(0)));
 
         return builder.build();
     }

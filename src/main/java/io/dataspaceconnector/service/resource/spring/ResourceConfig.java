@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.model.catalog.CatalogFactory;
 import io.dataspaceconnector.model.configuration.ConfigurationFactory;
 import io.dataspaceconnector.model.contract.ContractFactory;
+import io.dataspaceconnector.model.daps.DapsFactory;
 import io.dataspaceconnector.model.datasource.DataSourceFactory;
 import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
@@ -45,6 +46,7 @@ import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.repository.CatalogRepository;
 import io.dataspaceconnector.repository.ConfigurationRepository;
 import io.dataspaceconnector.repository.ContractRepository;
+import io.dataspaceconnector.repository.DapsRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.repository.DataSourceRepository;
 import io.dataspaceconnector.repository.EndpointRepository;
@@ -68,6 +70,7 @@ import io.dataspaceconnector.service.resource.type.BrokerService;
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import io.dataspaceconnector.service.resource.type.ConfigurationService;
 import io.dataspaceconnector.service.resource.type.ContractService;
+import io.dataspaceconnector.service.resource.type.DapsService;
 import io.dataspaceconnector.service.resource.type.DataSourceService;
 import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
 import io.dataspaceconnector.service.resource.type.OfferedResourceService;
@@ -177,6 +180,17 @@ public class ResourceConfig {
     @Bean("configurationBrokerService")
     public BrokerService createBrokerService(final BrokerRepository repo) {
         return new BrokerService(repo, new BrokerFactory());
+    }
+
+    /**
+     * Create a daps service bean.
+     *
+     * @param repo The daps repository.
+     * @return The daps service bean.
+     */
+    @Bean("configurationDapsService")
+    public DapsService createDapsService(final DapsRepository repo) {
+        return new DapsService(repo, new DapsFactory());
     }
 
     /**

@@ -111,12 +111,12 @@ public class Template implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ArrayList<Volume> volumes;
 
-    /**
-     * A list of commands.
-     */
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ArrayList<String> command;
-
+//    /**
+//     * A list of commands.
+//     */
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+//    private ArrayList<String> command;
+//
     /**
      * A list of environments.
      */

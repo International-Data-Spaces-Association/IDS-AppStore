@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,17 +139,16 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
         if (tmp.getData() != null) {
             // The data element is new, insert
-            if (tmp.getData() instanceof RemoteData) {
-                var data = (RemoteData) tmp.getData();
+            if (tmp.getData() instanceof RemoteData data) {
                 data.getAuthentication().forEach(authRepo::saveAndFlush);
             }
             final var persistedData = dataRepo.saveAndFlush(tmp.getData());
 
-            if (tmp.getData() instanceof LocalData) {
+            if (tmp.getData() instanceof LocalData localData) {
                 final var factory = (ArtifactFactory) getFactory();
-                factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
-            } else if (tmp.getData() instanceof RemoteData) {
-                final var url = ((RemoteData) tmp.getData()).getAccessUrl();
+                factory.updateByteSize(artifact, localData.getValue());
+            } else if (tmp.getData() instanceof RemoteData remoteData) {
+                final var url = remoteData.getAccessUrl();
                 artifactRouteSvc.ensureSingleArtifactPerRoute(url, artifact.getId());
                 artifactRouteSvc.checkForValidRoute(url);
                 final var persisted = persist(artifact);
@@ -192,8 +191,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             Data storedCopy = null;
             if (tmpData.getId() == null) {
                 // The data element is new, insert
-                if (tmpData instanceof RemoteData) {
-                    var data = (RemoteData) tmpData;
+                if (tmpData instanceof RemoteData data) {
                     data.getAuthentication().forEach(authRepo::saveAndFlush);
                 }
                 persistedData = dataRepo.saveAndFlush(tmp.getData());
@@ -205,12 +203,12 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 }
             }
 
-            if (tmp.getData() instanceof LocalData) {
+            if (tmp.getData() instanceof LocalData localData) {
                 final var factory = (ArtifactFactory) getFactory();
-                factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
+                factory.updateByteSize(artifact, localData.getValue());
                 artifact = persist(artifact);
-            } else if (tmp.getData() instanceof RemoteData) {
-                final var url = ((RemoteData) tmp.getData()).getAccessUrl();
+            } else if (tmp.getData() instanceof RemoteData remoteData) {
+                final var url = remoteData.getAccessUrl();
                 artifactRouteSvc.ensureSingleArtifactPerRoute(url, artifact.getId());
                 artifactRouteSvc.checkForValidRoute(url);
                 try {
@@ -257,7 +255,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             throws PolicyRestrictionException, IOException {
         final var agreements =
                 ((ArtifactRepository) getRepository()).findRemoteOriginAgreements(artifactId);
-        if (agreements.size() > 0) {
+        if (!agreements.isEmpty()) {
             return tryToAccessDataByUsingAnyAgreement(accessVerifier, retriever, artifactId,
                     queryInput, agreements, routeIds);
         }
@@ -451,8 +449,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream setData(final UUID artifactId, final InputStream data) throws IOException {
         final var artifact = get(artifactId);
         final var currentData = ((ArtifactImpl) artifact).getData();
-        if (currentData instanceof LocalData) {
-            return setLocalData(artifactId, data, artifact, (LocalData) currentData);
+        if (currentData instanceof LocalData localData) {
+            return setLocalData(artifactId, data, artifact, localData);
         } else {
             throw new NotImplemented();
         }
@@ -525,8 +523,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public boolean isDataDeleted(final UUID artifactId) {
         final var artifact = get(artifactId);
         final var currentData = ((ArtifactImpl) artifact).getData();
-        if (currentData instanceof LocalData) {
-            final var value = ((LocalData) currentData).getValue();
+        if (currentData instanceof LocalData localData) {
+            final var value = localData.getValue();
             return (value == null || !(value.length > 0));
         } else {
             // Only local data deletion supported.

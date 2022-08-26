@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.representation;
 
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.resource.Resource;
@@ -37,9 +38,6 @@ import java.net.URI;
 import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
-
-/* AppStore Extension */
-import io.dataspaceconnector.model.app.App;
 
 /**
  * A representation describes how data is presented.
@@ -100,6 +98,10 @@ public class Representation extends NamedEntity {
     @OneToMany
     private List<Subscription> subscriptions;
 
+    /***
+     Change to the new version of appstore
+     */
+
     /* AppStore Extension */
     /**
      * Data app runtime environment.
@@ -118,5 +120,6 @@ public class Representation extends NamedEntity {
      */
     @ManyToMany
     private List<App> dataApps;
+
 
 }

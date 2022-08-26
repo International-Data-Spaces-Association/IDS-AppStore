@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import io.dataspaceconnector.model.catalog.Catalog;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 /**
  * Describes resources offered by this connector.
@@ -32,6 +33,7 @@ import org.hibernate.annotations.Where;
 @Where(clause = "deleted = false")
 @Entity
 @EqualsAndHashCode(callSuper = true)
+@Indexed
 public class OfferedResource extends Resource {
 
     /**

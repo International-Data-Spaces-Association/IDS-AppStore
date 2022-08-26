@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,11 @@ public final class ResourceName {
      * Tag name for subscriptions.
      */
     public static final String SUBSCRIPTIONS = "Subscriptions";
+
+    /**
+     * Tag name for daps.
+     */
+    public static final String DAPS = "Daps";
 
     private ResourceName() {
         // Nothing to do here.

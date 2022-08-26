@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,18 @@
  */
 package io.dataspaceconnector.common.ids.mapping;
 
+import de.fraunhofer.iais.eis.Language;
+import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.configuration.Configuration;
+import io.dataspaceconnector.model.configuration.DeployMode;
+import io.dataspaceconnector.model.endpoint.EndpointType;
+import io.dataspaceconnector.model.resource.PaymentMethod;
+import lombok.SneakyThrows;
+import de.fraunhofer.iais.eis.AppEndpointType;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.BasicAuthentication;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
@@ -22,20 +34,12 @@ import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ConnectorStatus;
-import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.iais.eis.PaymentModality;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.ProxyBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
-import de.fraunhofer.iais.eis.util.TypedLiteral;
-import de.fraunhofer.iais.eis.util.Util;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.dataspaceconnector.model.auth.BasicAuth;
-import io.dataspaceconnector.model.configuration.Configuration;
-import io.dataspaceconnector.model.configuration.DeployMode;
-import io.dataspaceconnector.model.resource.PaymentMethod;
-import lombok.SneakyThrows;
+import de.fraunhofer.iais.eis.UsagePolicyClass;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -52,10 +56,8 @@ import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-/* AppStore Extension */
-import de.fraunhofer.iais.eis.AppEndpointType;
-import de.fraunhofer.iais.eis.UsagePolicyClass;
-import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import static de.fraunhofer.iais.eis.AppEndpointType.*;
+import static io.dataspaceconnector.model.endpoint.EndpointType.*;
 
 /**
  * Maps internal entities to ids objects.
@@ -281,16 +283,34 @@ public final class ToIdsObjectMapper {
         }
     }
 
-    /* AppStore Extension */
+//    /**
+//     * Get ids AppEndpointType from dsc endpoint type.
+//     *
+//     * @param endpointType The dsc endpointType
+//     * @return The ids AppEndpointType
+//     */
+//    public static EndpointType getAppEndpointType(
+//            final EndpointType endpointType) {
+//        switch (endpointType) {
+//            case APP:
+//                return APP;
+//            case CONNECTOR:
+//                return CONNECTOR;
+//            case GENERIC:
+//                return GENERIC;
+//            default:
+//                return APP;
+//        }
+//    }
+
     /**
      * Get ids AppEndpointType from dsc endpoint type.
      *
      * @param endpointType The dsc endpointType
      * @return The ids AppEndpointType
      */
-    // FIXME: do we need this method?
-    /* public static AppEndpointType getAppEndpointType(
-            final io.dataspaceconnector.model.endpoint.EndpointType endpointType) {
+    public static AppEndpointType getAppEndpointType(
+            final io.dataspaceconnector.model.endpoint.AppEndpointType endpointType) {
         switch (endpointType) {
             case CONFIG_ENDPOINT:
                 return AppEndpointType.CONFIG_ENDPOINT;
@@ -304,10 +324,10 @@ public final class ToIdsObjectMapper {
             default:
                 return AppEndpointType.INPUT_ENDPOINT;
         }
-    } */
+    }
 
     // FIXME: Did all cases match the right values?
-    private static UsagePolicyClass getUsagePolicyClass(final PolicyPattern policyPattern) {
+    public static UsagePolicyClass getUsagePolicyClass(final PolicyPattern policyPattern) {
         switch (policyPattern) {
             case PROHIBIT_ACCESS:
                 return UsagePolicyClass.PURPOSE_RESTRICTED_DATA_USAGE;
@@ -332,19 +352,4 @@ public final class ToIdsObjectMapper {
         }
     }
 
-    /**
-     * Converts a List of dsc policy patterns to ids usage policy class.
-     *
-     * @param policyPatterns List of policy patterns.
-     * @return A list of usage policy classes.
-     */
-    public static List<UsagePolicyClass> getListOfUsagePolicyClasses(
-            final List<PolicyPattern> policyPatterns) {
-
-        final var policyClasses = new ArrayList<UsagePolicyClass>();
-        policyPatterns.forEach(pattern -> {
-            policyClasses.add(getUsagePolicyClass(pattern));
-        });
-        return policyClasses;
-    }
 }

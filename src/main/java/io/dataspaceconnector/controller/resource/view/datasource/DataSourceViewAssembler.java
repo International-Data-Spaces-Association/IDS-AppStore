@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import io.dataspaceconnector.controller.resource.type.DataSourceController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.model.datasource.DataSource;
+import io.dataspaceconnector.model.datasource.DatabaseDataSource;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -41,7 +42,13 @@ public class DataSourceViewAssembler extends SelfLinkHelper
     @Override
     public final DataSourceView toModel(final DataSource dataSource) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(dataSource, DataSourceView.class);
+        DataSourceView view;
+        if (dataSource instanceof DatabaseDataSource) {
+            view = modelMapper.map(dataSource, DatabaseDataSourceView.class);
+        } else {
+            view = modelMapper.map(dataSource, DataSourceView.class);
+        }
+
         view.add(getSelfLink(dataSource.getId()));
 
         return view;

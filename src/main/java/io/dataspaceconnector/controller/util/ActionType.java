@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,40 +23,20 @@ public enum ActionType {
     /**
      * Start an app.
      */
-    START("Start"),
+    START,
 
     /**
      * Stop an app.
      */
-    STOP("Stop"),
+    STOP,
 
     /**
      * Delete an app.
      */
-    DELETE("Delete"),
+    DELETE,
 
     /**
      * Describes an app.
      */
-    DESCRIBE("Describe");
-
-    /**
-     * Holds the enums string.
-     */
-    private final String value;
-
-    /**
-     * Constructor.
-     *
-     * @param name The name of the action type.
-     */
-    ActionType(final String name) {
-        this.value = name;
-    }
-
-    @Override
-    public String toString() {
-        return value;
-    }
-
+    DESCRIBE;
 }

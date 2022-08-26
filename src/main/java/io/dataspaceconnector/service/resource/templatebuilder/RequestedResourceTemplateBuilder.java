@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,9 +58,8 @@ public class RequestedResourceTemplateBuilder
             final ResourceTemplate<RequestedResourceDesc> template) {
         final var resourceService = getResourceService();
 
-        if (resourceService instanceof RemoteResolver) {
-            final var resourceId = ((RemoteResolver) resourceService)
-                    .identifyByRemoteId(template.getDesc().getRemoteId());
+        if (resourceService instanceof RemoteResolver resolver) {
+            final var resourceId = resolver.identifyByRemoteId(template.getDesc().getRemoteId());
             if (resourceId.isPresent()) {
                 return resourceService.update(resourceId.get(), template.getDesc());
             }

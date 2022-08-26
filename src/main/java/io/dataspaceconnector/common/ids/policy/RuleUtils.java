@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,9 +66,9 @@ public final class RuleUtils {
 
         if (rule instanceof Prohibition) {
             detectedPattern = PolicyPattern.PROHIBIT_ACCESS;
-        } else if (rule instanceof Permission) {
+        } else if (rule instanceof Permission permission) {
             final var constraints = rule.getConstraint();
-            final var postDuties = ((Permission) rule).getPostDuty();
+            final var postDuties = permission.getPostDuty();
 
             if (!constraints.isEmpty() && constraints.get(0) != null) {
                 if (constraints.size() > 1) {

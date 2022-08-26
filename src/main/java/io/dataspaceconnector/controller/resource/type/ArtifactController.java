@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,7 +138,10 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         queryInput.setParams(params);
         queryInput.setHeaders(headers);
 
-        final var searchString = "/data";
+        // TOCheck
+        final var searchString = request.getContextPath() + "/data";
+
+        //final var searchString = "/data";
         var optional = request.getRequestURI().substring(
                 request.getRequestURI().indexOf(searchString) + searchString.length());
         if ("/**".equals(optional)) {

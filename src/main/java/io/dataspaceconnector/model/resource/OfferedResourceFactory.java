@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public final class OfferedResourceFactory extends ResourceFactory<OfferedResourc
                 throw new InvalidEntityException("Resource cannot reference itself.");
             }
 
-            if (!doesExist.apply(resourceId)) {
+            if (Boolean.FALSE.equals(doesExist.apply(resourceId))) {
                 if (log.isWarnEnabled()) {
                     log.warn("Could not find matching resource. [id=({})]", sample);
                 }

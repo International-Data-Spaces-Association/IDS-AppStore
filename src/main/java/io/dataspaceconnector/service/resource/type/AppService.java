@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,8 +116,8 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
     public void setData(final UUID appId, final InputStream data) throws IOException {
         final var app = get(appId);
         final var currentData = ((AppImpl) app).getData();
-        if (currentData instanceof LocalData) {
-            setAppTemplate(appId, data, (LocalData) currentData);
+        if (currentData instanceof LocalData localData) {
+            setAppTemplate(appId, data, localData);
         } else {
             throw new NotImplemented();
         }
@@ -151,8 +151,8 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
         final var data = app.getData();
 
         InputStream rawData;
-        if (data instanceof LocalData) {
-            rawData = getData((LocalData) data);
+        if (data instanceof LocalData localData) {
+            rawData = getData(localData);
         } else {
             throw new UnreachableLineException("Could not load data.");
         }

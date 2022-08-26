@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,38 +106,38 @@ public class ExampleController {
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {
         try {
-            if (input instanceof PermissionDesc) {
-                final var policy = PatternUtils.buildProvideAccessRule((PermissionDesc) input);
+            if (input instanceof PermissionDesc permissionDesc) {
+                final var policy = PatternUtils.buildProvideAccessRule(permissionDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof ProhibitionDesc) {
-                final var policy = PatternUtils.buildProhibitAccessRule((ProhibitionDesc) input);
+            } else if (input instanceof ProhibitionDesc prohibitionDesc) {
+                final var policy = PatternUtils.buildProhibitAccessRule(prohibitionDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof UsageNumberDesc) {
-                final var policy = PatternUtils.buildNTimesUsageRule((UsageNumberDesc) input);
+            } else if (input instanceof UsageNumberDesc usageNumberDesc) {
+                final var policy = PatternUtils.buildNTimesUsageRule(usageNumberDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof DurationDesc) {
-                final var policy = PatternUtils.buildDurationUsageRule((DurationDesc) input);
+            } else if (input instanceof DurationDesc durationDesc) {
+                final var policy = PatternUtils.buildDurationUsageRule(durationDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof IntervalDesc) {
-                final var policy = PatternUtils.buildIntervalUsageRule((IntervalDesc) input);
+            } else if (input instanceof IntervalDesc intervalDesc) {
+                final var policy = PatternUtils.buildIntervalUsageRule(intervalDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof DeletionDesc) {
-                final var policy = PatternUtils.buildUsageUntilDeletionRule((DeletionDesc) input);
+            } else if (input instanceof DeletionDesc deletionDesc) {
+                final var policy = PatternUtils.buildUsageUntilDeletionRule(deletionDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof LoggingDesc) {
-                final var policy = PatternUtils.buildUsageLoggingRule((LoggingDesc) input);
+            } else if (input instanceof LoggingDesc loggingDesc) {
+                final var policy = PatternUtils.buildUsageLoggingRule(loggingDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof NotificationDesc) {
+            } else if (input instanceof NotificationDesc notificationDesc) {
                 final var policy = PatternUtils.buildUsageNotificationRule(
-                        (NotificationDesc) input);
+                        notificationDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof ConnectorRestrictionDesc) {
+            } else if (input instanceof ConnectorRestrictionDesc connectorRestrictionDesc) {
                 final var policy = PatternUtils.buildConnectorRestrictedUsageRule(
-                        (ConnectorRestrictionDesc) input);
+                        connectorRestrictionDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof SecurityRestrictionDesc) {
+            } else if (input instanceof SecurityRestrictionDesc securityRestrictionDesc) {
                 final var policy = PatternUtils.buildSecurityProfileRestrictedUsageRule(
-                        (SecurityRestrictionDesc) input);
+                        securityRestrictionDesc);
                 return ResponseEntity.ok(policy.toRdf());
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

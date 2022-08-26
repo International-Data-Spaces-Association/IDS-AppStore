@@ -23,6 +23,7 @@ import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.OfferedResourceService;
+import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

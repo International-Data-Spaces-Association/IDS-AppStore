@@ -20,16 +20,14 @@
         </RollingFile>-->
     </Appenders>
     <Loggers>
-        <Root level="debug">
+        <Root level="DEBUG">
             <AppenderRef ref="ConsoleAppender"/>
         </Root>
 <!--        <Logger name="org.springframework" level="debug">-->
 <!--            <AppenderRef ref="ConsoleAppender"/>-->
 <!--        </Logger>-->
-        <Logger name="org.hibernate" level="error">
-            <AppenderRef ref="ConsoleAppender"/>
-        </Logger>
-        <Logger name="io.dataspaceconnector" level="info">
+        <Logger name="org.hibernate" level="error"/>
+        <Logger name="io.dataspaceconnector" level="debug">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="camel-route-logger" level="debug"/>

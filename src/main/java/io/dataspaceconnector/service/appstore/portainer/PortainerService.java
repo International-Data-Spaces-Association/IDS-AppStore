@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -798,7 +798,6 @@ public class PortainerService {
             final List<AppEndpointImpl> appEndpoints
     ) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
-        final var image = templateObject.getString("image");
 
         //get all ports from the appTemplate (with label)
         var portLabelMap = new HashMap<String, String>();
@@ -818,12 +817,15 @@ public class PortainerService {
             }
         }
 
+        final var containerName = "app-" + System.currentTimeMillis();
+
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme(portainerConfig.getScheme())
                 .host(portainerConfig.getHost())
                 .port(portainerConfig.getPort())
-                .addPathSegments(API_ENDPOINT + endpointId + "/docker/containers/create");
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/containers/create")
+                .addQueryParameter("name", containerName);
 
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
@@ -835,8 +837,7 @@ public class PortainerService {
                         templateObject,
                         new ArrayList<>(portLabelMap.keySet()),
                         volumes,
-                        image
-                );
+                        containerName);
 
         //add json payload to request
         builder.post(

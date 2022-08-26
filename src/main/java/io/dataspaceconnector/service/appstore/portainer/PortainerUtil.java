@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
  */
 package io.dataspaceconnector.service.appstore.portainer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.minidev.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.util.SocketUtils;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.List;
 import java.util.Map;
 
@@ -35,25 +37,32 @@ public final class PortainerUtil {
      * @param templateObject The template object.
      * @param ports          The list of ports.
      * @param volumes        Map of volumes.
-     * @param image          The image name.
+     * @param containerName  The container name.
      * @return payload for the creation of a container.
      */
+    @SuppressFBWarnings("UNENCRYPTED_SERVER_SOCKET")
     public static JSONObject createContainerJSONPayload(final JSONObject templateObject,
                                                         final List<String> ports,
                                                         final Map<String, String> volumes,
-                                                        final String image) {
-
+                                                        final String containerName)
+            throws IOException {
         // Build json payload and fill single fields.
         final var jsonPayload = new JSONObject() {{
             put("Env", new JSONArray());
             put("OpenStdin", false);
             put("Tty", false);
             put("Labels", new JSONObject());
-            put("name", "");
             put("Cmd", new JSONArray());
-            put("Image", templateObject.getString("registry")
-                    + "/" + templateObject.getString("image"));
+            put("name", containerName);
         }};
+
+        // Build image url and add it to payload.
+        var imageUrl = templateObject.getString("registry");
+        if (!imageUrl.endsWith("/")) {
+            imageUrl += "/";
+        }
+        imageUrl += templateObject.getString("image");
+        jsonPayload.put("Image", imageUrl);
 
         // Build exposed ports part of json payload.
         final var exposedPorts = new JSONObject();
@@ -80,8 +89,12 @@ public final class PortainerUtil {
 
         final var portBindings = new JSONObject();
         for (final var port : ports) {
+            final var serverSocket = new ServerSocket(0);
+
             portBindings.put(port, new JSONArray().appendElement(new JSONObject()
-                    .put("HostPort", String.valueOf(SocketUtils.findAvailableTcpPort()))));
+                    .put("HostPort", String.valueOf(serverSocket.getLocalPort()))));
+
+            serverSocket.close();
         }
         hostConfig.put("PortBindings", portBindings);
 
@@ -92,7 +105,6 @@ public final class PortainerUtil {
         hostConfig.put("Binds", binds);
 
         jsonPayload.put("HostConfig", hostConfig);
-        jsonPayload.put("name", image);
 
         // Build volumes part of json payload.
         final var volumesJSON = new JSONObject();

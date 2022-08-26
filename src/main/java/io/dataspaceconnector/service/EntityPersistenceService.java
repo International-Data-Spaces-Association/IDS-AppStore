@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -316,8 +316,8 @@ public class EntityPersistenceService {
     private Optional<URI> getInstanceId(final AppResource appResource) {
         if (appResource != null && appResource.getRepresentation() != null) {
             final var representations = appResource.getRepresentation().stream()
-                    .filter(x -> x instanceof AppRepresentation)
-                    .map(x -> (AppRepresentation) x)
+                    .filter(AppRepresentation.class::isInstance)
+                    .map(AppRepresentation.class::cast)
                     .collect(Collectors.toList());
             if (!representations.isEmpty()) {
                 final var instance = representations.get(0).getInstance();

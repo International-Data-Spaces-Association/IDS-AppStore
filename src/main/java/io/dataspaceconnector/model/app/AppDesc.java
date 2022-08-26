@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,10 @@ public class AppDesc extends NamedDescription {
      */
     private Map<String, String> additional;
 
-    /* AppStore Extension */
+
+    /***
+    Change to the new version of appstore
+    */
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // SecurityScan Extensions                                                                    //
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +183,6 @@ public class AppDesc extends NamedDescription {
      * Security scanner high issues.
      */
     private long securityScannerIssuesHigh;
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Registry Extensions                                                                        //
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,3 +202,4 @@ public class AppDesc extends NamedDescription {
      */
     private String repositoryDigest;
 }
+
