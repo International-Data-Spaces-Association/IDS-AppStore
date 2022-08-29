@@ -1,3 +1,4 @@
+import datetime
 import pprint
 import time
 
@@ -149,7 +150,10 @@ def create_representation():
         "description": "This is the docker representation for the DataProcessingApp",
         "language": "EN",
         "runtimeEnvironment": "docker",
-        "distributionService": "https://app.registry.example.org"
+        "mediaType": "application/json",
+        "representationStandard": "",
+        "shapesGraph": "",
+        "distributionService": "https://drm-appstore.fit.fraunhofer.de"
     }
     loc = post_request_check_response(f"{combined_host}/api/representations", json)
     return loc
@@ -159,17 +163,10 @@ def create_dataApp():
     json = {
         "title": "DataApp Information",
         "description": "This is the dataApp information for the DataProcessingApp.",
-        "remoteId": "",
-        "remoteAddress": "",
-        "docs": "App-related human-readable documentation.",
+	"docs": "App-related human-readable documentation.",
         "envVariables": "dbUser=sa;dbPasswd=passwd",
-        "storageConfig": "-v /data",
-        "supportedPolicies": [
-        "DURATION_USAGE"
-        ],
-        "keywords": [
-        "string"
-        ],
+  	"storageConfig": "-v /data",
+  	"supportedPolicies": [    "PROVIDE_ACCESS"  ]
     }
     loc = post_request_check_response(f"{combined_host}/api/apps", json)
     return loc
@@ -185,8 +182,9 @@ def create_endpoints():
         "port": 8080,
         "protocol": "HTTP/1.1",
         "type": "APP",
-        "docs": "https://app.swaggerhub.com/apis/app/1337",
-         "info": "More information about the endpoint",
+        "endpointType" : "Output" , 
+        "endpointPort": 8080,
+        "protocol": "HTTP/1.1",
         "path": "/output/"
     }
     loc = post_request_check_response(f"{combined_host}/api/endpoints", json)
@@ -563,15 +561,15 @@ add_rule_to_contract(contract, use_rule)
 ############################
 # response = post_description_request("http://localhost:8080/api/ids/data", resource)
 # pprint.pprint(response.json())
-#resource_uuid = resource.replace(f"{combined_host}/api/offers/", "")
-#artifact_uuid = artifact.replace(f"{combined_host}/api/artifacts/", "")
-#pprint.pprint("ResourceId: " + resource_uuid)
-#pprint.pprint("ArtifactId: " + artifact_uuid)
+resource_uuid = resource.split("/api/offers/")[1]
+artifact_uuid = artifact.replace(f"{combined_host}/api/artifacts/", "")
+pprint.pprint("ResourceId: " + resource_uuid)
+pprint.pprint("ArtifactId: " + artifact_uuid)
 
 ###########################
 # SENDING SIMULATED EVENT #
 ###########################
-# send_simulated_registry_event(resource_uuid)
+send_simulated_registry_event(resource_uuid)
 
 ##########################
 # DOCKER UPLOAD METHODS  #
@@ -588,7 +586,7 @@ pulling_tagging_pushing_image_to_registry(image_name_pull=image_name, resource_i
 ##################################
 # GET ARTIFACT AND ARTIFACT DATA #
 ##################################
-#send_get_artifact(artifact)
+send_get_artifact(artifact)
 
-#filename = send_get_artifact_data(artifact, artifact_uuid)
-#pprint.pprint("File can be found in working directory: " + filename)
+filename = send_get_artifact_data(artifact, artifact_uuid)
+pprint.pprint("File can be found in working directory: " + filename)
