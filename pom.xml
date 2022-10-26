@@ -563,7 +563,7 @@
 		<repository>
 			<id>ids-public</id>
 			<name>isst-public</name>
-			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
+			<url>https://mvn.ids.isst.fraunhofer.de/repository/ids-public/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
