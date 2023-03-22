@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +15,22 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.model.util.FactoryUtils;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 
 /**
  * Base class for creating and updating resources.
+ *
+ * @param <T> The resource type.
+ * @param <D> The description type.
  */
-@Log4j2
-@Component
-@RequiredArgsConstructor
-public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc> {
-
-
-//    /**
-//     * The service for resource handling.
-//     */
-    //private final @NonNull ResourceService resourceService;
-
-    /**
-     * The default remote id assigned to all resources.
-     */
-    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc>
+        extends AbstractNamedFactory<T, D> {
 
     /**
      * The default keywords assigned to all resources.
@@ -83,7 +70,7 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
     /**
      * The default sample list assigned to all resources.
      */
-    public static final List<URI> DEFAULT_SAMPLES = new ArrayList<>();
+    public static final URI[] DEFAULT_SAMPLES = {};
 
     /**
      * Create a new resource.
@@ -93,15 +80,25 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
      * @throws IllegalArgumentException if desc is null.
      */
     @Override
-    protected Resource initializeEntity(final ResourceDesc desc) {
-        final var resource = new Resource();
+    protected T initializeEntity(final D desc) {
+        final var resource = createInternal(desc);
         resource.setRepresentations(new ArrayList<>());
         resource.setContracts(new ArrayList<>());
         resource.setCatalogs(new ArrayList<>());
         resource.setSubscriptions(new ArrayList<>());
 
+        update(resource, desc);
+
         return resource;
     }
+
+    /**
+     * Create a new resource. Implement type specific stuff here.
+     *
+     * @param desc The description passed to the factory.
+     * @return The new resource.
+     */
+    protected abstract T createInternal(D desc);
 
     /**
      * Update a resource.
@@ -112,8 +109,8 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Override
-    protected boolean updateInternal(final Resource resource, final ResourceDesc desc) {
-        final var hasUpdatedRemoteId = updateRemoteId(resource, desc.getRemoteId());
+    public boolean update(final T resource, final D desc) {
+        final var hasParentUpdated = super.update(resource, desc);
         final var hasUpdatedKeywords = updateKeywords(resource, desc.getKeywords());
         final var hasUpdatedPublisher = updatePublisher(resource, desc.getPublisher());
         final var hasUpdatedLanguage = updateLanguage(resource, desc.getLanguage());
@@ -123,10 +120,13 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
         final var hasUpdatedPaymentMethod = updatePaymentMethod(resource, desc.getPaymentMethod());
         final var hasUpdatedSamples = updateSamples(resource, desc.getSamples());
+        final var hasChildUpdated = updateInternal(resource, desc);
 
-        final var hasUpdated = hasUpdatedRemoteId || hasUpdatedKeywords || hasUpdatedPublisher
-                || hasUpdatedLanguage || hasUpdatedLicense || hasUpdatedSovereign
-                || hasUpdatedEndpointDocs || hasUpdatedPaymentMethod || hasUpdatedSamples;
+        final var hasUpdated = hasParentUpdated || hasChildUpdated
+                || hasUpdatedKeywords || hasUpdatedPublisher
+                || hasUpdatedLanguage || hasUpdatedLicense
+                || hasUpdatedSovereign || hasUpdatedEndpointDocs
+                || hasUpdatedPaymentMethod || hasUpdatedSamples;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -135,15 +135,14 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return hasUpdated;
     }
 
-    private boolean updateRemoteId(final Resource resource, final URI remoteId) {
-        final var newUri = FactoryUtils.updateUri(
-                resource.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
-        newUri.ifPresent(resource::setRemoteId);
-
-        return newUri.isPresent();
-    }
-
-    private boolean updateKeywords(final Resource resource, final List<String> keywords) {
+    /**
+     * Update a resource's keywords.
+     *
+     * @param resource The resource.
+     * @param keywords The new keywords.
+     * @return true if the resource's keywords have been modified.
+     */
+    protected final boolean updateKeywords(final Resource resource, final List<String> keywords) {
         final var newKeys =
                 FactoryUtils.updateStringList(resource.getKeywords(), keywords, DEFAULT_KEYWORDS);
         newKeys.ifPresent(resource::setKeywords);
@@ -151,7 +150,14 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return newKeys.isPresent();
     }
 
-    private boolean updatePublisher(final Resource resource, final URI publisher) {
+    /**
+     * Update a resource's publisher.
+     *
+     * @param resource  The resource.
+     * @param publisher The new publisher.
+     * @return true if the resource's publisher has been modified.
+     */
+    protected final boolean updatePublisher(final Resource resource, final URI publisher) {
         final var newPublisher =
                 FactoryUtils.updateUri(resource.getPublisher(), publisher, DEFAULT_PUBLISHER);
         newPublisher.ifPresent(resource::setPublisher);
@@ -159,7 +165,14 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return newPublisher.isPresent();
     }
 
-    private boolean updateLanguage(final Resource resource, final String language) {
+    /**
+     * Update a resource's language.
+     *
+     * @param resource The resource.
+     * @param language The new language.
+     * @return true if the resource's language has been modified.
+     */
+    protected final boolean updateLanguage(final Resource resource, final String language) {
         final var newLanguage =
                 FactoryUtils.updateString(resource.getLanguage(), language, DEFAULT_LANGUAGE);
         newLanguage.ifPresent(resource::setLanguage);
@@ -167,7 +180,14 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return newLanguage.isPresent();
     }
 
-    private boolean updateLicense(final Resource resource, final URI license) {
+    /**
+     * Update a resource's license.
+     *
+     * @param resource The resource.
+     * @param license  The new license.
+     * @return true if the resource's license has been modified.
+     */
+    protected final boolean updateLicense(final Resource resource, final URI license) {
         final var newLicense =
                 FactoryUtils.updateUri(resource.getLicense(), license, DEFAULT_LICENSE);
         newLicense.ifPresent(resource::setLicense);
@@ -175,7 +195,14 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return newLicense.isPresent();
     }
 
-    private boolean updateSovereign(final Resource resource, final URI sovereign) {
+    /**
+     * Update a resource's sovereign.
+     *
+     * @param resource  The resource.
+     * @param sovereign The new sovereign.
+     * @return true if the resource's sovereign has been modified.
+     */
+    protected final boolean updateSovereign(final Resource resource, final URI sovereign) {
         final var newPublisher =
                 FactoryUtils.updateUri(resource.getSovereign(), sovereign, DEFAULT_SOVEREIGN);
         newPublisher.ifPresent(resource::setSovereign);
@@ -183,7 +210,14 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return newPublisher.isPresent();
     }
 
-    private boolean updateEndpointDocs(final Resource resource, final URI endpointDocs) {
+    /**
+     * Update a resource's endpoint documentation.
+     *
+     * @param resource     The resource.
+     * @param endpointDocs The new endpoint documentation.
+     * @return true if the resource's endpoint documentation has been modified.
+     */
+    protected final boolean updateEndpointDocs(final Resource resource, final URI endpointDocs) {
         final var newPublisher = FactoryUtils.updateUri(
                 resource.getEndpointDocumentation(), endpointDocs, DEFAULT_ENDPOINT_DOCS);
         newPublisher.ifPresent(resource::setEndpointDocumentation);
@@ -191,8 +225,15 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return newPublisher.isPresent();
     }
 
-    private boolean updatePaymentMethod(final Resource resource,
-                                        final PaymentMethod paymentMethod) {
+    /**
+     * Update a resource's payment modality.
+     *
+     * @param resource      The resource.
+     * @param paymentMethod The new payment modality.
+     * @return true if the resource's payment modality has been modified.
+     */
+    protected final boolean updatePaymentMethod(final Resource resource,
+                                                final PaymentMethod paymentMethod) {
         final var tmp = paymentMethod == null ? DEFAULT_PAYMENT_MODALITY : paymentMethod;
         if (tmp.equals(resource.getPaymentModality())) {
             return false;
@@ -202,43 +243,30 @@ public class ResourceFactory extends AbstractNamedFactory<Resource, ResourceDesc
         return true;
     }
 
-    private boolean updateSamples(final Resource resource, final List<URI> samples) {
-//        if (samples != null) {
-//            validateSamples(resource, samples);
-//        }
+    /**
+     * Update a resource's samples.
+     *
+     * @param resource The resource.
+     * @param samples  The new samples.
+     * @return true if the resource's samples have been modified.
+     */
+    protected final boolean updateSamples(final Resource resource, final List<URI> samples) {
+        if (samples != null) {
+            validateSamples(resource, samples);
+        }
         final var newList
-                = FactoryUtils.updateUriList(resource.getSamples(), samples, DEFAULT_SAMPLES);
+                = FactoryUtils.updateUriList(resource.getSamples(), samples,
+                                             Arrays.asList(DEFAULT_SAMPLES));
         newList.ifPresent(resource::setSamples);
 
         return newList.isPresent();
     }
 
-//    private void validateSamples(final Resource resource, final List<URI> samples) {
-//        for (final var sample : samples) {
-//            if (
-//              io.dataspaceconnector.common.util.ValidationUtils.isInvalidUri(sample.toString())
-//            )
-//            {
-//                throw new InvalidEntityException("Sample is not a valid uri.");
-//            }
-//
-//            UUID resourceId;
-//            try {
-//                resourceId = io.dataspaceconnector.common.net.EndpointUtils.getUUIDFromPath(sample);
-//            } catch (Exception exception) {
-//                throw new InvalidEntityException("Sample is not a valid uri.");
-//            }
-//
-//            if (resource.getId().equals(resourceId)) {
-//                throw new InvalidEntityException("Resource cannot reference itself.");
-//            }
-//
-//            if (!resourceService.doesExist(resourceId)) {
-//                if (log.isWarnEnabled()) {
-//                    log.warn("Could not find matching resource. [id=({})]", sample);
-//                }
-//                throw new InvalidEntityException("Could not find matching resource.");
-//            }
-//        }
-//    }
+    /**
+     * Update a resource's samples. Implement type specific stuff here.
+     *
+     * @param resource The resource passed to the factory.
+     * @param samples  The new samples.
+     */
+    protected abstract void validateSamples(Resource resource, List<URI> samples);
 }

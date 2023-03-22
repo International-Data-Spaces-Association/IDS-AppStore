@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +55,8 @@ public final class ContractAgreementService
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
+
+        Utils.requireNonNull(token, ErrorMessage.DAT_NULL);
 
         final var recipient = desc.getRecipient();
         final var correlationMessage = desc.getCorrelationMessage();

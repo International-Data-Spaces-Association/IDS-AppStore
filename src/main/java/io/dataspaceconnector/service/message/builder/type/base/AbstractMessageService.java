@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +28,6 @@ import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
-import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
@@ -38,8 +36,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import okhttp3.MultipartBody;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
@@ -91,6 +91,19 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     protected abstract Class<?> getResponseMessageType();
 
     /**
+     * Creates the multipart request body with given header and payload parts.
+     *
+     * @param header the header.
+     * @param payload the payload.
+     * @return the multipart body.
+     * @throws SerializeException if the multipart message could not be built.
+     */
+    protected MultipartBody buildMultipartBody(final Message header, final Object payload)
+            throws SerializeException {
+        return MessageUtils.buildIdsMultipartMessage(header, payload);
+    }
+
+    /**
      * Build and sent a multipart message with header and payload.
      *
      * @param desc    Type-specific message parameter.
@@ -105,16 +118,16 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(desc);
 
-            final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
+            final var body = buildMultipartBody(header, payload);
             if (log.isDebugEnabled()) {
-                log.debug("Built request message. [body=({})]", body);
+                log.debug("Built request message. [header=({}), payload=({})]", header, payload);
             }
 
             return idsHttpService.sendAndCheckDat(body, recipient);
-        } catch (SerializeException | ConstraintViolationException e) {
+        } catch (SerializeException | ConstraintViolationException | IllegalArgumentException e) {
             final var msg = ErrorMessage.MESSAGE_BUILDING_FAILED;
             if (log.isWarnEnabled()) {
-                log.warn(msg + "[exception=({})]", e.getMessage(), e);
+                log.warn(msg + " [exception=({})]", e.getMessage());
             }
             throw new MessageException(msg, e);
         } catch (MultipartParseException | DeserializeException | ShaclValidatorException e) {
@@ -133,6 +146,12 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var msg = ErrorMessage.INVALID_DAT;
             if (log.isDebugEnabled()) {
                 log.debug(msg + " [exception=({})]", e.getMessage(), e);
+            }
+            throw new MessageException(msg, e);
+        } catch (SSLHandshakeException e) {
+            final var msg = ErrorMessage.CERTIFICATE_NOT_TRUSTED;
+            if (log.isWarnEnabled()) {
+                log.warn(msg + " [exception=({})]", e.getMessage());
             }
             throw new MessageException(msg, e);
         } catch (IOException e) {
@@ -206,8 +225,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         map.put("type", idsMessage.getClass());
 
         // If the message is of type exception, add the reason to the response object.
-        if (idsMessage instanceof RejectionMessage) {
-            final var rejectionMessage = (RejectionMessage) idsMessage;
+        if (idsMessage instanceof RejectionMessage rejectionMessage) {
             map.put("reason", MessageUtils.extractRejectionReason(rejectionMessage));
         }
 
@@ -220,10 +238,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      *
      * @param message The message that should be validated.
      * @throws MessageEmptyException        if the message is empty.
-     * @throws VersionNotSupportedException if the message version is not supported.
      */
-    public void validateIncomingMessage(final Message message) throws MessageEmptyException,
-            VersionNotSupportedException {
+    public void validateIncomingMessage(final Message message) throws MessageEmptyException {
         MessageUtils.checkForEmptyMessage(message);
 
         final var modelVersion = MessageUtils.extractModelVersion(message);

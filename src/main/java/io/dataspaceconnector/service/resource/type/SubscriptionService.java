@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,60 +15,65 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.SubscriptionRepository;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.relation.ArtifactSubscriptionLinker;
-import io.dataspaceconnector.service.resource.relation.RepresentationSubscriptionLinker;
-import io.dataspaceconnector.service.resource.relation.ResourceSubscriptionLinker;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.dataspaceconnector.service.resource.relation.OfferedResourceSubscriptionLinker;
+import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
+import io.dataspaceconnector.service.resource.relation.RequestedResourceSubscriptionLinker;
+import io.dataspaceconnector.service.resource.spring.ServiceLookUp;
+import lombok.NonNull;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Handles the basic logic for subscriptions.
  */
-@Service
-@NoArgsConstructor
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
-
-    /**
-     * Service for linking artifacts and subscriptions.
-     */
-    @Autowired
-    private ArtifactSubscriptionLinker artSubLinker;
-
-    /**
-     * Service for linking representations and subscriptions.
-     */
-    @Autowired
-    private RepresentationSubscriptionLinker repSubLinker;
-
-    /**
-     * Service for linking resources and subscriptions.
-     */
-    @Autowired
-    private ResourceSubscriptionLinker resSubLinker;
 
     /**
      * Service for resolving database entities by id.
      */
-    @Autowired
-    private EntityResolver entityResolver;
+    private final @NonNull EntityResolver entityResolver;
+
+    /**
+     * Service for service lookup.
+     */
+    private final @NonNull ServiceLookUp lookUp;
+
+    /**
+     * Constructor.
+     * @param repository The subscription repository.
+     * @param factory    The subscription factory.
+     * @param resolver   The entity resolver.
+     * @param serviceLookUp The service lookup.
+     */
+    public SubscriptionService(
+            final BaseEntityRepository<Subscription> repository,
+            final AbstractFactory<Subscription, SubscriptionDesc> factory,
+            final @NonNull EntityResolver resolver,
+            final @NonNull ServiceLookUp serviceLookUp) {
+        super(repository, factory);
+        this.entityResolver = resolver;
+        this.lookUp = serviceLookUp;
+    }
 
     /**
      * @param desc The description of the new entity.
@@ -136,6 +140,10 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws SubscriptionProcessingException if the subscription could not be removed.
      * @throws ResourceNotFoundException       if not matching subscription could be found.
      */
+    @SuppressFBWarnings(
+            value = "REC_CATCH_EXCEPTION",
+            justification = "caught exceptions are unchecked"
+    )
     public void removeSubscription(final URI target, final URI issuer)
             throws SubscriptionProcessingException, ResourceNotFoundException {
         final var subscriptions = getBySubscriberAndTarget(issuer, target);
@@ -174,12 +182,19 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         // Link subscription to entity.
         final var subscriptionId = subscription.getId();
         final var value = entity.get();
+
         if (value instanceof Artifact) {
-            artSubLinker.add(value.getId(), Set.of(subscriptionId));
+            lookUp.getService(ArtifactSubscriptionLinker.class).get()
+                  .add(value.getId(), Set.of(subscriptionId));
         } else if (value instanceof Representation) {
-            repSubLinker.add(value.getId(), Set.of(subscriptionId));
-        } else if (value instanceof Resource) {
-            resSubLinker.add(value.getId(), Set.of(subscriptionId));
+            lookUp.getService(RepresentationArtifactLinker.class).get()
+                  .add(value.getId(), Set.of(subscriptionId));
+        } else if (value instanceof OfferedResource) {
+            lookUp.getService(OfferedResourceSubscriptionLinker.class).get()
+                  .add(value.getId(), Set.of(subscriptionId));
+        } else if (value instanceof RequestedResource) {
+            lookUp.getService(RequestedResourceSubscriptionLinker.class).get()
+                  .add(value.getId(), Set.of(subscriptionId));
         } else {
             throw new SubscriptionProcessingException("No subscription offered for this target.");
         }

@@ -1,44 +1,37 @@
-/*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.SmartDataApp;
 import de.fraunhofer.iais.eis.SmartDataAppBuilder;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Converts dsc apps to ids data apps.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsDataAppBuilder extends AbstractIdsBuilder<App, SmartDataApp> {
 
     /**
      * The builder for ids dataApp.
      */
-    private final @NonNull IdsEndpointBuilder endpointBuilder;
+    private final @NonNull IdsAppEndpointBuilder endpointBuilder;
+
+    public IdsDataAppBuilder(@NonNull SelfLinkHelper selfLinkHelper, @NonNull IdsAppEndpointBuilder endpointBuilder) {
+        super(selfLinkHelper);
+        this.endpointBuilder = endpointBuilder;
+    }
+
 
     @Override
     protected de.fraunhofer.iais.eis.SmartDataApp createInternal(final App app,
@@ -56,19 +49,23 @@ public final class IdsDataAppBuilder extends AbstractIdsBuilder<App, SmartDataAp
         // Prepare SmartDataApp attributes.
         final var selfLink = getAbsoluteSelfLink(app);
         final var documentation = app.getDocs();
-        final var environmentVariables = app.getEnvironmentVariables();
+        final var environmentVariables = app.getEnvVariables();
         final var storageConfiguration = app.getStorageConfig();
 
         final var usagePolicies
-                = ToIdsObjectMapper.getListOfUsagePolicyClasses(app.getSupportedUsagePolicies());
+                = ToIdsObjectMapper.getUsagePolicyClass(app.getSupportedPolicies().get(0));
+
+//                Optional<List<AppEndpoint>> appEndpoints
+//                = Optional.of(List.<AppEndpoint>copyOf((Collection<? extends AppEndpoint>) endpoints.get()));
 
         final var builder = new SmartDataAppBuilder(selfLink)
                 ._appDocumentation_(documentation)
                 ._appEnvironmentVariables_(environmentVariables)
                 ._appStorageConfiguration_(storageConfiguration)
                 ._supportedUsagePolicies_(usagePolicies);
+//                ._appEndpoint_(appEndpoints);
 
-        endpoints.ifPresent(x -> builder._appEndpoint_(Collections.unmodifiableList(x)));
+        endpoints.ifPresent(x -> builder._appEndpoint_((de.fraunhofer.iais.eis.AppEndpoint) Collections.unmodifiableList(x).get(0)));
 
         return builder.build();
     }

@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-# Dependencies
+
 FROM maven:3-jdk-11 AS maven
 WORKDIR /app
 COPY pom.xml .

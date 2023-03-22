@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +15,6 @@
  */
 package io.dataspaceconnector.model.contract;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.resource.Resource;
@@ -100,7 +98,6 @@ public class Contract extends NamedEntity implements RemoteObject {
     /**
      * The representations in which this contract is used.
      */
-    @JsonIgnore
     @ManyToMany(mappedBy = "contracts")
     private List<Resource> resources;
 }

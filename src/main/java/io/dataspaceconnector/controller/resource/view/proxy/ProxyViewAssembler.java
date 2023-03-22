@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +26,9 @@ public class ProxyViewAssembler implements RepresentationModelAssembler<Proxy, P
 
     @Override
     public final ProxyView toModel(final Proxy proxy) {
-        return new ModelMapper().map(proxy, ProxyView.class);
+        final var proxyView = new ModelMapper().map(proxy, ProxyView.class);
+        proxyView.setAuthenticationSet(proxy.getAuthentication() != null);
+
+        return proxyView;
     }
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,13 +49,13 @@ public class ArtifactRequestMessageBuilder
     /**
      * Builds an ArtifactRequestMessage according to the exchange properties and creates a Request
      * with the message as header and an empty payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */
     @Override
     protected Request<ArtifactRequestMessageImpl, QueryInput, Optional<Jws<Claims>>>
-    processInternal(
-            final Exchange exchange) {
+    processInternal(final Exchange exchange) {
         final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
         final var agreementId = exchange
                 .getProperty(ParameterUtils.TRANSFER_CONTRACT_PARAM, URI.class);

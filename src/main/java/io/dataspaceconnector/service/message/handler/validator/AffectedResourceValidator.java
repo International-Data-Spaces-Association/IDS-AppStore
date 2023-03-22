@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +36,10 @@ class AffectedResourceValidator extends IdsValidator<Request<ResourceUpdateMessa
         MessagePayload, Optional<Jws<Claims>>>> {
 
     /**
-     * Checks whether the resource ID given in a ResourceUpdateMessage is null or empty.
+     * Checks whether the resource id given in a ResourceUpdateMessage is null or empty.
      *
      * @param message the incoming message.
-     * @throws Exception if the ID is null or empty.
+     * @throws Exception if the id is null or empty.
      */
     @Override
     protected void processInternal(final Request<ResourceUpdateMessageImpl,

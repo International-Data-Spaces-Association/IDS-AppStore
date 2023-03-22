@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,23 +26,42 @@ public enum PaymentMethod {
      * To express that the payment method is not set.
      */
     @JsonProperty("undefined")
-    UNDEFINED,
+    UNDEFINED("Undefined"),
 
     /**
      * To express that the exchange of resource is with a fixed price.
      */
     @JsonProperty("fixedPrice")
-    FIXED_PRICE,
+    FIXED_PRICE("Fixed price"),
 
     /**
      * To express that the exchange of resource is free.
      */
     @JsonProperty("free")
-    FREE,
+    FREE("Free"),
 
     /**
      * To express that the exchange of resource is negotiation-based.
      */
     @JsonProperty("negotiationBasis")
-    NEGOTIATION_BASIS
+    NEGOTIATION_BASIS("Negotiation basis");
+
+    /**
+     * Holds the enums string.
+     */
+    private final String value;
+
+    /**
+     * Constructor.
+     *
+     * @param name The name of the payment method.
+     */
+    PaymentMethod(final String name) {
+        this.value = name;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

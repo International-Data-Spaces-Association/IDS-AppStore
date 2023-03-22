@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +30,8 @@ import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.InvalidInputException;
-import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
 import io.dataspaceconnector.common.time.TimeInterval;
+import io.dataspaceconnector.common.time.TimeUtils;
 import io.dataspaceconnector.common.util.Utils;
 import lombok.extern.log4j.Log4j2;
 
@@ -67,9 +66,9 @@ public final class RuleUtils {
 
         if (rule instanceof Prohibition) {
             detectedPattern = PolicyPattern.PROHIBIT_ACCESS;
-        } else if (rule instanceof Permission) {
+        } else if (rule instanceof Permission permission) {
             final var constraints = rule.getConstraint();
-            final var postDuties = ((Permission) rule).getPostDuty();
+            final var postDuties = permission.getPostDuty();
 
             if (!constraints.isEmpty() && constraints.get(0) != null) {
                 if (constraints.size() > 1) {
@@ -245,11 +244,11 @@ public final class RuleUtils {
             final var operator = ((ConstraintImpl) constraint).getOperator();
             if (operator == BinaryOperator.AFTER) {
                 final var value = ((ConstraintImpl) constraint).getRightOperand().getValue();
-                final var start = FromIdsObjectMapper.getDateOf(value);
+                final var start = TimeUtils.getDateOf(value);
                 interval.setStart(start);
             } else if (operator == BinaryOperator.BEFORE) {
                 final var value = ((ConstraintImpl) constraint).getRightOperand().getValue();
-                final var end = FromIdsObjectMapper.getDateOf(value);
+                final var end = TimeUtils.getDateOf(value);
                 interval.setEnd(end);
             }
         }
@@ -277,7 +276,7 @@ public final class RuleUtils {
         final var constraint = rule.getConstraint().get(0);
         final var date = ((ConstraintImpl) constraint).getRightOperand().getValue();
 
-        return FromIdsObjectMapper.getDateOf(date);
+        return TimeUtils.getDateOf(date);
     }
 
     /**

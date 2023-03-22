@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +30,8 @@ import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadExceptio
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +44,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,7 +51,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -61,11 +60,10 @@ import java.util.Optional;
 /**
  * Controller for sending ids resource update messages.
  */
-@ConditionalOnProperty("ids.controller.enabled")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class ResourceUpdateMessageController {
 
     /**
@@ -101,8 +99,8 @@ public class ResourceUpdateMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/resource/update")
-    @Operation(summary = "Resource update message", description = "Can be used for registering "
-            + "or updating a resource at an IDS broker or consumer connector.")
+    @Operation(summary = "Send an IDS ResourceUpdateMessage.", description = "Can be used to "
+            + "register or update an IDS resource at an IDS Broker or consumer connector.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

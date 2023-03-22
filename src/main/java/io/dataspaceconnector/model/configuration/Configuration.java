@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +150,7 @@ public class Configuration extends NamedEntity {
     private Keystore keystore;
 
     /**
-     * Weather this config is the active one.
+     * Whether this config is the active one.
      */
     @Column(unique = true)
     private Boolean active;

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +56,7 @@ public class ContractRequestMessageBuilder
     /**
      * Builds a ContractRequestMessage and a contract request according to the exchange properties
      * and creates a Request with the message as header and the contract request as payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */

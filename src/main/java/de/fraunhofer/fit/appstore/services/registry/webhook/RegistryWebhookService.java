@@ -24,10 +24,12 @@ import de.fraunhofer.fit.appstore.model.registry.webhook.ScanOverview;
 import de.fraunhofer.fit.appstore.services.template.ContainerTemplateService;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.app.AppDesc;
+//import io.dataspaceconnector.service.resource.type.;
+//import io.dataspaceconnector.service.resource.type.;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import io.dataspaceconnector.service.resource.type.RepresentationService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -46,10 +48,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RegistryWebhookService {
 
-    /**
-     * The app resource service.
+    /***
+     Change to the new version of appstore
+     from ResourceService to RequestedResourceService
      */
-    private final @NonNull ResourceService resourceSvc;
+
+
+    /**
+     * The resource service.
+     */
+    private final @NonNull OfferedResourceService resourceSvc;
 
     /**
      * The representation service.
@@ -160,9 +168,9 @@ public class RegistryWebhookService {
         final var appDesc = new AppDesc();
         appDesc.setDocs(app.getDocs());
         appDesc.setRemoteId(app.getRemoteId());
-        appDesc.setEnvironmentVariables(app.getEnvironmentVariables());
+        appDesc.setEnvVariables(app.getEnvVariables());
         appDesc.setStorageConfig(app.getStorageConfig());
-        appDesc.setSupportedUsagePolicies(app.getSupportedUsagePolicies());
+        appDesc.setSupportedPolicies(app.getSupportedPolicies());
 
         appDesc.setSecurityScannerName(app.getSecurityScannerName());
         appDesc.setSecurityScannerVendor(app.getSecurityScannerVendor());
@@ -274,9 +282,10 @@ public class RegistryWebhookService {
         final var appDesc = new AppDesc();
         appDesc.setDocs(app.getDocs());
         appDesc.setRemoteId(app.getRemoteId());
-        appDesc.setEnvironmentVariables(app.getEnvironmentVariables());
+        appDesc.setEnvVariables(app.getEnvVariables());
         appDesc.setStorageConfig(app.getStorageConfig());
-        appDesc.setSupportedUsagePolicies(app.getSupportedUsagePolicies());
+        appDesc.setSupportedPolicies(app.getSupportedPolicies());
+
 
         final var summary = resourceScanOverview.getSummary();
         final var summarySummary = resourceScanOverview.getSummary().getSummary();
@@ -353,9 +362,9 @@ public class RegistryWebhookService {
         final var appDesc = new AppDesc();
         appDesc.setDocs(app.getDocs());
         appDesc.setRemoteId(app.getRemoteId());
-        appDesc.setEnvironmentVariables(app.getEnvironmentVariables());
+        appDesc.setEnvVariables(app.getEnvVariables());
         appDesc.setStorageConfig(app.getStorageConfig());
-        appDesc.setSupportedUsagePolicies(app.getSupportedUsagePolicies());
+        appDesc.setSupportedPolicies(app.getSupportedPolicies());
 
         final var scanner = resourceScanOverview.getScanner();
         appDesc.setSecurityScannerCompletePercent(resourceScanOverview.getCompletePercent());

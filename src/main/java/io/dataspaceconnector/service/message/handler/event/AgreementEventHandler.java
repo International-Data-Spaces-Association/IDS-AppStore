@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +15,7 @@
  */
 package io.dataspaceconnector.service.message.handler.event;
 
-import de.fraunhofer.iais.eis.ContractAgreement;
+import io.dataspaceconnector.service.message.handler.dto.payload.AgreementClaimsContainer;
 import io.dataspaceconnector.service.usagecontrol.PolicyExecutionService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -39,12 +38,13 @@ public class AgreementEventHandler {
     /**
      * Sends the agreement received in an event to the clearing house.
      *
-     * @param agreement the agreement.
+     * @param agreementContainer contains the agreement and the requesting connector's claims.
      */
     @Async
     @EventListener
-    public void handleAgreementEvent(final ContractAgreement agreement) {
-        executionService.sendAgreement(agreement);
+    public void handleAgreementEvent(final AgreementClaimsContainer agreementContainer) {
+        executionService.sendAgreement(agreementContainer.getAgreement(),
+                agreementContainer.getClaims());
     }
 
 }

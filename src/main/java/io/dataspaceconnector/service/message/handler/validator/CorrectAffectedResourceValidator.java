@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +35,7 @@ class CorrectAffectedResourceValidator extends IdsValidator<Request<ResourceUpda
         Resource, Optional<Jws<Claims>>>> {
 
     /**
-     * Checks whether the resource ID given in a ResourceUpdateMessage matches the resource ID in
+     * Checks whether the resource id given in a ResourceUpdateMessage matches the resource ID in
      * the message's payload.
      *
      * @param msg the incoming message.

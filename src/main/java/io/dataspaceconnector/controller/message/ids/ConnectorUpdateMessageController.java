@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +31,8 @@ import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadExceptio
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +45,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,11 +61,10 @@ import java.util.Optional;
 /**
  * Controller for sending ids connector update messages.
  */
-@ConditionalOnProperty("ids.controller.enabled")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class ConnectorUpdateMessageController {
 
     /**
@@ -100,8 +99,8 @@ public class ConnectorUpdateMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/connector/update")
-    @Operation(summary = "Connector update message", description = "Can be used for registering or "
-            + "updating the connector at an IDS broker.")
+    @Operation(summary = "Send an IDS ConnectorUpdateMessage.", description = "Can be used for "
+            + "registering or updating the connector at an IDS Broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

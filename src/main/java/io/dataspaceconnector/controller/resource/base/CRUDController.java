@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +24,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.UUID;
@@ -45,6 +42,8 @@ import java.util.UUID;
  * @param <D> Input type consumed by controller.
  * @param <V> Output type produced by the controller.
  */
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
 public interface CRUDController<T extends Entity, D extends Description, V> {
 
     /**
@@ -55,13 +54,8 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * @throws IllegalArgumentException if the description is null.
      */
     @PostMapping
-    @Operation(summary = "Create a base resource")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.CREATED,
-                    description = ResponseDescription.CREATED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+    @Operation(summary = "Create a base resource.")
+    @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
     ResponseEntity<V> create(@RequestBody D desc);
 
     /**
@@ -71,13 +65,9 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * @param size The page size.
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
-    @RequestMapping(method = RequestMethod.GET)
-    @Operation(summary = "Get a list of base resources with pagination")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+    @GetMapping
+    @Operation(summary = "Get a list of base resources with pagination.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     PagedModel<V> getAll(@RequestParam(required = false, defaultValue = "0") Integer page,
                          @RequestParam(required = false, defaultValue = "30") Integer size);
 
@@ -90,13 +80,9 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the resourceId is
      * unknown.
      */
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @Operation(summary = "Get a base resource by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+    @GetMapping(value = "{id}")
+    @Operation(summary = "Get a base resource by id.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     V get(@Valid @PathVariable(name = "id") UUID resourceId);
 
     /**
@@ -111,15 +97,12 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * unknown.
      */
     @PutMapping("{id}")
-    @Operation(summary = "Update a base resource by id")
+    @Operation(summary = "Update a base resource by id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.CREATED,
                     description = ResponseDescription.CREATED),
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+                    description = ResponseDescription.NO_CONTENT)})
     ResponseEntity<V> update(@Valid @PathVariable(name = "id") UUID id, @RequestBody D desc);
 
     /**
@@ -130,12 +113,8 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * @throws IllegalArgumentException if the resourceId is null.
      */
     @DeleteMapping("{id}")
-    @Operation(summary = "Delete a base resource by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+    @Operation(summary = "Delete a base resource by id.")
+    @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+            description = ResponseDescription.NO_CONTENT)
     ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") UUID id);
 }

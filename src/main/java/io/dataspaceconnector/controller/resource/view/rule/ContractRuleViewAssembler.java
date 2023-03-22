@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view.rule;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.type.RuleController;
 import io.dataspaceconnector.controller.resource.relation.RulesToContractsController;
+import io.dataspaceconnector.controller.resource.type.RuleController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.rule.ContractRule;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -29,8 +30,6 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
@@ -38,7 +37,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @Component
 @NoArgsConstructor
-public class ContractRuleViewAssembler
+public class ContractRuleViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<ContractRule, ContractRuleView>, SelfLinking {
     /**
      * Construct the ContractRuleView from a ContractRule.
@@ -62,6 +61,6 @@ public class ContractRuleViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, RuleController.class);
+        return getSelfLink(entityId, RuleController.class);
     }
 }

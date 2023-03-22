@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +21,10 @@ import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -33,9 +33,18 @@ import java.util.List;
  * Converts dsc configuration to ids configuration.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuration,
         ConfigurationModel> {
+
+    /**
+     * Constructs an IdsConfigModelBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     */
+    @Autowired
+    public IdsConfigModelBuilder(final SelfLinkHelper selfLinkHelper) {
+        super(selfLinkHelper);
+    }
 
     @Override
     protected ConfigurationModel createInternal(final Configuration config,

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +29,7 @@ public class RequestWithoutPayloadPreparer extends Idscp2MappingProcessor {
 
     /**
      * Prepares a {@link Request} with empty body for communication over IDSCPv2.
+     *
      * @param in the in-message of the exchange.
      */
     @Override

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +24,8 @@ import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -51,7 +52,7 @@ class RejectContractProcessor extends
      */
     @Override
     protected Response processInternal(final RouteMsg<ContractRequestMessageImpl,
-            ContractTargetRuleMapContainer> msg) throws Exception {
+            ContractTargetRuleMapContainer> msg, final Jws<Claims> claims) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
 

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +39,9 @@ import io.dataspaceconnector.service.resource.type.BrokerService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -190,7 +191,7 @@ public class GlobalMessageService {
                 log.info("Successfully updated resource. [resourceId=({}}), url=({}})]",
                         resource.getId(), input);
             }
-            // TODO Does this causes errors on subscription update?
+
             brokerCommunication.updateOfferedResourceBrokerList(address, resource);
         }
         return Optional.ofNullable(response);
@@ -322,7 +323,10 @@ public class GlobalMessageService {
         final var header = response.get().getUnderlyingMessage();
         final var payload = response.get().getReceivedPayload();
         if (header.getClass().equals(msgType)) {
-            return new ResponseEntity<>(payload, HttpStatus.OK);
+            final var headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/json+ld"));
+
+            return new ResponseEntity<>(payload, headers, HttpStatus.OK);
         }
 
         // If response message is not of predefined type.

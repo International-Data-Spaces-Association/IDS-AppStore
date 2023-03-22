@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This is the package for all resource classes.
+ * This is the package for the data app model.
  */
-package io.configmanager.model.app;
+package io.dataspaceconnector.model.app;

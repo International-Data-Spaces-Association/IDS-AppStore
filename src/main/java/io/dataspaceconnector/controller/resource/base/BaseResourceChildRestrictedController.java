@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +41,11 @@ import java.util.UUID;
  * @param <T> The type of the entity operated on.
  * @param <V> The type of the view model produces.
  */
+@ApiResponses(value = {
+        @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED),
+        @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                description = ResponseDescription.UNAUTHORIZED)})
 public class BaseResourceChildRestrictedController<S extends RelationService<?, ?, ?, ?>,
         T extends Entity, V extends RepresentationModel<V>>
         extends BaseResourceChildController<S, T, V> {
@@ -51,9 +55,6 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public PagedModel<V> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
@@ -65,9 +66,6 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
                                              @Valid @RequestBody final List<URI> resources) {
         throw new MethodNotAllowed();
@@ -78,9 +76,6 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,
                                             @Valid @RequestBody final List<URI> resources) {
         throw new MethodNotAllowed();

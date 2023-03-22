@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +79,6 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
     }
 
     private void validateInput(final URI uri) {
-        // TODO Should not throw?
         final var cond1 = connectorConfig.isIdscpEnabled()
                           && (uri == null || uri.toString().isBlank());
         final var cond2 = uri == null || ValidationUtils.isInvalidUri(String.valueOf(uri));

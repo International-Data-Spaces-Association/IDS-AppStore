@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,21 +29,25 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.common.exception.ContractException;
+import io.dataspaceconnector.common.ids.policy.ContractUtils;
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.controller.resource.type.ArtifactController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
-import io.dataspaceconnector.common.ids.policy.ContractUtils;
-import io.dataspaceconnector.common.ids.policy.RuleUtils;
-import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityDependencyResolver;
-import io.dataspaceconnector.service.EntityResolver;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +55,6 @@ import java.util.List;
  * This service offers methods related to contract management.
  */
 @Service
-@RequiredArgsConstructor
 public class ContractManager {
 
     /**
@@ -76,6 +78,33 @@ public class ContractManager {
     private final @NonNull ConnectorService connectorService;
 
     /**
+     * Helper class for creating self-links.
+     */
+    private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
+     * Constructs a ContractManager.
+     *
+     * @param deserializationSvc The deserialization service.
+     * @param entityDependencyResolver The dependency resolver.
+     * @param resolver The entity resolver.
+     * @param connectorSvc The connector service.
+     * @param linkHelper The self link helper.
+     */
+    public ContractManager(@NonNull final DeserializationService deserializationSvc,
+                           @NonNull final EntityDependencyResolver entityDependencyResolver,
+                           @NonNull final EntityResolver resolver,
+                           @NonNull final ConnectorService connectorSvc,
+                           @NonNull @Qualifier("utilSelfLinkHelper")
+                           final SelfLinkHelper linkHelper) {
+        this.deserializationService = deserializationSvc;
+        this.dependencyResolver = entityDependencyResolver;
+        this.entityResolver = resolver;
+        this.connectorService = connectorSvc;
+        this.selfLinkHelper = linkHelper;
+    }
+
+    /**
      * Check if the transfer contract is valid and the conditions are fulfilled.
      *
      * @param agreementId       The id of the contract.
@@ -97,7 +126,7 @@ public class ContractManager {
         final var agreement = (Agreement) entity.get();
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
-        if (!ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact)) {
+        if (!isMatchingTransferContract(artifacts, requestedArtifact)) {
             // If the requested artifact does not match the agreement, send rejection message.
             throw new ContractException("Transfer contract does not match the requested artifact.");
         }
@@ -110,6 +139,13 @@ public class ContractManager {
 
         final var idsAgreement = deserializationService.getContractAgreement(agreement.getValue());
 
+        // Validation of end date.
+        final var endDate = idsAgreement.getContractEnd()
+                .toGregorianCalendar().toZonedDateTime();
+        if (endDate.isBefore(ZonedDateTime.now())) {
+            throw new ContractException("The agreement has expired.");
+        }
+
         // Validation of issuer connector.
         if (!idsAgreement.getConsumer().equals(issuer)) {
             throw new ContractException("The issuer connector does not correspond to the signed "
@@ -117,6 +153,29 @@ public class ContractManager {
         }
 
         return idsAgreement;
+    }
+
+    /**
+     * Check if the transfer contract's target matches the requested artifact.
+     *
+     * @param artifacts         List of artifacts.
+     * @param requestedArtifact Id of the requested artifact.
+     * @return True if the requested artifact matches the transfer contract's artifacts.
+     * @throws ResourceNotFoundException If a resource could not be found.
+     */
+    private boolean isMatchingTransferContract(final List<Artifact> artifacts,
+                                               final URI requestedArtifact)
+            throws ResourceNotFoundException {
+        for (final var artifact : artifacts) {
+            final var endpoint = selfLinkHelper
+                    .getSelfLink(artifact.getId(), ArtifactController.class).toUri();
+            if (endpoint.equals(requestedArtifact)) {
+                return true;
+            }
+        }
+
+        // If the requested artifact could not be found in the transfer contract (agreement).
+        return false;
     }
 
     /**
@@ -156,15 +215,15 @@ public class ContractManager {
 
         // Add assignee to all rules.
         for (final var rule : ruleList) {
-            if (rule instanceof Permission) {
+            if (rule instanceof Permission permission) {
                 ((PermissionImpl) rule).setAssignee(Util.asList(connectorId));
-                permissions.add((Permission) rule);
-            } else if (rule instanceof Prohibition) {
+                permissions.add(permission);
+            } else if (rule instanceof Prohibition prohibition) {
                 ((ProhibitionImpl) rule).setAssignee(Util.asList(connectorId));
-                prohibitions.add((Prohibition) rule);
-            } else if (rule instanceof Duty) {
+                prohibitions.add(prohibition);
+            } else if (rule instanceof Duty duty) {
                 ((DutyImpl) rule).setAssignee(Util.asList(connectorId));
-                obligations.add((Duty) rule);
+                obligations.add(duty);
             }
         }
 
@@ -199,15 +258,15 @@ public class ContractManager {
 
         // Add assigner to all rules.
         for (final var rule : ruleList) {
-            if (rule instanceof Permission) {
+            if (rule instanceof Permission permission) {
                 ((PermissionImpl) rule).setAssigner(Util.asList(connectorId));
-                permissions.add((Permission) rule);
-            } else if (rule instanceof Prohibition) {
+                permissions.add(permission);
+            } else if (rule instanceof Prohibition prohibition) {
                 ((ProhibitionImpl) rule).setAssigner(Util.asList(connectorId));
-                prohibitions.add((Prohibition) rule);
-            } else if (rule instanceof Duty) {
+                prohibitions.add(prohibition);
+            } else if (rule instanceof Duty duty) {
                 ((DutyImpl) rule).setAssigner(Util.asList(connectorId));
-                obligations.add((Duty) rule);
+                obligations.add(duty);
             }
         }
 

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +19,7 @@ import io.dataspaceconnector.model.agreement.Agreement;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -35,6 +35,7 @@ public interface AgreementRepository extends BaseEntityRepository<Agreement> {
      * @param entityId The id of the agreement.
      */
     @Modifying
+    @Transactional
     @Query("UPDATE Agreement a "
             + "SET a.confirmed = true "
             + "WHERE a.id = :entityId "

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +15,9 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.named.NamedDescription;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,38 +28,17 @@ import java.net.URI;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class EndpointDesc extends NamedDescription {
-
-    /**
-     * The endpoint id on provider side.
-     */
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private URI remoteId;
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = GenericEndpointDesc.class, name = "GENERIC"),
+        @JsonSubTypes.Type(value = AppEndpointDesc.class, name = "APP")}
+)
+public class EndpointDesc extends Description {
 
     /**
      * The location information about the endpoint.
      */
-    private URI location;
-
-    /**
-     * The media type expressed by this endpoint.
-     */
-    private String mediaType;
-
-    /**
-     * The port of the endpoint.
-     */
-    private Long port;
-
-    /**
-     * The protocol of the endpoint.
-     */
-    private String protocol;
-
-    /**
-     * The endpoint type.
-     */
-    private EndpointType type;
+    private String location;
     /**
      * The documentation url.
      */
@@ -68,9 +47,4 @@ public class EndpointDesc extends NamedDescription {
      * The information about the endpoint.
      */
     private String info;
-
-    /**
-     * The path of the endpoint.
-     */
-    private String path;
 }

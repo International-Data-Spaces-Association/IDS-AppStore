@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +19,6 @@ package io.dataspaceconnector.controller.resource.base.tag;
  * The names of tags for resources.
  */
 public final class ResourceName {
-
-    /**
-     * Tag name for data apps.
-     */
-    public static final String APPS = "Data Apps";
 
     /**
      * Tag name for catalogs.
@@ -47,19 +41,34 @@ public final class ResourceName {
     public static final String CONTRACTS = "Contracts";
 
     /**
-     * Tag name for resources.
+     * Tag name for offered resources.
      */
-    public static final String RESOURCES = "Resources";
+    public static final String OFFERS = "Offered Resources";
+
+    /**
+     * Tag name for requested resources.
+     */
+    public static final String REQUESTS = "Requested Resources";
 
     /**
      * Tag name for agreements.
      */
-    public static final String AGREEMENTS = "Agreements";
+    public static final String AGREEMENTS = "Contracts";
 
     /**
      * Tag name for artifacts.
      */
     public static final String ARTIFACTS = "Artifacts";
+
+    /**
+     * Tag name for apps.
+     */
+    public static final String APPS = "Apps";
+
+    /**
+     * Tag name for app stores.
+     */
+    public static final String APPSTORES = "App Stores";
 
     /**
      * Tag name for brokers.
@@ -69,7 +78,12 @@ public final class ResourceName {
     /**
      * Tag name for configurations.
      */
-    public static final String CONFIGURATIONS = "Configurations";
+    public static final String CONFIGURATIONS = "_Configurations";
+
+    /**
+     * Tag name for data sources/sinks.
+     */
+    public static final String DATA_SOURCES = "Data Sources";
 
     /**
      * Tag name for endpoints.
@@ -77,9 +91,19 @@ public final class ResourceName {
     public static final String ENDPOINTS = "Endpoints";
 
     /**
+     * Tag name for routes.
+     */
+    public static final String ROUTES = "Routes";
+
+    /**
      * Tag name for subscriptions.
      */
     public static final String SUBSCRIPTIONS = "Subscriptions";
+
+    /**
+     * Tag name for daps.
+     */
+    public static final String DAPS = "Daps";
 
     private ResourceName() {
         // Nothing to do here.

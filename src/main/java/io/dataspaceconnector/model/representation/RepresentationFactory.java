@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +17,16 @@ package io.dataspaceconnector.model.representation;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.ArrayList;
 
+/* AppStore Extension */
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  * Creates and updates a representation.
  */
-@Component
-@Data
 public class RepresentationFactory
         extends AbstractNamedFactory<Representation, RepresentationDesc> {
 
@@ -53,6 +50,7 @@ public class RepresentationFactory
      */
     public static final String DEFAULT_STANDARD = "";
 
+    /* AppStore Extension */
     /**
      * The default runtime environment to all representations.
      */
@@ -62,7 +60,8 @@ public class RepresentationFactory
      * The default distribution service assigned to all representations.
      */
     @Value("${registry.host}")
-    private URI defaultDistributionService = URI.create("binac.fit.fraunhofer.de");
+    private URI defaultDistributionService;
+    /* AppStore Extension End */
 
     /**
      * Create a new representation.
@@ -77,6 +76,8 @@ public class RepresentationFactory
         representation.setArtifacts(new ArrayList<>());
         representation.setResources(new ArrayList<>());
         representation.setSubscriptions(new ArrayList<>());
+
+        /* AppStore Extension */
         representation.setDataApps(new ArrayList<>());
 
         return representation;
@@ -97,6 +98,8 @@ public class RepresentationFactory
         final var hasUpdatedMediaType = this.updateMediaType(representation, desc.getMediaType());
         final var hasUpdatedLanguage = this.updateLanguage(representation, desc.getLanguage());
         final var hasUpdatedStandard = this.updateStandard(representation, desc.getStandard());
+
+        /* AppStore Extension */
         final var hasUpdatedRuntimeEnvironment = this.updateRuntimeEnvironment(representation,
                 desc.getRuntimeEnvironment());
         final var hasUpdatedDistributionService = this.updateDistributionService(representation,
@@ -105,6 +108,9 @@ public class RepresentationFactory
         return hasUpdatedRemoteId || hasUpdatedLanguage || hasUpdatedMediaType
                 || hasUpdatedStandard || hasUpdatedRuntimeEnvironment
                 || hasUpdatedDistributionService;
+
+        // return hasUpdatedRemoteId || hasUpdatedLanguage
+        //        || hasUpdatedMediaType || hasUpdatedStandard;
     }
 
     private boolean updateRemoteId(final Representation representation, final URI remoteId) {

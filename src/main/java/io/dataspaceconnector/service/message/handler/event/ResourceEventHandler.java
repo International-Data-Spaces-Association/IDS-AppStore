@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +17,7 @@ package io.dataspaceconnector.service.message.handler.event;
 
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
-import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.RequestedResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -35,9 +34,9 @@ import org.springframework.stereotype.Component;
 public class ResourceEventHandler {
 
     /**
-     * Service for resources.
+     * Service for requested resources.
      */
-    private final @NonNull ResourceService resourceSvc;
+    private final @NonNull RequestedResourceService requestedResourceSvc;
 
     /**
      * Service for notifying subscribers about an entity update.
@@ -52,9 +51,9 @@ public class ResourceEventHandler {
     @Async
     @EventListener
     public void handleResourceUpdateEvent(final Resource resource) {
-        final var internalResource = resourceSvc.getEntityByRemoteId(resource.getId());
+        final var requestedResource = requestedResourceSvc.getEntityByRemoteId(resource.getId());
         try {
-            internalResource.ifPresent(subscriberNotificationSvc::notifyOnUpdate);
+            requestedResource.ifPresent(subscriberNotificationSvc::notifyOnUpdate);
         } catch (Exception exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to notify subscribers for update to resource. [remoteId=({})]",

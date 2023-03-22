@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +15,13 @@
  */
 package io.dataspaceconnector.service.message.handler.processor.base;
 
+import java.util.Optional;
+
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -40,15 +43,23 @@ public abstract class IdsProcessor<I extends RouteMsg<?, ?>> implements Processo
     @Override
     @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) throws Exception {
-        exchange.getIn().setBody(processInternal((I) exchange.getIn().getBody(Request.class)));
+        var request = exchange.getIn().getBody(Request.class);
+        var claims = (Optional<Jws<Claims>>) request.getClaims();
+
+        if (claims.isPresent()) {
+            exchange.getIn().setBody(processInternal((I) request, claims.get()));
+        } else {
+            exchange.getIn().setBody(processInternal((I) request, null));
+        }
     }
 
     /**
      * Contains the logic to generate a response to an incoming message.
      *
      * @param msg the incoming message.
+     * @param claims the JWT claims of the issuer.
      * @return the generated response.
      * @throws Exception if an error occurs.
      */
-    protected abstract Response processInternal(I msg) throws Exception;
+    protected abstract Response processInternal(I msg, Jws<Claims> claims) throws Exception;
 }

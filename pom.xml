@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.6</version>
+		<version>2.6.3</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -56,57 +56,61 @@
 
 	<properties>
 		<!-- General -->
-		<revision>2.0.0</revision>
+		<revision>3.0.0</revision>
 
 		<!-- Build info -->
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-messaging-services.version>5.1.1</ids-messaging-services.version>
-		<springframework.version>5.3.18</springframework.version>
-		<swagger-annotations.version>1.6.2</swagger-annotations.version>
-		<okhttp.version>4.9.1</okhttp.version>
-		<modelmapper.version>2.4.4</modelmapper.version>
-		<jackson.version>2.13.2</jackson.version>
-		<jackson-databind.version>2.13.2.2</jackson-databind.version>
-		<postgres.version>42.2.23</postgres.version>
-		<springdoc-ui.version>1.5.10</springdoc-ui.version>
-		<springdoc-security.version>1.5.10</springdoc-security.version>
-		<springdoc-hateoas.version>1.5.10</springdoc-hateoas.version>
-		<jsonld-java.version>0.13.3</jsonld-java.version>
-		<equalsverifier.version>3.7.1</equalsverifier.version>
+		<ids-messaging-services.version>6.1.0</ids-messaging-services.version>
+		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
+		<swagger-annotations.version>1.6.4</swagger-annotations.version>
+		<okhttp.version>4.9.3</okhttp.version>
+		<modelmapper.version>3.0.0</modelmapper.version>
+		<jackson.version>2.13.1</jackson.version>
+		<postgres.version>42.3.2</postgres.version>
+		<springdoc-ui.version>1.6.5</springdoc-ui.version>
+		<springdoc-security.version>1.6.5</springdoc-security.version>
+		<springdoc-hateoas.version>1.6.5</springdoc-hateoas.version>
+		<jsonld-java.version>0.13.4</jsonld-java.version>
+		<equalsverifier.version>3.9</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
+		<freemarker.version>2.3.31</freemarker.version>
 		<velocity.version>1.7</velocity.version>
-		<camel.version>3.11.1</camel.version>
-		<idscp2.version>0.5.0</idscp2.version>
+		<freemarker.version>2.3.31</freemarker.version>
+		<camel.version>3.14.1</camel.version>
+		<idscp2.version>0.6.0</idscp2.version>
+		<protobuf.version>3.19.4</protobuf.version>
+
 		<!-- PROPS FOR Hibernate Search -->
 		<hibernate.search.version>6.0.0.Final</hibernate.search.version>
 		<log4j2.version>2.17.1</log4j2.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
-		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.6.8</pitest.version>
-		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
+		<pitest.version>1.7.4</pitest.version>
+		<pitest-junit5-plugin.version>0.15</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
-		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
+		<maven-site-plugin.version>3.10.0</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
-		<spotbugs.version>4.3.0</spotbugs.version>
+		<spotbugs.version>4.5.3</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
-		<checkstyle.version>8.45.1</checkstyle.version>
+		<checkstyle.version>9.3</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
-		<pmd-plugin.version>3.14.0</pmd-plugin.version>
-		<pmd.version>6.37.0</pmd.version>
-		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
+		<pmd-plugin.version>3.15.0</pmd-plugin.version>
+		<pmd.version>6.42.0</pmd.version>
+		<versions-maven-plugin.version>2.9.0</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
-		<taglist.version>2.4</taglist.version>
+		<taglist.version>3.0.0</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
+		<dependency-check.version>6.5.3</dependency-check.version>
 
 		<!-- License -->
 		<license_name>Apache License, Version 2.0</license_name>
@@ -151,22 +155,6 @@
 					<groupId>com.squareup.okhttp3</groupId>
 					<artifactId>okhttp</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-tx</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-webmvc</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-test</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -182,55 +170,11 @@
 			</exclusions>
 		</dependency>
 
-
-		<!-- Spring dependencies -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.plugin/spring-plugin-core -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${springframework.version}</version>
-		</dependency>
-
-<!--		<dependency>-->
-<!--			<groupId>org.springframework</groupId>-->
-<!--			<artifactId>spring-context</artifactId>-->
-<!--			<version>${springframework.version}</version>-->
-<!--		</dependency>-->
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${springframework.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${springframework.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${springframework.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${springframework.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${springframework.version}</version>
-		</dependency>
-
-<!--		&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework/spring-expression &ndash;&gt;-->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
-			<version>${springframework.version}</version>
+			<groupId>org.springframework.plugin</groupId>
+			<artifactId>spring-plugin-core</artifactId>
+			<version>${springframework.plugin}</version>
 		</dependency>
 
 		<dependency>
@@ -248,10 +192,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-logging</artifactId>
-				</exclusion>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-logging</artifactId>
+					</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -355,11 +299,18 @@
 			<version>${okhttp.version}</version>
 		</dependency>
 
-<!--		<dependency>-->
-<!--			<groupId>com.fasterxml.jackson.core</groupId>-->
-<!--			<artifactId>jackson-databind</artifactId>-->
-<!--			<version>${jackson-databind.version}</version>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>mockwebserver</artifactId>
+			<version>${okhttp.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
 		<dependency>
@@ -446,6 +397,23 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.9</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
 		<dependency>
@@ -459,13 +427,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.2</version>
-		</dependency>
-
 
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
@@ -660,22 +621,22 @@
 							<groupId>net.sourceforge.pmd</groupId>
 							<artifactId>pmd-core</artifactId>
 							<version>${pmd.version}</version>
-						</dependency>
-						<dependency>
+						  </dependency>
+						  <dependency>
 							<groupId>net.sourceforge.pmd</groupId>
 							<artifactId>pmd-java</artifactId>
 							<version>${pmd.version}</version>
-						</dependency>
-						<dependency>
+						  </dependency>
+						  <dependency>
 							<groupId>net.sourceforge.pmd</groupId>
 							<artifactId>pmd-javascript</artifactId>
 							<version>${pmd.version}</version>
-						</dependency>
-						<dependency>
+						  </dependency>
+						  <dependency>
 							<groupId>net.sourceforge.pmd</groupId>
 							<artifactId>pmd-jsp</artifactId>
 							<version>${pmd.version}</version>
-						</dependency>
+						  </dependency>
 					</dependencies>
 				</plugin>
 				<plugin>
@@ -769,19 +730,19 @@
 						<buildDirectory>${project.build.directory}</buildDirectory>
 					</systemPropertyVariables>
 				</configuration>
-				<executions>
-					<execution>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>test</goal>
-						</goals>
-						<configuration>
-							<includes>
-								<include>**/*IT</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
 			</plugin>
 			<plugin>
 				<groupId>com.mycila</groupId>
@@ -853,9 +814,9 @@
 					<targetTests>
 						<param>io.dataspaceconnector.model*</param>
 					</targetTests>
-					<!--					<excludedTestClasses>-->
-					<!--						<param>**</param>-->
-					<!--					</excludedTestClasses>-->
+<!--					<excludedTestClasses>-->
+<!--						<param>**</param>-->
+<!--					</excludedTestClasses>-->
 					<mutators>
 						<mutator>ALL</mutator>
 					</mutators>
@@ -883,6 +844,18 @@
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>${maven-project-info-reports-plugin.version}</version>
 			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>${dependency-check.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -908,7 +881,7 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
-			<plugin>
+ 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 			</plugin>
@@ -950,24 +923,24 @@
 				<configuration>
 					<tagListOptions>
 						<tagClasses>
-							<tagClass>
-								<displayName>TODO</displayName>
-								<tags>
-									<tag>
-										<matchString>TODO</matchString>
-										<matchType>exact</matchType>
-									</tag>
-								</tags>
-							</tagClass>
+						  <tagClass>
+							<displayName>TODO</displayName>
+							<tags>
+							  <tag>
+								<matchString>TODO</matchString>
+								<matchType>exact</matchType>
+							  </tag>
+							</tags>
+						  </tagClass>
 						</tagClasses>
-					</tagListOptions>
+					  </tagListOptions>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
-			</plugin>
+			  </plugin>
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>

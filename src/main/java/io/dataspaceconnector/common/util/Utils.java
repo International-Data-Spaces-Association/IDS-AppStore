@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +16,7 @@
 package io.dataspaceconnector.common.util;
 
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -172,9 +172,14 @@ public final class Utils {
                 for (final var lObj : lSet) {
                     var found = false;
                     for (final var rObj : rSet) {
-                        if (compare.apply(lObj, rObj)) {
-                            found = true;
-                            break;
+                        if (Boolean.TRUE.equals(compare.apply(lObj, rObj))) {
+                            final var lType = lObj.getClass();
+                            final var rType = rObj.getClass();
+
+                            if (lType.equals(rType)) {
+                                found = true;
+                                break;
+                            }
                         }
                     }
 
@@ -199,7 +204,7 @@ public final class Utils {
         for (int x = 0; x < output.size(); x++) {
             final var obj = output.get(x);
             for (int y = x + 1; y < output.size(); y++) {
-                if (compare.apply(obj, output.get(y))) {
+                if (Boolean.TRUE.equals(compare.apply(obj, output.get(y)))) {
                     output.remove(y);
                     --y;
                 }
@@ -212,5 +217,15 @@ public final class Utils {
     @SuppressWarnings("PMD.UselessParentheses")
     private static <T> boolean isOnlyOneNull(final T obj1, final T obj2) {
         return (obj1 == null && obj2 != null) || (obj1 != null && obj2 == null);
+    }
+
+    /**
+     * Escapes a string to be valid XML.
+     *
+     * @param input the input string.
+     * @return the escaped string.
+     */
+    public static String escapeForXml(final String input) {
+        return StringEscapeUtils.escapeXml11(StringEscapeUtils.unescapeXml(input));
     }
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +26,12 @@ import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.util.List;
 
 /**
  * Creates and updates a configuration.
  */
-@Component
 @RequiredArgsConstructor
 public class ConfigurationFactory extends AbstractNamedFactory<Configuration, ConfigurationDesc> {
 
@@ -82,12 +78,12 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     /**
      * The default maintainer.
      */
-    public static final URI DEFAULT_MAINTAINER = URI.create("https://www.isst.fraunhofer.de/");
+    public static final URI DEFAULT_MAINTAINER = URI.create("https://sovity.de/");
 
     /**
      * The default curator.
      */
-    public static final URI DEFAULT_CURATOR = URI.create("https://www.isst.fraunhofer.de/");
+    public static final URI DEFAULT_CURATOR = URI.create("https://example.org/");
 
     /**
      * The default security profile.
@@ -129,9 +125,9 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                 desc.getSecurityProfile());
         final var hasUpdatedLogLevel = updateLogLevel(config, desc.getLogLevel());
         final var hasUpdatedDeployMode = updateDeployMode(config, desc.getDeployMode());
-        final var hasUpdatedTrustStore = updateTrustStore(config, desc.getTruststoreSettings());
-        final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystoreSettings());
-        final var hasUpdatedProxy = updateProxy(config, desc.getProxySettings());
+        final var hasUpdatedTrustStore = updateTrustStore(config, desc.getTruststore());
+        final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystore());
+        final var hasUpdatedProxy = updateProxy(config, desc.getProxy());
         final var hasUpdatedStatus = updateStatus(config, desc.getStatus());
 
         return hasUpdatedDefaultEndpoint

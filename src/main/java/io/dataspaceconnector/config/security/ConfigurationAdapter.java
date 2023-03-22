@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +19,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -31,30 +33,33 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 
 /**
  * This class configures admin rights for all backend endpoints behind "/api" using the role
- * defined in {@link MultipleEntryPointsSecurityConfig}.
+ * defined in {@link MultipleEntryPointsSecurityConfig}. If the web security is disabled, all
+ * DSC APIs are publicly available.
  */
 @Log4j2
 @Configuration
 @Getter(AccessLevel.PUBLIC)
+@ConditionalOnProperty(value = "spring.security.enabled", havingValue = "true")
+@Order(1)
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
     /**
      * Whether the h2 console is enabled.
      */
     @Value("${spring.h2.console.enabled}")
-    private boolean isH2ConsoleEnabled;
+    private boolean h2Enabled;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity http) throws Exception {
-
-        http
-                .sessionManagement()
+        http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/public", "/api/ids/data", "/api/gui/**", "/api/webhook/**")
-                .anonymous()
+                .antMatchers("/", "/public", "/api/ids/data", "/api/webhook/**").permitAll()
                 .antMatchers("/api/subscriptions/**").authenticated()
                 .antMatchers("/api/**").hasRole("ADMIN")
                 .antMatchers("/actuator/**").hasRole("ADMIN")
@@ -64,10 +69,9 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint());
-
         http.headers().xssProtection();
 
-        if (isH2ConsoleEnabled) {
+        if (h2Enabled) {
             http.headers().frameOptions().disable();
             if (log.isWarnEnabled()) {
                 log.warn("H2 Console enabled. Disabling frame protection.");
@@ -79,7 +83,6 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
     /**
      * Bean with an entry point for the admin realm.
-     *
      * @return The authentication entry point for the admin realm.
      */
     @Bean
@@ -88,5 +91,4 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
         entryPoint.setRealmName("admin realm");
         return entryPoint;
     }
-
 }

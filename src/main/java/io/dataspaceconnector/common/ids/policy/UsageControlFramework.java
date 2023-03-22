@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +23,12 @@ public enum UsageControlFramework {
     /**
      * Usage control (enforcement) inside the connector.
      */
-    INTERNAL("INTERNAL"),
+    INTERNAL("Internal"),
 
     /**
      * Usage control framework MyData.
      */
-    MY_DATA("MY_DATA");
+    MY_DATA("MyData");
 
     /**
      * The usage control framework.

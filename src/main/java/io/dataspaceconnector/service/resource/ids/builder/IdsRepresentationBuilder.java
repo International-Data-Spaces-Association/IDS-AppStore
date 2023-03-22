@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +15,15 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder;
 
-import de.fraunhofer.iais.eis.AppRepresentationBuilder;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
+import de.fraunhofer.iais.eis.AppRepresentationBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -33,9 +33,8 @@ import java.util.Collections;
  * Converts dsc representation to ids representation.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Representation,
-        de.fraunhofer.iais.eis.AppRepresentation> {
+        de.fraunhofer.iais.eis.Representation> {
 
     /**
      * The builder for ids artifacts.
@@ -47,6 +46,20 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
      */
     private final @NonNull IdsDataAppBuilder dataAppBuilder;
 
+    /**
+     * Constructs an IdsRepresentationBuilder.
+     *  @param selfLinkHelper the self link helper.
+     * @param idsArtifactBuilder the artifact builder.
+     * @param dataAppBuilder
+     */
+    @Autowired
+    public IdsRepresentationBuilder(final SelfLinkHelper selfLinkHelper,
+                                    final IdsArtifactBuilder idsArtifactBuilder, @NonNull IdsDataAppBuilder dataAppBuilder) {
+        super(selfLinkHelper);
+        this.artifactBuilder = idsArtifactBuilder;
+        this.dataAppBuilder = dataAppBuilder;
+    }
+
     @Override
     protected de.fraunhofer.iais.eis.AppRepresentation createInternal(
             final Representation representation, final int currentDepth,
@@ -55,6 +68,10 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
         final var artifacts =
                 create(artifactBuilder, representation.getArtifacts(), currentDepth, maxDepth);
 
+        // Build representation only if at least one artifact is present.
+        if (artifacts.isEmpty() || artifacts.get().isEmpty()) {
+            return null;
+        }
         final var apps
                 = create(dataAppBuilder, representation.getDataApps(), currentDepth, maxDepth);
 
@@ -63,6 +80,7 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
                 || apps.get().isEmpty()) {
             return null;
         }
+
 
         // Prepare representation attributes.
         final var modified = ToIdsObjectMapper.getGregorianOf(representation
@@ -79,9 +97,9 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
 
         final var builder = new AppRepresentationBuilder(getAbsoluteSelfLink(representation))
                 ._created_(created)
+                ._language_(language)
                 ._dataAppDistributionService_(distributionService)
                 ._dataAppRuntimeEnvironment_(runtimeEnvironment)
-                ._language_(language)
                 ._mediaType_(mediaType)
                 ._modified_(modified)
                 ._representationStandard_(standard);
@@ -89,6 +107,7 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
         artifacts.ifPresent(x -> builder._instance_(Collections.unmodifiableList(x)));
         // FIXME: First element because DataApp is a list
         apps.ifPresent(x -> builder._dataAppInformation_(Collections.unmodifiableList(x).get(0)));
+
         return builder.build();
     }
 }

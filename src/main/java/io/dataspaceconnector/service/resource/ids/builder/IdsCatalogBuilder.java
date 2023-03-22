@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +15,57 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder;
 
-import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/* AppStore Extension */
 import java.util.List;
 import java.util.Optional;
+import de.fraunhofer.iais.eis.Resource;
 
 /**
  * Converts dsc catalogs to ids catalogs.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, ResourceCatalog> {
 
     /**
-     * The builder for ids resource.
+     * The builder for ids resource (from offered resource).
      */
-    private final @NonNull IdsResourceBuilder resourceBuilder;
+    private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
+
+    /**
+     * Constructs an IdsCatalogBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param idsResourceBuilder the resource builder.
+     */
+    @Autowired
+    public IdsCatalogBuilder(final SelfLinkHelper selfLinkHelper,
+                             final IdsResourceBuilder<OfferedResource> idsResourceBuilder) {
+        super(selfLinkHelper);
+        this.resourceBuilder = idsResourceBuilder;
+    }
 
     @Override
     protected ResourceCatalog createInternal(final Catalog catalog, final int currentDepth,
                                              final int maxDepth)
             throws ConstraintViolationException {
         // Build children.
+
+        /* AppStore Extension */
+        // final var resources = create(resourceBuilder,
+        //        catalog.getOfferedResources(), currentDepth, maxDepth);
         final var appResources = create(resourceBuilder,
-                catalog.getResources(), currentDepth, maxDepth);
+                catalog.getOfferedResources(), currentDepth, maxDepth);
 
 
         Optional<List<Resource>> resources = Optional.empty();

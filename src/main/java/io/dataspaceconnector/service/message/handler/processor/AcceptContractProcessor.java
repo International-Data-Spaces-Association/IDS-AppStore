@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +18,8 @@ package io.dataspaceconnector.service.message.handler.processor;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.message.builder.type.ContractAgreementService;
@@ -29,6 +28,8 @@ import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.service.message.handler.exception.AgreementPersistenceException;
 import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -43,8 +44,8 @@ import java.util.ArrayList;
 @Log4j2
 @Component("AcceptContractProcessor")
 @RequiredArgsConstructor
-class AcceptContractProcessor extends IdsProcessor<RouteMsg<ContractRequestMessageImpl,
-        ContractTargetRuleMapContainer>> {
+class AcceptContractProcessor extends
+        IdsProcessor<RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer>> {
 
     /**
      * Service for persisting entities.
@@ -67,7 +68,7 @@ class AcceptContractProcessor extends IdsProcessor<RouteMsg<ContractRequestMessa
      */
     @Override
     protected Response processInternal(final RouteMsg<ContractRequestMessageImpl,
-            ContractTargetRuleMapContainer> msg) throws Exception {
+            ContractTargetRuleMapContainer> msg, final Jws<Claims> claims) throws Exception {
         final var targets = new ArrayList<>(msg.getBody().getTargetRuleMap().keySet());
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());

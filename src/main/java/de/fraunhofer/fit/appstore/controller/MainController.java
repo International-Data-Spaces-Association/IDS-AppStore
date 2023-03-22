@@ -24,7 +24,16 @@ import io.dataspaceconnector.controller.resource.type.CatalogController;
 import io.dataspaceconnector.controller.resource.type.ContractController;
 import io.dataspaceconnector.controller.resource.type.EndpointController;
 import io.dataspaceconnector.controller.resource.type.RepresentationController;
-import io.dataspaceconnector.controller.resource.type.ResourceController;
+
+/***
+Change to the new version of appstore
+*/
+
+
+import io.dataspaceconnector.controller.resource.type.OfferedResourceController;
+import io.dataspaceconnector.controller.resource.type.RequestedResourceController;
+
+//ResourceController;
 import io.dataspaceconnector.controller.resource.type.RuleController;
 import io.dataspaceconnector.controller.resource.type.SubscriptionController;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -68,6 +77,7 @@ public class MainController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
+        //return  null;
         return ResponseEntity.ok(connectorService.getAppStoreWithoutResources().toRdf());
     }
 
@@ -84,6 +94,7 @@ public class MainController {
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     public ResponseEntity<Object> getPrivateSelfDescription() {
+        //return  null;
         return ResponseEntity.ok(connectorService.getAppStoreWithAppResources().toRdf());
     }
 
@@ -113,8 +124,10 @@ public class MainController {
                 .getAll(null, null)).withRel(BaseType.CONTRACTS));
         model.add(linkTo(methodOn(EndpointController.class)
                 .getAll(null, null)).withRel(BaseType.ENDPOINTS));
-        model.add(linkTo(methodOn(ResourceController.class)
-                .getAll(null, null)).withRel(BaseType.RESOURCES));
+        model.add(linkTo(methodOn(OfferedResourceController.class)
+                .getAll(null, null)).withRel(BaseType.OFFERS));
+        model.add(linkTo(methodOn(RequestedResourceController.class)
+                .getAll(null, null)).withRel(BaseType.REQUESTS));
         model.add(linkTo(methodOn(RepresentationController.class)
                 .getAll(null, null)).withRel(BaseType.REPRESENTATIONS));
         model.add(linkTo(methodOn(RuleController.class)

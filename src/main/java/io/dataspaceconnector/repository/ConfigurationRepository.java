@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +19,7 @@ import io.dataspaceconnector.model.configuration.Configuration;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -44,6 +44,7 @@ public interface ConfigurationRepository extends BaseEntityRepository<Configurat
     /**
      * Deselect current configuration.
      */
+    @Transactional
     @Modifying
     @Query("UPDATE Configuration a "
             + "SET a.active = NULL "
@@ -56,6 +57,7 @@ public interface ConfigurationRepository extends BaseEntityRepository<Configurat
      *
      * @param id Id to select
      */
+    @Transactional
     @Modifying
     @Query("UPDATE Configuration a "
             + "SET a.active = true "

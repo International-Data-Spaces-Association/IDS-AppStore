@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +20,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The repository containing all objects of type {@link Data}.
@@ -33,9 +33,20 @@ public interface DataRepository extends JpaRepository<Data, Long> {
      * @param entityId The entity id.
      * @param data     The new data.
      */
+    @Transactional
     @Modifying
     @Query("UPDATE LocalData a "
             + "SET a.value = :data "
             + "WHERE a.id = :entityId")
     void setLocalData(Long entityId, byte[] data);
+
+    /**
+     * Removes a RemoteData object from the database.
+     *
+     * @param entityId ID of the data to delete.
+     */
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM RemoteData r WHERE r.id =:entityId")
+    void deleteRemoteData(Long entityId);
 }

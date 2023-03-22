@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +15,19 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.ArrayList;
 
 /**
  * Base class for creating and updating endpoints.
+ *
+ * @param <T> The endpoint type.
+ * @param <D> The description type.
  */
-@Component
-public class EndpointFactory extends AbstractNamedFactory<Endpoint, EndpointDesc> {
-
-    /**
-     * Default remote id assigned to all endpoints.
-     */
-    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc>
+        extends AbstractFactory<T, D> {
 
     /**
      * The default uri.
@@ -45,66 +40,36 @@ public class EndpointFactory extends AbstractNamedFactory<Endpoint, EndpointDesc
     public static final String DEFAULT_INFORMATION = "information";
 
     /**
-     * The default port.
+     * The default location.
      */
-    private static final Integer DEFAULT_PORT = 8080;
+    public static final String DEFAULT_LOCATION = "https://location";
 
     /**
-     * The default media type.
-     */
-    private static final String DEFAULT_MEDIA_TYPE = "application/json";
-
-    /**
-     * The default protocol.
-     */
-    private static final String DEFAULT_PROTOCOL = "HTTP/1.1";
-
-    /**
-     * The default path.
-     */
-    private static final String DEFAULT_PATH = "";
-
-    /**
-     * The default type.
-     */
-    private static final EndpointType DEFAULT_TYPE = EndpointType.INPUT_ENDPOINT;
-
-    /**
-     * Create a new endpoint.
+     * Update an endpoint. Implement type specific stuff here.
      *
-     * @param desc The description of the new endpoint.
-     * @return The new endpoint.
-     * @throws IllegalArgumentException if desc is null.
+     * @param endpoint The endpoint to be updated.
+     * @param desc     The description passed to the factory.
+     * @return true if the endpoint has been modified.
      */
-    protected Endpoint initializeEntity(final EndpointDesc desc) {
-        final var endpoint = new Endpoint();
-        endpoint.setApps(new ArrayList<>());
-
-        return endpoint;
+    protected boolean updateInternal(final T endpoint, final D desc) {
+        return false;
     }
 
     /**
-     * Update a endpoint.
-     *
-     * @param endpoint The endpoint to be updated.
-     * @param desc     The description of the new endpoint.
-     * @return True, if endpoint is updated.
+     * @param endpoint The entity to be updated.
+     * @param desc     The description of the new entity.
+     * @return True, if entity is updated.
      */
     @Override
-    protected boolean updateInternal(final Endpoint endpoint, final EndpointDesc desc) {
-        final var hasUpdatedRemoteId = updateRemoteId(endpoint, desc.getRemoteId());
+    public boolean update(final T endpoint, final D desc) {
+        final var hasParentUpdated = super.update(endpoint, desc);
         final var hasUpdatedLocation = updateLocation(endpoint, desc.getLocation());
         final var hasUpdatedDocs = updateDocs(endpoint, desc.getDocs());
         final var hasUpdatedInfo = updateInfo(endpoint, desc.getInfo());
-        final var hasUpdatedMediaType = updateMediaType(endpoint, desc.getMediaType());
-        final var hasUpdatedPort = updatePort(endpoint, desc.getPort());
-        final var hasUpdatedProtocol = updateProtocol(endpoint, desc.getProtocol());
-        final var hasUpdatedEndpointType = updateType(endpoint, desc.getType());
-        final var hasUpdatedPath = updatePath(endpoint, desc.getPath());
+        final var updatedInternal = updateInternal(endpoint, desc);
 
-        return hasUpdatedLocation || hasUpdatedDocs || hasUpdatedInfo
-                || hasUpdatedMediaType || hasUpdatedPort || hasUpdatedProtocol
-                || hasUpdatedEndpointType || hasUpdatedPath || hasUpdatedRemoteId;
+        return hasParentUpdated || hasUpdatedLocation || hasUpdatedDocs || hasUpdatedInfo
+                || updatedInternal;
     }
 
     /**
@@ -141,86 +106,11 @@ public class EndpointFactory extends AbstractNamedFactory<Endpoint, EndpointDesc
      * @return True, if endpoint location is updated.
      */
     private boolean updateLocation(final Endpoint endpoint,
-                                   final URI location) {
-        final var newLocation = FactoryUtils.updateUri(endpoint.getDocs(), location, DEFAULT_URI);
+                                   final String location) {
+        final var newLocation = FactoryUtils.updateString(endpoint.getLocation(),
+                location, DEFAULT_LOCATION);
         newLocation.ifPresent(endpoint::setLocation);
 
         return newLocation.isPresent();
-    }
-
-    /**
-     * @param endpoint The endpoint entity.
-     * @param path     The endpoint path.
-     * @return True, if endpoint path is updated.
-     */
-    private boolean updatePath(final Endpoint endpoint, final String path) {
-        final var newPath = FactoryUtils.updateString(endpoint.getPath(), path, DEFAULT_PATH);
-        newPath.ifPresent(endpoint::setPath);
-
-        return newPath.isPresent();
-    }
-
-    /**
-     * @param endpoint  The endpoint entity.
-     * @param mediaType The endpoint media type.
-     * @return True, if endpoint media type is updated.
-     */
-    private boolean updateMediaType(final Endpoint endpoint, final String mediaType) {
-        final var newMediaType = FactoryUtils.updateString(endpoint.getMediaType(),
-                mediaType, DEFAULT_MEDIA_TYPE);
-        newMediaType.ifPresent(endpoint::setMediaType);
-
-        return newMediaType.isPresent();
-    }
-
-    /**
-     * @param endpoint The endpoint entity.
-     * @param protocol The endpoint protocol.
-     * @return True, if endpoint protocol is updated.
-     */
-    private boolean updateProtocol(final Endpoint endpoint, final String protocol) {
-        final var newProtocol = FactoryUtils.updateString(endpoint.getProtocol(),
-                protocol, DEFAULT_PROTOCOL);
-        newProtocol.ifPresent(endpoint::setProtocol);
-
-        return newProtocol.isPresent();
-    }
-
-    /**
-     * @param endpoint The endpoint entity.
-     * @param type     The endpoint type.
-     * @return True, if endpoint type is updated.
-     */
-    private boolean updateType(final Endpoint endpoint, final EndpointType type) {
-        final var tmp = type == null ? DEFAULT_TYPE : type;
-        if (tmp.equals(endpoint.getType())) {
-            return false;
-        }
-        endpoint.setType(tmp);
-        return true;
-    }
-
-    /**
-     * @param endpoint The endpoint entity.
-     * @param port     The endpoint port.
-     * @return True, if endpoint port is updated.
-     */
-    private boolean updatePort(final Endpoint endpoint, final Long port) {
-        final var tmp = port == null ? DEFAULT_PORT : port;
-
-        final var newPort = FactoryUtils.updateNumber(endpoint.getPort(), tmp);
-        if (newPort == endpoint.getPort()) {
-            return false;
-        }
-        endpoint.setPort(newPort);
-        return true;
-    }
-
-    private boolean updateRemoteId(final Endpoint endpoint, final URI remoteId) {
-        final var newUri =
-                FactoryUtils.updateUri(endpoint.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
-        newUri.ifPresent(endpoint::setRemoteId);
-
-        return newUri.isPresent();
     }
 }

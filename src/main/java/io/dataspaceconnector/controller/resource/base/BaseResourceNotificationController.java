@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.base;
 
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.base.EntityService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,8 @@ import java.util.UUID;
  * @param <V> The type of the view produces by this controller.
  * @param <S> The underlying service for handling the resource logic.
  */
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
 public class BaseResourceNotificationController<T extends Entity, D extends Description, V
         extends RepresentationModel<V>, S extends EntityService<T, D>>
         extends BaseResourceController<T, D, V, S> {

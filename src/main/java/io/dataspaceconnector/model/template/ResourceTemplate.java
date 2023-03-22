@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +15,7 @@
  */
 package io.dataspaceconnector.model.template;
 
-import io.dataspaceconnector.model.resource.ResourceDesc;
+import io.dataspaceconnector.model.base.Description;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,18 +28,19 @@ import java.util.List;
 
 /**
  * Describes a resource and all its dependencies.
+ * @param <D> The resource type.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class ResourceTemplate {
+public class ResourceTemplate<D extends Description> {
 
     /**
      * Resource parameters.
      */
     @Setter(AccessLevel.NONE)
-    private @NonNull ResourceDesc desc;
+    private @NonNull D desc;
 
     /**
      * List of representation templates.

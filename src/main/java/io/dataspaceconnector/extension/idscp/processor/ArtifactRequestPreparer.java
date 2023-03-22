@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +35,12 @@ public class ArtifactRequestPreparer extends Idscp2MappingProcessor {
     /**
      * ObjectMapper for writing the query input to JSON.
      */
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Prepares a {@link Request} with an ArtifactRequestMessage as header and a query input as body
      * for communication over IDSCPv2.
+     *
      * @param in the in-message of the exchange.
      * @throws JsonProcessingException if writing the query input to JSON fails.
      */
@@ -51,8 +51,7 @@ public class ArtifactRequestPreparer extends Idscp2MappingProcessor {
 
         in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         if (queryInput != null) {
-            in.setBody(objectMapper
-                               .writeValueAsString(queryInput).getBytes(StandardCharsets.UTF_8));
+            in.setBody(mapper.writeValueAsString(queryInput).getBytes(StandardCharsets.UTF_8));
         } else {
             in.setBody("".getBytes(StandardCharsets.UTF_8));
         }

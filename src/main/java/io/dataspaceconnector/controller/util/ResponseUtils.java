@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +17,13 @@ package io.dataspaceconnector.controller.util;
 
 import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
@@ -54,7 +56,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(msg.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -69,7 +72,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(msg.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -85,7 +89,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -100,7 +105,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [resourceId=({})]", msg, resourceId);
         }
-        return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
+
+        return new JsonResponse(msg).create(HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -115,7 +121,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception({})]", msg, exception.getMessage());
         }
-        return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+
+        return new JsonResponse(msg).create(HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -130,8 +137,8 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(String.format("%s %s", msg, e.getMessage()),
-                HttpStatus.BAD_REQUEST);
+
+        return new JsonResponse(msg, e.getMessage()).create(HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -146,7 +153,8 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -161,8 +169,24 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(String.format("%s %s", msg, e.getMessage()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new JsonResponse(msg, e.getMessage()).create(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that parsing an URI
+     * has failed.
+     *
+     * @param e The exception that was thrown.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondFailedToParseURI(final Exception e) {
+        final var msg = "Failed to parse URI.";
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage(), e);
+        }
+
+        return new JsonResponse(msg, e.getMessage()).create(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -177,7 +201,8 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
-        return new ResponseEntity<>(msg.toString(), HttpStatus.GATEWAY_TIMEOUT);
+
+        return new JsonResponse(msg).create(HttpStatus.GATEWAY_TIMEOUT);
     }
 
     /**
@@ -192,7 +217,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
-        return new ResponseEntity<>(msg.toString(), HttpStatus.BAD_GATEWAY);
+
+        return new JsonResponse(msg).create(HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -207,7 +233,7 @@ public final class ResponseUtils {
             log.debug("{}", msg.toString());
         }
 
-        return new ResponseEntity<>(msg.toString(), HttpStatus.BAD_GATEWAY);
+        return new JsonResponse(msg).create(HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -217,10 +243,12 @@ public final class ResponseUtils {
      * @return ResponseEntity with status code 417.
      */
     public static ResponseEntity<Object> respondWithContent(final Map<String, Object> response) {
-        if (log.isWarnEnabled()) {
-            log.warn("Received unexpected response message. [response=({})]", response);
+        final var msg = "Received unexpected response message.";
+        if (log.isDebugEnabled()) {
+            log.debug("{} [response=({})]", msg, response);
         }
-        return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+
+        return new JsonResponse(msg, response).create(HttpStatus.EXPECTATION_FAILED);
     }
 
     /**
@@ -234,7 +262,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug(msg);
         }
-        return new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
+
+        return new JsonResponse(msg).create(HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -245,10 +274,12 @@ public final class ResponseUtils {
      * @return ResponseEntity with status code 204.
      */
     public static ResponseEntity<Object> respondNoSubscriptionsFound(final URI target) {
+        final var msg = "No subscriptions found.";
         if (log.isDebugEnabled()) {
-            log.debug("No subscriptions found. [target=({})]", target);
+            log.debug("{} [target=({})]", msg, target);
         }
-        return new ResponseEntity<>("No subscriptions found.", HttpStatus.NO_CONTENT);
+
+        return new JsonResponse(msg).create(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -263,10 +294,11 @@ public final class ResponseUtils {
                                                             final Idscp2Exception exception) {
         final var msg = "IDSCP2 communication failed.";
         if (log.isDebugEnabled()) {
-            log.debug("{} [recipient=({})] [exception=({})]", msg, recipient,
-                    exception.getMessage());
+            log.debug("{} [recipient=({}), exception=({})]", msg, recipient,
+                    exception.getMessage(), exception);
         }
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -278,14 +310,77 @@ public final class ResponseUtils {
     public static ResponseEntity<Object> respondWithExchangeContent(final Exchange exchange) {
         final var response = exchange.getIn().getBody(Response.class);
         if (response != null) {
-            return ResponseEntity.ok(response.getBody());
+            final var headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/json+ld"));
+
+            return new ResponseEntity<>(response.getBody(), headers, HttpStatus.OK);
         } else {
-            final var responseEntity =
-                    toObjectResponse(exchange.getIn().getBody(ResponseEntity.class));
-            return Objects.requireNonNullElseGet(responseEntity,
-                    () -> new ResponseEntity<>("An internal server error occurred.",
-                            HttpStatus.INTERNAL_SERVER_ERROR));
+            final var body = toObjectResponse(exchange.getIn().getBody(ResponseEntity.class));
+            return Objects.requireNonNullElseGet(body, () -> new JsonResponse("An error occurred.")
+                            .create(HttpStatus.INTERNAL_SERVER_ERROR));
         }
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that portainer
+     * is not properly configured.
+     *
+     * @param e the thrown exception
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondPortainerNotConfigured(final Exception e) {
+        final var msg = "Portainer not configured.";
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage());
+        }
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that the app is not deployed.
+     *
+     * @param e the thrown exception
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondAppNotDeployed(final Exception e) {
+        final var msg = "App not deployed.";
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage());
+        }
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that the app could not be downloaded.
+     *
+     * @param appId The app id.
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondAppNotDownloaded(final URI appId) {
+        final var msg = "Could not download app.";
+        if (log.isDebugEnabled()) {
+            log.debug(msg + " Removed app. [remoteId=({})]", appId);
+        }
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that
+     * a portainer error has occurred.
+     *
+     * @param e the thrown exception
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondPortainerError(final Exception e) {
+        final var msg = "A portainer error has occurred.";
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage());
+        }
+
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @SuppressWarnings("unchecked")

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +18,7 @@ package io.dataspaceconnector.model.broker;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.named.NamedEntity;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -75,5 +74,5 @@ public class Broker extends NamedEntity implements RemoteService {
      * The list of resources.
      */
     @ManyToMany
-    private List<Resource> resources;
+    private List<OfferedResource> offeredResources;
 }

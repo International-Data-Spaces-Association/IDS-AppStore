@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +15,144 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder;
 
+import java.math.BigInteger;
+import java.net.URI;
+import java.util.HashMap;
+
 import de.fraunhofer.iais.eis.AppEndpointBuilder;
+import de.fraunhofer.iais.eis.AppEndpointType;
+import de.fraunhofer.iais.eis.BasicAuthentication;
+import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
+import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.model.auth.ApiKey;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
+import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.datasource.DatabaseDataSource;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigInteger;
-
 /**
- * Converts DSC endpoints to IDS endpoints.
+ * Converts dsc endpoints to ids endpoints.
  */
 @Component
 public final class IdsEndpointBuilder
-        extends AbstractIdsBuilder<Endpoint, de.fraunhofer.iais.eis.AppEndpoint> {
+        extends AbstractIdsBuilder<Endpoint, de.fraunhofer.iais.eis.Endpoint> {
+
+    /**
+     * Constructs an IdsEndpointBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     */
+    @Autowired
+    public IdsEndpointBuilder(final SelfLinkHelper selfLinkHelper) {
+        super(selfLinkHelper);
+    }
 
     @Override
-    protected de.fraunhofer.iais.eis.AppEndpoint createInternal(
+    protected de.fraunhofer.iais.eis.Endpoint createInternal(
             final Endpoint endpoint, final int currentDepth, final int maxDepth)
             throws ConstraintViolationException {
 
-        final var protocol = endpoint.getProtocol();
-        final var type = ToIdsObjectMapper.getAppEndpointType(endpoint.getType());
-        final var port = endpoint.getPort();
         final var documentation = endpoint.getDocs();
-        final var information = endpoint.getInfo();
-        final var path = endpoint.getPath();
-        final var location = endpoint.getLocation();
-        final var mediaType =
-                new IANAMediaTypeBuilder()._filenameExtension_(endpoint.getMediaType()).build();
+        var location = endpoint.getLocation();
+        final var info = new TypedLiteral(endpoint.getInfo(), "EN");
 
-        final var builder = new AppEndpointBuilder(getAbsoluteSelfLink(endpoint))
-                ._endpointDocumentation_(Util.asList(documentation))
-                ._endpointInformation_(Util.asList(new TypedLiteral(information, "EN")))
-                ._appEndpointProtocol_(protocol)
-                ._appEndpointType_(type)
-                ._appEndpointPort_(BigInteger.valueOf(port))
-                ._path_(path)
-                ._accessURL_(location)
-                ._appEndpointMediaType_(mediaType);
+        URI accessUrl;
+        try {
+            accessUrl = URI.create(location);
+        } catch (IllegalArgumentException exception) {
+            accessUrl = URI.create("https://default-url");
+        }
 
-        return builder.build();
+        de.fraunhofer.iais.eis.Endpoint idsEndpoint;
+        if (endpoint instanceof GenericEndpoint) {
+
+            final var genericEndpoint = (GenericEndpoint) endpoint;
+            BasicAuthentication idsAuth = null;
+            final var additional = new HashMap<String, String>();
+            if (genericEndpoint.getDataSource() != null
+                    && genericEndpoint.getDataSource().getAuthentication() != null) {
+
+                final var dataSource = genericEndpoint.getDataSource();
+                final var auth = dataSource.getAuthentication();
+
+                if (auth instanceof BasicAuth) {
+                    final var basicAuth = (BasicAuth) auth;
+                    idsAuth = new BasicAuthenticationBuilder()
+                            ._authUsername_(basicAuth.getUsername())
+                            ._authPassword_(basicAuth.getPassword())
+                            .build();
+                    idsAuth.setProperty("type", "basic");
+                } else {
+                    final var apiKeyAuth = (ApiKey) auth;
+                    idsAuth = new BasicAuthenticationBuilder()
+                            ._authUsername_(apiKeyAuth.getKey())
+                            ._authPassword_(apiKeyAuth.getValue())
+                            .build();
+                    idsAuth.setProperty("type", "api-key");
+                }
+
+                if (dataSource instanceof DatabaseDataSource) {
+                    additional.put("database", "true");
+
+                    if (location.contains("?")) {
+                        location = location.concat("&dataSource=#" + dataSource.getId());
+                    } else {
+                        location = location.concat("?dataSource=#" + dataSource.getId());
+                    }
+                }
+            }
+
+            idsEndpoint = new GenericEndpointBuilder(getAbsoluteSelfLink(endpoint))
+                    ._path_(location)
+                    ._accessURL_(accessUrl)
+                    ._genericEndpointAuthentication_(idsAuth)
+                    ._endpointDocumentation_(Util.asList(documentation))
+                    ._endpointInformation_(Util.asList(info))
+                    .build();
+            additional.forEach(idsEndpoint::setProperty);
+
+        } else if (endpoint instanceof AppEndpoint) {
+
+            final var protocol = ((AppEndpoint) endpoint).getProtocol();
+            final var type = ((AppEndpoint) endpoint).getEndpointType();
+            final var port = ((AppEndpoint) endpoint).getEndpointPort();
+            final var information = endpoint.getInfo();
+            final var path = ((AppEndpoint) endpoint).getPath();
+            final var mediaType =
+                    new IANAMediaTypeBuilder()._filenameExtension_(((AppEndpoint) endpoint).getMediaType());
+            final var appEndpoint = (AppEndpoint) endpoint;
+
+            idsEndpoint = new AppEndpointBuilder(getAbsoluteSelfLink(endpoint))
+                    ._path_(location)
+                    ._accessURL_(accessUrl)
+                    ._endpointDocumentation_(Util.asList(documentation))
+                    ._endpointInformation_(Util.asList(info))
+                    ._appEndpointType_(AppEndpointType.valueOf(appEndpoint.getEndpointType()))
+                    ._appEndpointPort_(BigInteger.valueOf(appEndpoint.getEndpointPort()))
+                    ._appEndpointProtocol_(appEndpoint.getProtocol())
+                    ._appEndpointMediaType_(new IANAMediaTypeBuilder()
+                            ._filenameExtension_(appEndpoint.getMediaType())
+                            .build())
+                    ._language_(ToIdsObjectMapper.getLanguage(appEndpoint.getLanguage()))
+                    .build();
+
+        } else {
+            throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
+        }
+
+        return idsEndpoint;
     }
 
 }

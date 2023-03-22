@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +16,36 @@
 package io.dataspaceconnector.controller.resource.type;
 
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.net.QueryInput;
-import io.dataspaceconnector.common.net.RetrievalInformation;
+import io.dataspaceconnector.common.net.ContentType;
+import io.dataspaceconnector.common.routing.dataretrieval.RetrievalInformation;
 import io.dataspaceconnector.common.util.ValidationUtils;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceNotificationController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
+import io.dataspaceconnector.controller.resource.view.route.RouteView;
+import io.dataspaceconnector.controller.resource.view.route.RouteViewAssembler;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,6 +65,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -68,9 +74,9 @@ import java.util.UUID;
  */
 @Log4j2
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(BasePath.ARTIFACTS)
 @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
-@RequiredArgsConstructor
 public class ArtifactController extends BaseResourceNotificationController<Artifact, ArtifactDesc,
         ArtifactView, ArtifactService> {
 
@@ -82,7 +88,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
     /**
      * The receiver for getting data from a remote source.
      */
-    private final @NonNull BlockingArtifactReceiver dataReceiver;
+    private final @NonNull ArtifactRetriever dataReceiver;
 
     /**
      * The verifier for the data access.
@@ -95,6 +101,11 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
     private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
 
     /**
+     * The assembler for creating a view from  a route.
+     */
+    private final @NonNull RouteViewAssembler routeAssembler;
+
+    /**
      * Returns data from the local database or a remote data source. In case of a remote data
      * source, all headers and query parameters included in this request will be used for the
      * request to the backend.
@@ -102,6 +113,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @param artifactId   Artifact id.
      * @param download     If the data should be forcefully downloaded.
      * @param agreementUri The agreement which should be used for access control.
+     * @param routeIds     The routes the data should be sent to.
      * @param params       All request parameters.
      * @param headers      All request headers.
      * @param request      The current http request.
@@ -109,15 +121,13 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @throws IOException if the data cannot be received.
      */
     @GetMapping("{id}/data/**")
-    @Operation(summary = "Get data by artifact id with query input")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Get data by artifact id with query input.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<StreamingResponseBody> getData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestParam(required = false) final Boolean download,
             @RequestParam(required = false) final URI agreementUri,
+            @RequestParam(required = false) final List<URI> routeIds,
             @RequestParam(required = false) final Map<String, String> params,
             @RequestHeader final Map<String, String> headers,
             final HttpServletRequest request) throws IOException {
@@ -128,7 +138,10 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         queryInput.setParams(params);
         queryInput.setHeaders(headers);
 
+        // TOCheck
         final var searchString = request.getContextPath() + "/data";
+
+        //final var searchString = "/data";
         var optional = request.getRequestURI().substring(
                 request.getRequestURI().indexOf(searchString) + searchString.length());
         if ("/**".equals(optional)) {
@@ -144,9 +157,10 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
             to check if the data access is restricted by the usage control.
          */
         final var data = (agreementUri == null)
-                ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
+                ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput,
+                routeIds)
                 : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                new RetrievalInformation(agreementUri, download, queryInput));
+                new RetrievalInformation(agreementUri, download, queryInput), routeIds);
 
         return returnData(artifactId, data);
     }
@@ -157,26 +171,25 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * used when fetching the data.
      *
      * @param artifactId Artifact id.
+     * @param routeIds   The routes the data should be sent to.
      * @param queryInput Query input containing headers, query parameters, and path variables.
      * @return The data object.
      * @throws IOException                 if the data could not be stored.
      * @throws UnexpectedResponseException if the ids response message has been unexpected.
      */
     @PostMapping("{id}/data")
-    @Operation(summary = "Get data by artifact id with query input")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Get data by artifact id with query input.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<StreamingResponseBody> getData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
+            @RequestParam(required = false) final List<URI> routeIds,
             @RequestBody(required = false) final QueryInput queryInput)
             throws IOException,
             UnexpectedResponseException,
             io.dataspaceconnector.common.exception.UnexpectedResponseException {
         ValidationUtils.validateQueryInput(queryInput);
         final var data =
-                artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
+                artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput, routeIds);
         return returnData(artifactId, data);
     }
 
@@ -196,10 +209,35 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         final var outputHeader = new HttpHeaders();
         outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
 
+        final var type = getMediaTypeOfArtifact(artifactId);
         return ResponseEntity.ok()
                 .headers(outputHeader)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(type)
                 .body(body);
+    }
+
+    private MediaType getMediaTypeOfArtifact(final UUID artifactId) {
+        // Get type to set the correct content type.
+        // NOTE: Assume that an artifact has only one representation.
+        try {
+            final var artifact = getService().get(artifactId);
+            if (artifact.getRepresentations().isEmpty()
+                    || artifact.getRepresentations().get(0) == null
+                    || artifact.getRepresentations().get(0).getMediaType() == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("No representation found. Return data as stream.");
+                }
+            } else {
+                final var mediaType = artifact.getRepresentations().get(0).getMediaType();
+                return MediaType.parseMediaType(mediaType);
+            }
+        } catch (ResourceNotFoundException | InvalidMediaTypeException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not resolve media type. Return data as stream. [exception=({})]",
+                        e.getMessage());
+            }
+        }
+        return MediaType.APPLICATION_OCTET_STREAM;
     }
 
     /**
@@ -210,11 +248,8 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @return Http Status ok.
      * @throws IOException if the data could not be stored.
      */
-    @PutMapping(value = "{id}/data", consumes = "*/*")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @PutMapping(value = "{id}/data", consumes = ContentType.OCTET_STREAM)
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<Void> putData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestBody final byte[] inputStream) throws IOException {
@@ -224,5 +259,34 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         subscriberNotificationSvc.notifyOnUpdate(getService().get(artifactId));
 
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Returns the route associated with an artifact, if any. Returns an empty response body
+     * otherwise.
+     *
+     * @param artifactId The artifact id.
+     * @return Response with code 200 and the associated route, if any.
+     */
+    @GetMapping("{id}/route")
+    @Operation(summary = "Get route associated with artifact by id.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+    public ResponseEntity<RouteView> getRoute(
+            @Valid @PathVariable(name = "id") final UUID artifactId) {
+        return returnRoute(artifactSvc.getAssociatedRoute(artifactId));
+    }
+
+    /**
+     * Returns a {@link RouteView} if the route is present and an empty response body otherwise.
+     *
+     * @param route the route.
+     * @return Response with code 200 and the RouteView, if route if not null.
+     */
+    private ResponseEntity<RouteView> returnRoute(final Route route) {
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return route == null ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(routeAssembler.toModel(route), headers, HttpStatus.OK);
     }
 }

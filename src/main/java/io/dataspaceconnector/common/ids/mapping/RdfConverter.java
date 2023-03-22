@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +15,12 @@
  */
 package io.dataspaceconnector.common.ids.mapping;
 
-import de.fraunhofer.iais.eis.AppStore;
 import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.DataApp;
-import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
@@ -31,6 +28,11 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
+
+/* AppStore Extension */
+import de.fraunhofer.iais.eis.DataApp;
+import de.fraunhofer.iais.eis.Endpoint;
+import de.fraunhofer.iais.eis.AppStore;
 
 /**
  * Converting ids objects to rdf strings.
@@ -45,22 +47,22 @@ public final class RdfConverter {
     }
 
     /**
-     * Serializer for Infomodel objects.
+     * Serializer for ids objects.
      */
     private static final Serializer SERIALIZER = new Serializer();
 
     /**
-     * Get rdf string from instance of type {@link AppStore}.
+     * Get rdf string from instance of type {@link BaseConnector}.
      *
-     * @param appStore The app store.
-     * @return The ids app store as rdf string.
+     * @param baseConnector The ids connector.
+     * @return The ids connector as rdf string.
      * @throws RdfBuilderException If the response could not be extracted.
      */
-    public static String toRdf(final AppStore appStore) throws RdfBuilderException {
+    public static String toRdf(final BaseConnector baseConnector) throws RdfBuilderException {
         try {
-            var rdf = appStore.toRdf();
+            var rdf = baseConnector.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = SERIALIZER.serialize(appStore);
+                rdf = SERIALIZER.serialize(baseConnector);
             }
             return rdf;
         } catch (Exception exception) {
@@ -240,6 +242,26 @@ public final class RdfConverter {
         }
     }
 
+    /* AppStore Extension */
+    /**
+     * Get rdf string from instance of type {@link AppStore}.
+     *
+     * @param appStore The app store.
+     * @return The ids app store as rdf string.
+     * @throws RdfBuilderException If the response could not be extracted.
+     */
+    public static String toRdf(final AppStore appStore) throws RdfBuilderException {
+        try {
+            var rdf = appStore.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(appStore);
+            }
+            return rdf;
+        } catch (Exception exception) {
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
+        }
+    }
+
     /**
      * Get rdf string from instance of type {@link DataApp}.
      *
@@ -277,5 +299,4 @@ public final class RdfConverter {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
-
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +15,25 @@
  */
 package io.dataspaceconnector.controller.resource.view.contract;
 
+import java.util.UUID;
+
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.relation.ContractsToResourcesController;
+import io.dataspaceconnector.controller.resource.relation.ContractsToOfferedResourcesController;
+import io.dataspaceconnector.controller.resource.relation.ContractsToRequestedResourcesController;
 import io.dataspaceconnector.controller.resource.relation.ContractsToRulesController;
 import io.dataspaceconnector.controller.resource.type.ContractController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
@@ -39,7 +43,7 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
  */
 @Component
 @NoArgsConstructor
-public class ContractViewAssembler
+public class ContractViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Contract, ContractView>, SelfLinking {
     /**
      * Construct the ContractView from a Contract.
@@ -58,9 +62,28 @@ public class ContractViewAssembler
                 .withRel(BaseType.RULES);
         view.add(rulesLink);
 
-        final var resourceLinker = linkTo(methodOn(ContractsToResourcesController.class)
-                .getResource(contract.getId(), null, null))
-                .withRel(BaseType.RESOURCES);
+        final var resourceType = contract.getResources();
+        Link resourceLinker;
+        if (resourceType.isEmpty()) {
+            // No elements found, default to offered resources
+            resourceLinker = linkTo(methodOn(ContractsToOfferedResourcesController.class)
+                    .getResource(contract.getId(), null, null))
+                    .withRel(BaseType.OFFERS);
+        } else {
+            // Construct the link for the right resource type.
+            if (resourceType.get(0) instanceof OfferedResource) {
+                resourceLinker = linkTo(methodOn(ContractsToOfferedResourcesController.class)
+                        .getResource(contract.getId(), null, null))
+                        .withRel(BaseType.OFFERS);
+            } else if (resourceType.get(0) instanceof RequestedResource) {
+                resourceLinker = linkTo(methodOn(ContractsToRequestedResourcesController.class)
+                        .getResource(contract.getId(), null, null))
+                        .withRel(BaseType.REQUESTS);
+            } else {
+                throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
+            }
+        }
+
         view.add(resourceLinker);
 
         return view;
@@ -68,6 +91,6 @@ public class ContractViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ContractController.class);
+        return getSelfLink(entityId, ContractController.class);
     }
 }

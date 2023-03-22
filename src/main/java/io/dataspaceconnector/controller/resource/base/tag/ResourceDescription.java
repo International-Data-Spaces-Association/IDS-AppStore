@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,63 +21,90 @@ package io.dataspaceconnector.controller.resource.base.tag;
 public final class ResourceDescription {
 
     /**
-     * Tag description for data apps.
-     */
-    public static final String APPS = "Endpoints for operations on data apps";
-
-    /**
      * Tag description for catalogs.
      */
-    public static final String CATALOGS = "Endpoints for operations on catalogs";
+    public static final String CATALOGS = "Endpoints for operations on catalogs.";
 
     /**
      * Tag description for rules.
      */
-    public static final String RULES = "Endpoints for operations on rules";
+    public static final String RULES = "Endpoints for operations on rules.";
 
     /**
      * Tag description for representations.
      */
-    public static final String REPRESENTATIONS = "Endpoints for operations on representations";
+    public static final String REPRESENTATIONS = "Endpoints for operations on representations.";
 
     /**
      * Tag description for contracts.
      */
-    public static final String CONTRACTS = "Endpoints for operations on contracts";
+    public static final String CONTRACTS = "Endpoints for operations on contracts (+ agreements).";
 
     /**
-     * Tag description for resources.
+     * Tag description for offered resources.
      */
-    public static final String RESOURCES = "Endpoints for operations on resources";
+    public static final String OFFERS = "Endpoints for operations on offered resources.";
+
+    /**
+     * Tag description for requested resources.
+     */
+    public static final String REQUESTS = "Endpoints for operations on requested resources.";
 
     /**
      * Tag description for contract agreement handling.
      */
-    public static final String AGREEMENTS = "Endpoints for contract agreement handling";
+    public static final String AGREEMENTS = "Endpoints for contract agreement handling.";
+
+    /**
+     * Tag description for app handling.
+     */
+    public static final String APPS = "Endpoints for app handling.";
+
+    /**
+     * Tag description for app handling.
+     */
+    public static final String APPSTORES = "Endpoints for app store handling.";
 
     /**
      * Tag description for artifacts.
      */
-    public static final String ARTIFACTS = "Endpoints for operations on artifacts";
+    public static final String ARTIFACTS = "Endpoints for operations on artifacts.";
 
     /**
      * Tag description for brokers.
      */
-    public static final String BROKERS = "Endpoints for operations on brokers";
+    public static final String BROKERS = "Endpoints for operations on brokers.";
 
     /**
      * Tag description for configurations.
      */
-    public static final String CONFIGURATIONS = "Endpoints for operations on configurations";
+    public static final String CONFIGURATIONS = "Endpoints for operations on configurations.";
+
+    /**
+     * Tag description for data sources/sinks.
+     */
+    public static final String DATA_SOURCES = "Endpoints for operations on data sources/sinks.";
+
     /**
      * Tag description for endpoints.
      */
-    public static final String ENDPOINTS = "Endpoints for operations on endpoints";
+    public static final String ENDPOINTS = "Endpoints for operations on endpoints.";
+
+    /**
+     * Tag description for routes.
+     */
+    public static final String ROUTES = "Endpoints for operations on routes.";
 
     /**
      * Tag description for subscriptions.
      */
-    public static final String SUBSCRIPTIONS = "Endpoints for operations on subscriptions";
+    public static final String SUBSCRIPTIONS = "Endpoints for operations on subscriptions.";
+
+    /**
+     * Tag description for daps.
+     */
+    public static final String DAPS = "Endpoints for operations on daps.";
+
 
     private ResourceDescription() {
         // Nothing to do here.

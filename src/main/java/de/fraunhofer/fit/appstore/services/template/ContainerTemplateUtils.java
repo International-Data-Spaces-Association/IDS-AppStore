@@ -21,7 +21,8 @@ import de.fraunhofer.fit.appstore.model.portainer.Template;
 import de.fraunhofer.fit.appstore.model.portainer.Volume;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
+//import io.dataspaceconnector.model.resource.Resource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public final class ContainerTemplateUtils {
      * @param res      The resource.
      */
     public static void setTemplateTitle(final App app, final Representation rep,
-                                        final Template template, final Resource res) {
+                                        final Template template, final OfferedResource res) {
         if (!app.getTitle().isBlank()) {
             template.setTitle(app.getTitle());
         } else if (!rep.getTitle().isBlank()) {
@@ -67,7 +68,7 @@ public final class ContainerTemplateUtils {
      * @param res      The app resource.
      */
     public static void setTemplateDescription(final App app, final Representation rep,
-                                              final Template template, final Resource res) {
+                                              final Template template, final OfferedResource res) {
         if (!app.getDescription().isBlank()) {
             template.setDescription(app.getDescription());
         } else if (!rep.getDescription().isBlank()) {
@@ -113,13 +114,19 @@ public final class ContainerTemplateUtils {
             final var port = new HashMap<String, String>();
             for (var endpoint : app.getEndpoints()) {
                 var portLabel = "";
-                if (!endpoint.getType().toString().isBlank()) {
-                    portLabel = endpoint.getType().toString();
+                if (!endpoint.getEndpointType().isBlank()) {
+                    portLabel = endpoint.getEndpointType();
                 }
                 // create String
                 final var protocol = "tcp";
-                final var portStr = String.format("%s:%s/%s", endpoint.getPort(),
-                        endpoint.getPort(), protocol);
+
+                /***
+                 Change to the new version of appstore
+                 endpoint.getPort() to endpoint.getEndpointPort()
+                 Alternative to endpoint.getExposedPort
+                 */
+                final var portStr = String.format("%s:%s/%s", endpoint.getEndpointPort(),
+                        endpoint.getEndpointPort(), protocol);
 
                 if (!port.containsKey(portLabel)) {
                     port.put(portLabel, portStr);
@@ -141,8 +148,13 @@ public final class ContainerTemplateUtils {
      */
     public static ArrayList<Environment> getEnvVariablesFromApp(final App app) {
         final var environmentVariables = new ArrayList<Environment>();
-        if (!app.getEnvironmentVariables().isBlank()) {
-            final var envStr = app.getEnvironmentVariables().replaceAll("\\s+", "").split(";");
+        /***
+         Change to the new version of appstore
+         app.getEnvironmentVariables() to app.getEnvVariables()
+         */
+
+        if (!app.getEnvVariables().isBlank()) {
+            final var envStr = app.getEnvVariables().replaceAll("\\s+", "").split(";");
             for (final var env : envStr) {
                 final var keyValue = env.split("=");
                 if (keyValue.length == 2) {
@@ -160,7 +172,7 @@ public final class ContainerTemplateUtils {
      * @param res The app resource.
      * @return A list of labels.
      */
-    public static ArrayList<Label> getLabelsFromApp(final Resource res) {
+    public static ArrayList<Label> getLabelsFromApp(final OfferedResource res) {
         final var labels = new ArrayList<Label>();
         if (!res.getLicense().toString().isBlank()) {
             labels.add(new Label("License", res.getLicense().toString()));

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +19,7 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.List;
@@ -38,7 +38,7 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
      * @return List of all artifacts of the resource.
      */
     @Query("SELECT a "
-            + "FROM Artifact a, Representation r, Resource o "
+            + "FROM Artifact a, Representation r, OfferedResource o "
             + "WHERE o.id = :resourceId "
             + "AND r MEMBER OF o.representations "
             + "AND a MEMBER OF r.artifacts "
@@ -84,6 +84,7 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
      * @param checkSum   The new CRC32C checksum.
      * @param size       The new size in bytes.
      */
+    @Transactional
     @Modifying
     @Query("UPDATE Artifact a "
             + "SET a.checkSum=:checkSum, a.byteSize=:size "

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +35,7 @@ public class RequestWithSubscriptionPayloadPreparer extends Idscp2MappingProcess
     /**
      * ObjectMapper for writing the query input to JSON.
      */
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Prepares a {@link Request} with a RequestMessage as header and a {@link SubscriptionDesc}
@@ -52,8 +51,7 @@ public class RequestWithSubscriptionPayloadPreparer extends Idscp2MappingProcess
 
         in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         if (subscription != null) {
-            in.setBody(objectMapper
-                    .writeValueAsString(subscription).getBytes(StandardCharsets.UTF_8));
+            in.setBody(mapper.writeValueAsString(subscription).getBytes(StandardCharsets.UTF_8));
         } else {
             in.setBody("".getBytes(StandardCharsets.UTF_8));
         }

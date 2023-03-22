@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +16,11 @@
 package io.dataspaceconnector.model.catalog;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 
 /**
  * Creates and updates a catalog.
  */
-@Component
 public class CatalogFactory extends AbstractNamedFactory<Catalog, CatalogDesc> {
 
     /**
@@ -37,7 +33,8 @@ public class CatalogFactory extends AbstractNamedFactory<Catalog, CatalogDesc> {
     @Override
     protected Catalog initializeEntity(final CatalogDesc desc) {
         final var catalog = new Catalog();
-        catalog.setResources(new ArrayList<>());
+        catalog.setOfferedResources(new ArrayList<>());
+        catalog.setRequestedResources(new ArrayList<>());
 
         return catalog;
     }

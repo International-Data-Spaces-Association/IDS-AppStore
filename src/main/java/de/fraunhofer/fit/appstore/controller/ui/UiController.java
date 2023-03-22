@@ -22,6 +22,7 @@ import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.service.resource.type.AppService;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -61,7 +62,7 @@ public class UiController {
     /**
      * The service managing resources.
      */
-    private final @NonNull ResourceService resourceService;
+    private final @NonNull OfferedResourceService resourceService;
 
     /**
      * The service managing apps.

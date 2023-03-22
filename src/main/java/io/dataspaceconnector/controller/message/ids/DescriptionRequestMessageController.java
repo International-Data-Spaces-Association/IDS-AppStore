@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +20,13 @@ import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.net.ContentType;
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.builder.type.DescriptionRequestService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
@@ -37,8 +40,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,11 +57,10 @@ import java.util.Objects;
 /**
  * Controller for sending description request messages.
  */
-@ConditionalOnProperty("ids.controller.enabled")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class DescriptionRequestMessageController {
 
     /**
@@ -93,7 +96,7 @@ public class DescriptionRequestMessageController {
      * @return The response entity.
      */
     @PostMapping("/description")
-    @Operation(summary = "Send IDS description request message")
+    @Operation(summary = "Send an IDS DescriptionRequestMessage to query metadata.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -119,11 +122,9 @@ public class DescriptionRequestMessageController {
             if (response != null) {
                 payload = response.getBody();
             } else {
-                final var responseEntity =
-                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
-                return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<Object>("An internal server error occurred.",
-                                HttpStatus.INTERNAL_SERVER_ERROR));
+                final var body = toObjectResponse(result.getIn().getBody(ResponseEntity.class));
+                return Objects.requireNonNullElseGet(body, () -> new JsonResponse(
+                        "An error occurred.").create(HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {
             try {
@@ -143,7 +144,11 @@ public class DescriptionRequestMessageController {
                 return ResponseUtils.respondWithContent(e.getContent());
             }
         }
-        return new ResponseEntity<>(convertToAnswer(elementId, payload), HttpStatus.OK);
+
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(ContentType.JSON_LD));
+
+        return new ResponseEntity<>(convertToAnswer(elementId, payload), headers, HttpStatus.OK);
     }
 
     private String convertToAnswer(final URI elementId, final String payload) {

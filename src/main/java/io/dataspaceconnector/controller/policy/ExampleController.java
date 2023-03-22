@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +18,8 @@ package io.dataspaceconnector.controller.policy;
 import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.net.JsonResponse;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.controller.policy.util.PatternUtils;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
@@ -41,6 +42,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,8 +54,14 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * This class provides endpoints exposing example resources and configurations.
  */
+@Log4j2
 @RestController
+@ApiResponses(value = {
+        @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+        @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                description = ResponseDescription.UNAUTHORIZED)})
 @RequestMapping("/api/examples")
+@Tag(name = "_Utils")
 @RequiredArgsConstructor
 public class ExampleController {
     /**
@@ -67,23 +75,19 @@ public class ExampleController {
      * @param ruleAsString Policy as string.
      * @return A pattern enum or error.
      */
-    @Operation(summary = "Get pattern of policy",
-            description = "Get the policy pattern represented by a given JSON string.")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
-            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR)})
-    @PostMapping("/validation")
+    @Operation(summary = "Get the policy pattern represented by a given JSON string.")
+    @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
+            description = ResponseDescription.INTERNAL_SERVER_ERROR)
+    @PostMapping(value = "/validation", produces = ContentType.JSON)
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
-            @Parameter(description = "The JSON string representing a policy", required = true)
+            @Parameter(description = "The JSON string representing a policy.", required = true)
             @RequestBody final String ruleAsString) {
         try {
             final var rule = deserializationService.getRule(ruleAsString);
-            return ResponseEntity.ok(RuleUtils.getPatternByRule(rule));
+            final var pattern = RuleUtils.getPatternByRule(rule);
+
+            return new JsonResponse(null, null, pattern.name()).create(HttpStatus.OK);
         } catch (IllegalStateException | ContractException exception) {
             return ResponseUtils.respondPatternNotIdentified(exception);
         }
@@ -95,54 +99,54 @@ public class ExampleController {
      * @param input Policy pattern type and values.
      * @return An example policy object that can be filled out.
      */
-    @Operation(summary = "Get example policy",
-            description = "Get an example policy for a given policy pattern.")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
-                    description = ResponseDescription.BAD_REQUEST),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
-    @PostMapping("/policy")
+    @Operation(summary = "Get an example policy for a given policy pattern.")
+    @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
+            description = ResponseDescription.BAD_REQUEST)
+    @PostMapping(value = "/policy", produces = ContentType.JSON_LD)
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {
         try {
-            if (input instanceof PermissionDesc) {
-                return ResponseEntity.ok(PatternUtils.buildProvideAccessRule().toRdf());
-            } else if (input instanceof ProhibitionDesc) {
-                return ResponseEntity.ok(PatternUtils.buildProhibitAccessRule().toRdf());
-            } else if (input instanceof UsageNumberDesc) {
-                final var policy = PatternUtils.buildNTimesUsageRule((UsageNumberDesc) input);
+            if (input instanceof PermissionDesc permissionDesc) {
+                final var policy = PatternUtils.buildProvideAccessRule(permissionDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof DurationDesc) {
-                final var policy = PatternUtils.buildDurationUsageRule((DurationDesc) input);
+            } else if (input instanceof ProhibitionDesc prohibitionDesc) {
+                final var policy = PatternUtils.buildProhibitAccessRule(prohibitionDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof IntervalDesc) {
-                final var policy = PatternUtils.buildIntervalUsageRule((IntervalDesc) input);
+            } else if (input instanceof UsageNumberDesc usageNumberDesc) {
+                final var policy = PatternUtils.buildNTimesUsageRule(usageNumberDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof DeletionDesc) {
-                final var policy = PatternUtils.buildUsageUntilDeletionRule((DeletionDesc) input);
+            } else if (input instanceof DurationDesc durationDesc) {
+                final var policy = PatternUtils.buildDurationUsageRule(durationDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof LoggingDesc) {
-                return ResponseEntity.ok(PatternUtils.buildUsageLoggingRule().toRdf());
-            } else if (input instanceof NotificationDesc) {
+            } else if (input instanceof IntervalDesc intervalDesc) {
+                final var policy = PatternUtils.buildIntervalUsageRule(intervalDesc);
+                return ResponseEntity.ok(policy.toRdf());
+            } else if (input instanceof DeletionDesc deletionDesc) {
+                final var policy = PatternUtils.buildUsageUntilDeletionRule(deletionDesc);
+                return ResponseEntity.ok(policy.toRdf());
+            } else if (input instanceof LoggingDesc loggingDesc) {
+                final var policy = PatternUtils.buildUsageLoggingRule(loggingDesc);
+                return ResponseEntity.ok(policy.toRdf());
+            } else if (input instanceof NotificationDesc notificationDesc) {
                 final var policy = PatternUtils.buildUsageNotificationRule(
-                        (NotificationDesc) input);
+                        notificationDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof ConnectorRestrictionDesc) {
+            } else if (input instanceof ConnectorRestrictionDesc connectorRestrictionDesc) {
                 final var policy = PatternUtils.buildConnectorRestrictedUsageRule(
-                        (ConnectorRestrictionDesc) input);
+                        connectorRestrictionDesc);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof SecurityRestrictionDesc) {
+            } else if (input instanceof SecurityRestrictionDesc securityRestrictionDesc) {
                 final var policy = PatternUtils.buildSecurityProfileRestrictedUsageRule(
-                        (SecurityRestrictionDesc) input);
+                        securityRestrictionDesc);
                 return ResponseEntity.ok(policy.toRdf());
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (Exception exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not resolve pattern. [exception=({})]", e.getMessage());
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

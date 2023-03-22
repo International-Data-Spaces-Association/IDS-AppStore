@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +20,10 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import static io.dataspaceconnector.model.config.DatabaseConstants.DESCRIPTION_COLUMN_LENGTH;
 
 /**
  * The entity class which holds additional information like title, description.
@@ -39,16 +38,13 @@ public class NamedEntity extends Entity {
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
-
     /**
      * The title of the entity.
      */
-    @KeywordField
     private String title;
-
     /**
      * The description of the entity.
      */
-    @FullTextField
+    @Column(length = DESCRIPTION_COLUMN_LENGTH)
     private String description;
 }

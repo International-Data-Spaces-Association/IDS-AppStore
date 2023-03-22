@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,40 +15,42 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * The endpoint types.
  */
 public enum EndpointType {
 
     /**
-     * Configuration endpoint.
+     * Endpoint type is APP.
      */
-    @JsonProperty("Configuration")
-    CONFIG_ENDPOINT,
+    APP("App"),
 
     /**
-     * Input endpoint.
+     * Endpoint type is CONNECTOR.
      */
-    @JsonProperty("Input")
-    INPUT_ENDPOINT,
+    CONNECTOR("Connector"),
 
     /**
-     * Output endpoint.
+     * Endpoint type is GENERIC.
      */
-    @JsonProperty("Output")
-    OUTPUT_ENDPOINT,
+    GENERIC("Generic");
 
     /**
-     * Status endpoint.
+     * Holds the enums string.
      */
-    @JsonProperty("Status")
-    STATUS_ENDPOINT,
+    private final String value;
 
     /**
-     * Usage policy endpoint.
+     * Constructor.
+     *
+     * @param name The name of the endpoint type.
      */
-    @JsonProperty("UsagePolicy")
-    USAGE_POLICY_ENDPOINT
+    EndpointType(final String name) {
+        this.value = name;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +34,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public final class ResourceNotFoundExceptionHandler {
     /**
-     * Handle {@link ResourceNotFoundException}.
+     * Handles thrown {@link ResourceNotFoundException}.
      *
      * @param exception The thrown exception.
      * @return Response entity with code 404.

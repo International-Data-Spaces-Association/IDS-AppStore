@@ -19,8 +19,9 @@ import de.fraunhofer.fit.appstore.exceptions.TemplateException;
 import de.fraunhofer.fit.appstore.model.portainer.Template;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.resource.Resource;
-import io.dataspaceconnector.service.resource.type.ResourceService;
+//import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,16 +42,29 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class ContainerTemplateService {
 
+    /***
+     Change to the new version of appstore
+     from ResourceService to OfferedResourceService
+     */
+
+
     /**
      * The resource service.
      */
-    private final @NonNull ResourceService resourceService;
+    private final @NonNull OfferedResourceService resourceService;
 
     /**
      * The registry host.
      */
     @Value("${registry.host}")
     private String registryHost;
+
+    /**
+     * The registry host.
+     */
+    @Value("${registry.project}")
+    private String registryProject;
+
 
     /**
      * Create backend container template by resource id.
@@ -76,7 +90,7 @@ public class ContainerTemplateService {
      * @param app The data app.
      * @return The template.
      */
-    private Template createContainerTemplate(final Resource res, final Representation rep,
+    private Template createContainerTemplate(final OfferedResource res, final Representation rep,
                                              final App app) {
         final var template = new Template();
 
@@ -89,30 +103,30 @@ public class ContainerTemplateService {
         template.setName(res.getId().toString());
 
         // Image Name ("image": "linuxserver/headphones:latest"
-        if (!app.getRepositoryNameSpace().isBlank() || !app.getRepositoryName().isBlank()) {
-            // IF work with versioned resources
-            // template.setImage(app.getRepositoryNameSpace() + "/" + app.getRepositoryName() +
-            // ":" + res.getVersion());
-            template.setImage(app.getRepositoryNameSpace() + "/" + app.getRepositoryName());
-        }
+//        if (!(app.getRepositoryNameSpace()== null) || !(app.getRepositoryNameSpace().length() == 0) || !(app.getRepositoryName()== null) || !(app.getRepositoryName().length() == 0) ) {
+//            // IF work with versioned resources
+//            // template.setImage(app.getRepositoryNameSpace() + "/" + app.getRepositoryName() +
+//            // ":" + res.getVersion());
+//            template.setImage(app.getRepositoryNameSpace() + "/" + app.getRepositoryName());
+//        }
 
-        if (!rep.getDistributionService().toString().isBlank()
-                || !app.getRepositoryNameSpace().isBlank() || !app.getRepositoryName().isBlank()) {
+//        if (!rep.getDistributionService().toString().isBlank()
+//                || !app.getRepositoryNameSpace().isBlank() || !app.getRepositoryName().isBlank()) {
+//
+//            String registryAdress;
+//            if (rep.getDistributionService().toString().contains("http://")) {
+//                registryAdress = rep.getDistributionService().toString().replace("http://", "");
+//            } else if (rep.getDistributionService().toString().contains("https://")) {
+//                registryAdress = rep.getDistributionService().toString().replace("https://", "");
+//            } else {
+//                registryAdress = this.registryHost;
+//            }
+//
+//            template.setRegistry(URI.create(String.format("%s", registryAdress)));
+//        }
 
-            String registryAdress;
-            if (rep.getDistributionService().toString().contains("http://")) {
-                registryAdress = rep.getDistributionService().toString().replace("http://", "");
-            } else if (rep.getDistributionService().toString().contains("https://")) {
-                registryAdress = rep.getDistributionService().toString().replace("https://", "");
-            } else {
-                registryAdress = this.registryHost;
-            }
-
-            template.setRegistry(URI.create(String.format("%s", registryAdress)));
-        }
-
-        ContainerTemplateUtils.setTemplateDescription(app, rep, template, res);
-
+//        ContainerTemplateUtils.setTemplateDescription(app, rep, template, res);
+//
         try {
             template.setLogo(new URI("https://logo_placeholder.example"));
         } catch (URISyntaxException e) {
@@ -124,6 +138,15 @@ public class ContainerTemplateService {
         template.setCategories(new ArrayList<>(res.getKeywords()));
         template.setPlatform("linux");
         template.setRestartPolicy("always");
+
+
+//        template.setImage(URI.create("https://documentation"));
+//        template.setRegistry(URI.create(String.format("%s", "mobids-appstore.fit.fraunhofer.de")));
+        template.setRegistry(URI.create(String.format("%s", registryHost)));
+//        template.setImage("binacproj/" + res.getId().toString());
+
+        template.setImage(registryProject +"/" + res.getId().toString());
+        ContainerTemplateUtils.setTemplateDescription(app, rep, template, res);
 
         // PORTS
         /*
@@ -186,11 +209,12 @@ public class ContainerTemplateService {
 
         template.setLabel(ContainerTemplateUtils.getLabelsFromApp(res));
         template.setEnv(ContainerTemplateUtils.getEnvVariablesFromApp(app));
-
-        // Endpoints
+//
+//        // Endpoints
         template.setPorts(ContainerTemplateUtils.getPortsFromApp(app));
+//
 
-        // StorageConfiguration
+//        // StorageConfiguration
         template.setVolumes(ContainerTemplateUtils.getVolumesFromApp(app));
 
         return template;

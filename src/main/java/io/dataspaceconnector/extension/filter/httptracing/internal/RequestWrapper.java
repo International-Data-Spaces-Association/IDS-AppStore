@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +47,7 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * Default constructor.
+     *
      * @param request The request to be wrapped
      */
     public RequestWrapper(final HttpServletRequest request) {
@@ -56,8 +56,9 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * Get the request body of the message.
-     * @return The request body
-     * @throws IOException if the request body could not be read
+     *
+     * @return The request body.
+     * @throws IOException if the request body could not be read.
      */
     public byte[] getRequestBody() throws IOException {
         final var output = isBufferFilled ? requestBody : cloneRequestBody();
@@ -76,8 +77,9 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * Get the request body of the message as stream.
-     * @return The request body as stream
-     * @throws IOException if the request body could not be read
+     *
+     * @return The request body as stream.
+     * @throws IOException if the request body could not be read.
      */
     @Override
     public ServletInputStream getInputStream() throws IOException {
@@ -101,6 +103,7 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 
         /**
          * Default constructor.
+         *
          * @param contents The request body.
          */
         /* default */ CustomServletInputStream(final byte[] contents) {

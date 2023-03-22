@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +17,12 @@ package io.dataspaceconnector.model.rule;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.util.ArrayList;
 
 /**
  * Creates and updates a ContractRule.
  */
-@Component
 public class ContractRuleFactory extends AbstractNamedFactory<ContractRule, ContractRuleDesc> {
 
     /**

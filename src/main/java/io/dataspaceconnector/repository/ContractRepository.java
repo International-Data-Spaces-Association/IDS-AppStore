@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +36,7 @@ public interface ContractRepository extends BaseEntityRepository<Contract> {
      * @return list of contracts applicable for the artifact.
      */
     @Query("SELECT c "
-            + "FROM Contract c INNER JOIN Resource o ON c MEMBER OF o.contracts "
+            + "FROM Contract c INNER JOIN OfferedResource o ON c MEMBER OF o.contracts "
             + "INNER JOIN Representation r ON r MEMBER OF o.representations "
             + "INNER JOIN Artifact a ON a MEMBER OF r.artifacts WHERE a.id = :artifactId "
             + "AND c.deleted = false "

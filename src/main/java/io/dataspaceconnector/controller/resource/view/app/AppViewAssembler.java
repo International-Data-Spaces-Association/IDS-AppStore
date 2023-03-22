@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +15,18 @@
  */
 package io.dataspaceconnector.controller.resource.view.app;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.relation.AppsToEndpointsController;
-import io.dataspaceconnector.controller.resource.relation.AppsToRepresentationsController;
 import io.dataspaceconnector.controller.resource.type.AppController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.app.App;
-import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -38,29 +35,18 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Assembles the REST resource for an app.
  */
 @Component
-@NoArgsConstructor
-public class AppViewAssembler
+public class AppViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<App, AppView>, SelfLinking {
-    /**
-     * Construct the AppView from an App.
-     *
-     * @param app The app.
-     * @return The new view.
-     */
+
     @Override
-    public AppView toModel(final App app) {
+    public final AppView toModel(final App app) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(app, AppView.class);
         view.add(getSelfLink(app.getId()));
 
-        final var representationLink = linkTo(methodOn(AppsToRepresentationsController.class)
-                        .getResource(app.getId(), null, null))
-                        .withRel(BaseType.REPRESENTATIONS);
-        view.add(representationLink);
-
         final var endpointLink = linkTo(methodOn(AppsToEndpointsController.class)
-                        .getResource(app.getId(), null, null))
-                        .withRel(BaseType.ENDPOINTS);
+                .getResource(app.getId(), null, null))
+                .withRel(BaseType.ENDPOINTS);
         view.add(endpointLink);
 
         return view;
@@ -68,7 +54,7 @@ public class AppViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, AppController.class);
+        return getSelfLink(entityId, AppController.class);
     }
 
 }

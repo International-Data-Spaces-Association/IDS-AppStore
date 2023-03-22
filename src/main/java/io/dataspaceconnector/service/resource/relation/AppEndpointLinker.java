@@ -1,6 +1,5 @@
 /*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- * Copyright 2021 Fraunhofer Institute for Applied Information Technology
+ * Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,31 +16,25 @@
 package io.dataspaceconnector.service.resource.relation;
 
 import io.dataspaceconnector.model.app.App;
-import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.service.resource.base.OwningRelationService;
+import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
-import io.dataspaceconnector.service.resource.type.EndpointService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * Handles the relation between a data app and its endpoints.
+ * Handles the relation between apps and app endpoints.
  */
 @Service
 @NoArgsConstructor
-public class AppEndpointLinker extends OwningRelationService<App, Endpoint, AppService,
-        EndpointService> {
+public class AppEndpointLinker extends OwningRelationService<App, AppEndpointImpl, AppService,
+        AppEndpointService> {
 
-    /**
-     * Get the list of endpoints owned by a given data app.
-     *
-     * @param owner The owner of the endpoints.
-     * @return The list of owned endpoints.
-     */
     @Override
-    protected List<Endpoint> getInternal(final App owner) {
+    public final List<AppEndpointImpl> getInternal(final App owner) {
         return owner.getEndpoints();
     }
 }
