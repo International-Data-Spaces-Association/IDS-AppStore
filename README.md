@@ -16,7 +16,7 @@
 
 ## Quick Start
 
-If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
+If you want to build and run locally, ensure that at least Java 17 is installed. Then, follow these steps:
 
 1.  Clone this repository.
 2.  Create /Data/search folder on the root with `cd /` and `mkdir -p /data/search`
