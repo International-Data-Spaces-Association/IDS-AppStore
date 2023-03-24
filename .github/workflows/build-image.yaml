@@ -2,7 +2,7 @@ name: docker-image
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dsc7upgrade ]
     tags: 'v*'
   release:
     types: [published]
