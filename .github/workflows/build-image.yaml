@@ -46,7 +46,7 @@ jobs:
          # This should use REGISTRY instead of the secret directly
          registry: ${{ secrets.IMAGE_REGISTRY }}
          username: ${{ github.actor }}
-         password: ${{ secrets.GITHUB_TOKEN }}
+         password: ${{ secrets.DOCKHUB_TOKEN }}
       -
        name: Build image
        run: |
