@@ -26,7 +26,7 @@ RUN mvn -e -B dependency:resolve && \
 COPY src/main/java ./src/main/java
 COPY src/main/resources ./src/main/resources
 ## Build
-RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true  && dock\
+RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true  && \
 java -Djarmode=layertools -jar /app/target/appstore-3.0.0.jar extract
 
 # JRE
