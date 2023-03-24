@@ -17,7 +17,7 @@
 //
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
-//import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+//import ids.messaging.handler.message.MessagePayload;
 //import io.dataspaceconnector.common.exception.InvalidInputException;
 //import io.dataspaceconnector.common.ids.message.MessageUtils;
 //import io.dataspaceconnector.common.net.QueryInput;
@@ -165,7 +165,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
-import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.exception.InvalidInputException;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.net.QueryInput;
@@ -207,7 +207,7 @@ import de.fraunhofer.fit.appstore.services.registry.RegistryService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
-import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.exception.InvalidInputException;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.net.QueryInput;

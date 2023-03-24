@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.appstore.portainer;
 
-import de.fraunhofer.ids.messaging.protocol.http.HttpService;
+import ids.messaging.protocol.http.HttpService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.model.endpoint.AppEndpointImpl;

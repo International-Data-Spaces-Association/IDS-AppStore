@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.config;
 
-import de.fraunhofer.ids.messaging.core.daps.DapsVerifier;
-import de.fraunhofer.ids.messaging.core.daps.customvalidation.ValidationRuleResult;
+import ids.messaging.core.daps.DapsVerifier;
+import ids.messaging.core.daps.customvalidation.ValidationRuleResult;
 import io.dataspaceconnector.model.daps.Daps;
 import io.dataspaceconnector.repository.DapsRepository;
 import io.jsonwebtoken.Claims;

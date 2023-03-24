@@ -18,7 +18,7 @@ package io.dataspaceconnector.config.security;
 import javax.annotation.PostConstruct;
 
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
-import de.fraunhofer.ids.messaging.core.config.ConfigProducer;
+import ids.messaging.core.config.ConfigProducer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

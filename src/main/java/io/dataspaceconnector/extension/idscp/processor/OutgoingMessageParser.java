@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.extension.idscp.processor;
 
-import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.extension.idscp.processor.base.Idscp2MappingProcessor;
 import io.dataspaceconnector.service.message.handler.dto.Response;

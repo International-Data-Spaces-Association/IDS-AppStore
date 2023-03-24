@@ -48,7 +48,7 @@ public class HttpService implements DataRetrievalService {
     /**
      * Service for building and sending http requests.
      */
-    private final @NonNull de.fraunhofer.ids.messaging.protocol.http.HttpService httpSvc;
+    private final @NonNull ids.messaging.protocol.http.HttpService httpSvc;
 
     /**
      * The request method.

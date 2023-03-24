@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.extension.monitoring.update;
 
-import de.fraunhofer.ids.messaging.protocol.http.HttpService;
+import ids.messaging.protocol.http.HttpService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.extension.monitoring.update.util.Repository;

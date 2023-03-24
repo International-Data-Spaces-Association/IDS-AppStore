@@ -17,11 +17,11 @@ package io.dataspaceconnector.service.message.handler.type.base;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.ids.messaging.handler.message.MessageAndClaimsHandler;
-import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
-import de.fraunhofer.ids.messaging.response.BodyResponse;
-import de.fraunhofer.ids.messaging.response.ErrorResponse;
-import de.fraunhofer.ids.messaging.response.MessageResponse;
+import ids.messaging.handler.message.MessageAndClaimsHandler;
+import ids.messaging.handler.message.MessagePayload;
+import ids.messaging.response.BodyResponse;
+import ids.messaging.response.ErrorResponse;
+import ids.messaging.response.MessageResponse;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.Response;

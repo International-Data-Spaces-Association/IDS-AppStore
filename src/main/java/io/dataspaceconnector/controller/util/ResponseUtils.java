@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.util;
 
-import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
+import de.fhg.aisec.ids.idscp2.api.error.Idscp2Exception;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.service.message.handler.dto.Response;
@@ -317,7 +317,7 @@ public final class ResponseUtils {
         } else {
             final var body = toObjectResponse(exchange.getIn().getBody(ResponseEntity.class));
             return Objects.requireNonNullElseGet(body, () -> new JsonResponse("An error occurred.")
-                            .create(HttpStatus.INTERNAL_SERVER_ERROR));
+                    .create(HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
