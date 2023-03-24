@@ -16,7 +16,6 @@
 package io.dataspaceconnector.service.message.builder.type;
 
 import java.io.IOException;
-
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.RequestMessageBuilder;
