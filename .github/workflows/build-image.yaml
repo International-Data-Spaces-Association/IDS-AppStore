@@ -22,7 +22,7 @@ jobs:
       -
         name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/ids-appstore"
+        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/ids-appstore:main"
       -
        name: Find tag
        id: get_tag
@@ -96,7 +96,7 @@ jobs:
       -
         name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/ids-appstore"
+        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/ids-appstore:main"
       -
        name: Find tag
        id: get_tag
