@@ -8,7 +8,7 @@
 
         <!-- an error occurred in IDSCP2 communication -->
         <onException>
-            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <exception>de.fhg.aisec.ids.idscp2.api.error.Idscp2Exception</exception>
             <to uri="direct:handleIdscp2Exception"/>
         </onException>
 

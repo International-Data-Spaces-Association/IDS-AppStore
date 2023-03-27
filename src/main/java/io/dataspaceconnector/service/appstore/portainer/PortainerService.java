@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.appstore.portainer;
 
-import de.fraunhofer.ids.messaging.protocol.http.HttpService;
+import ids.messaging.protocol.http.HttpService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
@@ -31,7 +31,6 @@ import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.message.handler;
 
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import lombok.NonNull;

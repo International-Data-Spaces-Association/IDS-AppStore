@@ -16,9 +16,9 @@
 package io.dataspaceconnector.extension.idscp.processor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
-import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
-import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
+import ids.messaging.core.daps.ClaimsException;
+import ids.messaging.core.daps.DapsValidator;
+import ids.messaging.handler.message.MessagePayloadInputstream;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.extension.idscp.processor.base.Idscp2MappingProcessor;
 import io.dataspaceconnector.service.message.handler.dto.Request;

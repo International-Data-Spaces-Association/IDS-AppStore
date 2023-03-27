@@ -41,8 +41,8 @@ import java.util.Properties;
         "io.dataspaceconnector",
         /* AppStore Extension */
         "de.fraunhofer.fit.appstore.*",
-        "de.fraunhofer.ids.*",
-        "de.fraunhofer.ids.messaging.*"
+        "ids.*",
+        "ids.messaging.*"
 })
 public class ConnectorApplication {
 

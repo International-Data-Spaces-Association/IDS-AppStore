@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.message.handler.processor;
 
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
-import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.ids.message.MessageUtils;

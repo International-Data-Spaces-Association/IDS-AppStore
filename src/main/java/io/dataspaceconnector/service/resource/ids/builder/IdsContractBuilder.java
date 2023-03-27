@@ -21,7 +21,7 @@ import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.common.util.Utils;

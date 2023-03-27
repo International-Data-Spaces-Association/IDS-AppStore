@@ -16,10 +16,10 @@
 package io.dataspaceconnector.config;
 
 import de.fraunhofer.iais.eis.ConfigurationModel;
-import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorException;
-import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
-import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
+import ids.messaging.core.config.ConfigProducerInterceptorException;
+import ids.messaging.core.config.ConfigProperties;
+import ids.messaging.core.config.ConfigUpdateException;
+import ids.messaging.core.config.PreConfigProducerInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
@@ -38,7 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 /**
- * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer} and changes how the
+ * Intercepts {@link ids.messaging.core.config.ConfigProducer} and changes how the
  * startup configuration is loaded.
  */
 @Configuration

@@ -17,7 +17,7 @@ package io.dataspaceconnector.service.message.handler.transformer;
 
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
-import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.service.message.handler.dto.Request;

@@ -16,9 +16,9 @@
 package io.dataspaceconnector.service.resource.type;
 
 import de.fraunhofer.iais.eis.ConfigurationModel;
-import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
-import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
-import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import ids.messaging.core.config.ConfigContainer;
+import ids.messaging.core.config.ConfigProperties;
+import ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.base.AbstractFactory;

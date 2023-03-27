@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.extension.monitoring;
 
-import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
-import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
-import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
-import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
-import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
-import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
+import ids.messaging.core.daps.ClaimsException;
+import ids.messaging.core.daps.ConnectorMissingCertExtensionException;
+import ids.messaging.core.daps.DapsConnectionException;
+import ids.messaging.core.daps.DapsEmptyResponseException;
+import ids.messaging.core.daps.DapsValidator;
+import ids.messaging.core.daps.TokenProviderService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.ConnectorService;

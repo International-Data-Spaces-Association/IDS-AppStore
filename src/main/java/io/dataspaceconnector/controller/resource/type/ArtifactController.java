@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
-import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
+import ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.ContentType;

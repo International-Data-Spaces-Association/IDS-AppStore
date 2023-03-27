@@ -18,7 +18,7 @@ package io.dataspaceconnector.service.message.builder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorUnavailableMessageImpl;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.service.message.builder.base.IdsMessageBuilder;

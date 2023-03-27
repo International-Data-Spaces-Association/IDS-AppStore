@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.3</version>
+		<version>2.7.5</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -64,53 +64,55 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-messaging-services.version>6.1.0</ids-messaging-services.version>
-		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
-		<swagger-annotations.version>1.6.4</swagger-annotations.version>
-		<okhttp.version>4.9.3</okhttp.version>
-		<modelmapper.version>3.0.0</modelmapper.version>
-		<jackson.version>2.13.1</jackson.version>
-		<postgres.version>42.3.2</postgres.version>
+		<ids-messaging-services.version>7.0.0</ids-messaging-services.version>
+		<springframework.version>5.3.23</springframework.version>
+<!--		<springframework.plugin>5.3.23</springframework.plugin>-->
+		<swagger-annotations.version>1.6.9</swagger-annotations.version>
+		<okhttp.version>4.10.0</okhttp.version>
+		<modelmapper.version>3.1.0</modelmapper.version>
+		<jackson.version>2.14.1</jackson.version>
+		<postgres.version>42.5.1</postgres.version>
 		<springdoc-ui.version>1.6.5</springdoc-ui.version>
 		<springdoc-security.version>1.6.5</springdoc-security.version>
 		<springdoc-hateoas.version>1.6.5</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.4</jsonld-java.version>
-		<equalsverifier.version>3.9</equalsverifier.version>
+		<equalsverifier.version>3.11.1</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<velocity.version>1.7</velocity.version>
 		<freemarker.version>2.3.31</freemarker.version>
-		<camel.version>3.14.1</camel.version>
-		<idscp2.version>0.6.0</idscp2.version>
-		<protobuf.version>3.19.4</protobuf.version>
+		<camel.version>3.19.0</camel.version>
+		<protobuf.version>3.21.10</protobuf.version>
+		<idscp2.version>0.14.1</idscp2.version>
 
 		<!-- PROPS FOR Hibernate Search -->
 		<hibernate.search.version>6.0.0.Final</hibernate.search.version>
 		<log4j2.version>2.17.1</log4j2.version>
 
 		<!-- Plugins -->
-		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
-		<maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
-		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.7.4</pitest.version>
-		<pitest-junit5-plugin.version>0.15</pitest-junit5-plugin.version>
-		<tidy.version>1.1.0</tidy.version>
-		<maven-site-plugin.version>3.10.0</maven-site-plugin.version>
-		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
-		<spotbugs.version>4.5.3</spotbugs.version>
-		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
-		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
-		<checkstyle.version>9.3</checkstyle.version>
+		<maven-enforcer-plugin.version>3.1.0</maven-enforcer-plugin.version>
+		<maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
+		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+		<pitest.version>1.9.11</pitest.version>
+		<pitest-junit5-plugin.version>1.1.0</pitest-junit5-plugin.version>
+		<tidy.version>1.2.0</tidy.version>
+		<maven-site-plugin.version>3.12.1</maven-site-plugin.version>
+		<maven-project-info-reports-plugin.version>3.4.1</maven-project-info-reports-plugin.version>
+		<spotbugs.version>4.7.3</spotbugs.version>
+		<findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
+		<checkstyle-plugin.version>3.2.0</checkstyle-plugin.version>
+		<checkstyle.version>10.5.0</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
-		<pmd-plugin.version>3.15.0</pmd-plugin.version>
-		<pmd.version>6.42.0</pmd.version>
-		<versions-maven-plugin.version>2.9.0</versions-maven-plugin.version>
+		<pmd-plugin.version>3.19.0</pmd-plugin.version>
+		<pmd.version>6.52.0</pmd.version>
+		<versions-maven-plugin.version>2.13.0</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
 		<taglist.version>3.0.0</taglist.version>
-		<jxr.version>3.1.1</jxr.version>
-		<dependency-check.version>6.5.3</dependency-check.version>
+		<jxr.version>3.3.0</jxr.version>
+		<dependency-check.version>7.4.0</dependency-check.version>
+		<jsonwebtoken.version>0.11.5</jsonwebtoken.version>
 
 		<!-- License -->
 		<license_name>Apache License, Version 2.0</license_name>
@@ -119,10 +121,9 @@
 	</properties>
 
 	<dependencies>
-
 		<!-- https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services -->
 		<dependency>
-			<groupId>de.fraunhofer.ids.messaging</groupId>
+			<groupId>ids.messaging</groupId>
 			<artifactId>broker</artifactId>
 			<version>${ids-messaging-services.version}</version>
 			<exclusions>
@@ -155,6 +156,22 @@
 					<groupId>com.squareup.okhttp3</groupId>
 					<artifactId>okhttp</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-tx</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-test</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -170,11 +187,41 @@
 			</exclusions>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework.plugin/spring-plugin-core -->
+
+<!--
+		 https://mvnrepository.com/artifact/org.springframework.plugin/spring-plugin-core
 		<dependency>
 			<groupId>org.springframework.plugin</groupId>
 			<artifactId>spring-plugin-core</artifactId>
 			<version>${springframework.plugin}</version>
+		</dependency>
+-->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jsonwebtoken.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.bitbucket.b_c/jose4j -->
+		<dependency>
+			<groupId>org.bitbucket.b_c</groupId>
+			<artifactId>jose4j</artifactId>
+			<version>0.9.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jsonwebtoken.version}</version>
 		</dependency>
 
 		<dependency>
@@ -435,41 +482,12 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.camel.springboot</groupId>
-			<artifactId>camel-http-starter</artifactId>
-			<version>${camel.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.github.spotbugs</groupId>
 			<artifactId>spotbugs-annotations</artifactId>
 			<version>${spotbugs.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>de.fhg.aisec.ids</groupId>
-			<artifactId>camel-idscp2</artifactId>
-			<version>${idscp2.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>camel-core</artifactId>
-					<groupId>org.apache.camel</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-					<artifactId>java</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids</groupId>
-					<artifactId>infomodel-serializer</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.squareup.okhttp3</groupId>
-					<artifactId>okhttp</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<!-- Hibernate Search for FullText Search Support -->
 		<dependency>
@@ -497,6 +515,98 @@
 			<version>1.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-spring-boot</artifactId>
+			<version>${camel.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.camel</groupId>
+					<artifactId>camel-cloud</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.camel</groupId>
+					<artifactId>camel-cluster</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-core-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-bean-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-direct-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-log-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-timer-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-http-starter</artifactId>
+			<version>${camel.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.camel</groupId>
+					<artifactId>camel-cloud</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.camel</groupId>
+					<artifactId>camel-cluster</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-sql-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fhg.aisec.ids</groupId>
+			<artifactId>camel-idscp2</artifactId>
+			<version>${idscp2.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>camel-core</artifactId>
+					<groupId>org.apache.camel</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
+					<artifactId>java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>de.fraunhofer.iais.eis.ids</groupId>
+					<artifactId>infomodel-serializer</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.squareup.okhttp3</groupId>
+					<artifactId>okhttp</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>
@@ -522,17 +632,10 @@
 			</releases>
 		</repository>
 		<repository>
-			<id>ids-public</id>
-			<name>isst-public</name>
-			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
+			<id>sovity-public</id>
+			<url>https://pkgs.dev.azure.com/sovity/5bec6cbd-c80a-47ac-86ce-1deb26cee853/_packaging/artifact/maven/v1</url>
 		</repository>
-		<repository>
+<!--		<repository>
 			<id>eis-ids-public</id>
 			<name>maven-snapshots</name>
 			<url>https://maven.iais.fraunhofer.de/artifactory/eis-ids-public</url>
@@ -542,7 +645,7 @@
 			<releases>
 				<enabled>true</enabled>
 			</releases>
-		</repository>
+		</repository>-->
 	</repositories>
 
 	<dependencyManagement>

@@ -16,16 +16,15 @@
 package io.dataspaceconnector.service.message.builder.type;
 
 import java.io.IOException;
-
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.RequestMessageBuilder;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.ids.messaging.common.SerializeException;
-import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartDatapart;
-import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import ids.messaging.common.SerializeException;
+import ids.messaging.protocol.multipart.parser.MultipartDatapart;
+import ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.message.ProcessCreationMessageDesc;

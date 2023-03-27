@@ -16,7 +16,7 @@
 package io.dataspaceconnector.extension.idscp.config;
 
 import de.fhg.aisec.ids.camel.idscp2.Utils;
-import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import ids.messaging.core.config.ConfigContainer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Processor;

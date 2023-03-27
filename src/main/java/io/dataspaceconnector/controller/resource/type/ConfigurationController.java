@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
-import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;

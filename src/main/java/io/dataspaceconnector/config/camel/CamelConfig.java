@@ -12,12 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ *  Contributors:
+ *       sovity GmbH
+ *
  */
 package io.dataspaceconnector.config.camel;
 
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.model.Constants;
-import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -85,10 +89,13 @@ public class CamelConfig {
      */
     @Bean
     public DeadLetterChannelBuilder errorHandler() {
+        final var policyDef = new RedeliveryPolicyDefinition();
+        policyDef.setDisableRedelivery("true");
+
         final var dlcBuilder = new DeadLetterChannelBuilder();
         dlcBuilder.setDeadLetterUri("direct:deadLetterChannel");
-        dlcBuilder.setRedeliveryPolicy(new RedeliveryPolicy().disableRedelivery());
+        dlcBuilder.setRedeliveryPolicy(policyDef);
+
         return dlcBuilder;
     }
-
 }
