@@ -45,7 +45,7 @@ jobs:
        with:
          # This should use REGISTRY instead of the secret directly
          registry: ${{ secrets.IMAGE_REGISTRY }}
-         username: ${{ github.actor }}
+         username: ${{ secrets.REPO_USER  }}
          password: ${{ secrets.GITHUB_TOKEN }}
       -
        name: Build image
@@ -119,7 +119,7 @@ jobs:
        with:
          # This should use REGISTRY instead of the secret directly
          registry: ${{ secrets.IMAGE_REGISTRY }}
-         username: ${{ github.actor }}
+         username: ${{ secrets.REPO_USER  }}
          password: ${{ secrets.GITHUB_TOKEN }}
       -
        name: Build image
