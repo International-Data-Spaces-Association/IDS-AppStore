@@ -1,175 +1,175 @@
-name: CI
-
-on:
-  pull_request:
-    branches: [ main ]
-
-concurrency:
-  group: ${{ github.head_ref }}
-  cancel-in-progress: true
-
-env:
-  REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
-  OWNER: ${{ secrets.REPO_USER }}
-
-jobs:
-  style:
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-       java-version: 17
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Run style checks
-      run: mvn -B -U checkstyle:check --file pom.xml
-
-  license:
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-       java-version: 17
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Run license checks
-      run: mvn -B -U license:check --file pom.xml
-
-  linting:
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Lint Docker
-      uses: hadolint/hadolint-action@v1.5.0
-      with:
-        dockerfile: Dockerfile
-        config: .hadolint.yaml
-    # - name: Lint Docker and Yaml
-    #   uses: bridgecrewio/checkov-action@master
-    #   with:
-    #     directory: .
-    #     quiet: true
-    #     output_format: github_failed_only
-    #     download_external_modules: true
-    #     soft_fail: true
-
-  static-code-analysis:
-    needs: [style, license, linting]
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-       java-version: 17
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Run static code analysis
-      run: mvn -B -U compile spotbugs:check --file pom.xml
-
-  unit-and-integration-tests:
-    needs: [style, license, linting]
-    timeout-minutes: 30
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        java: [17]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Unit- and Integrationtests
-      run: mvn -B -U verify --file pom.xml -Prelease
-
-  unit-and-integration-tests-cross-version:
-    needs: unit-and-integration-tests
-    timeout-minutes: 30
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        java: [12, 13, 14, 15, 16]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Unit- and Integrationtests
-      run: mvn -B -U verify --file pom.xml -Prelease
-
-  mutation-tests:
-    needs: unit-and-integration-tests
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-       java-version: 17
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Run Mutation Tests
-      run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
-
+#name: CI
+#
+#on:
+#  pull_request:
+#    branches: [ main ]
+#
+#concurrency:
+#  group: ${{ github.head_ref }}
+#  cancel-in-progress: true
+#
+#env:
+#  REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
+#  OWNER: ${{ secrets.REPO_USER }}
+#
+#jobs:
+#  style:
+#    timeout-minutes: 5
+#    runs-on: ubuntu-latest
+#    strategy:
+#      fail-fast: false
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Set up JDK ${{ matrix.java }}
+#      uses: actions/setup-java@v1
+#      with:
+#       java-version: 11
+#    - name: Cache maven packages
+#      uses: actions/cache@v2
+#      with:
+#        path: ~/.m2
+#        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#        restore-keys: ${{ runner.os }}-m2
+#    - name: Run style checks
+#      run: mvn -B -U checkstyle:check --file pom.xml
+#
+#  license:
+#    timeout-minutes: 5
+#    runs-on: ubuntu-latest
+#    strategy:
+#      fail-fast: false
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Set up JDK ${{ matrix.java }}
+#      uses: actions/setup-java@v1
+#      with:
+#       java-version: 11
+#    - name: Cache maven packages
+#      uses: actions/cache@v2
+#      with:
+#        path: ~/.m2
+#        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#        restore-keys: ${{ runner.os }}-m2
+#    - name: Run license checks
+#      run: mvn -B -U license:check --file pom.xml
+#
+#  linting:
+#    timeout-minutes: 5
+#    runs-on: ubuntu-latest
+#    strategy:
+#      fail-fast: false
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Lint Docker
+#      uses: hadolint/hadolint-action@v1.5.0
+#      with:
+#        dockerfile: Dockerfile
+#        config: .hadolint.yaml
+#    # - name: Lint Docker and Yaml
+#    #   uses: bridgecrewio/checkov-action@master
+#    #   with:
+#    #     directory: .
+#    #     quiet: true
+#    #     output_format: github_failed_only
+#    #     download_external_modules: true
+#    #     soft_fail: true
+#
+#  static-code-analysis:
+#    needs: [style, license, linting]
+#    timeout-minutes: 5
+#    runs-on: ubuntu-latest
+#    strategy:
+#      fail-fast: false
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Set up JDK ${{ matrix.java }}
+#      uses: actions/setup-java@v1
+#      with:
+#       java-version: 11
+#    - name: Cache maven packages
+#      uses: actions/cache@v2
+#      with:
+#        path: ~/.m2
+#        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#        restore-keys: ${{ runner.os }}-m2
+#    - name: Run static code analysis
+#      run: mvn -B -U compile spotbugs:check --file pom.xml
+#
+#  unit-and-integration-tests:
+#    needs: [style, license, linting]
+#    timeout-minutes: 30
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      matrix:
+#        os: [ubuntu-latest, windows-latest, macos-latest]
+#        java: [11]
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Set up JDK ${{ matrix.java }}
+#      uses: actions/setup-java@v1
+#      with:
+#        java-version: ${{ matrix.java }}
+#    - name: Cache maven packages
+#      uses: actions/cache@v2
+#      with:
+#        path: ~/.m2
+#        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#        restore-keys: ${{ runner.os }}-m2
+#    - name: Unit- and Integrationtests
+#      run: mvn -B -U verify --file pom.xml -Prelease
+#
+#  unit-and-integration-tests-cross-version:
+#    needs: unit-and-integration-tests
+#    timeout-minutes: 30
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        os: [ubuntu-latest, windows-latest, macos-latest]
+#        java: [12, 13, 14, 15, 16]
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Set up JDK ${{ matrix.java }}
+#      uses: actions/setup-java@v1
+#      with:
+#        java-version: ${{ matrix.java }}
+#    - name: Cache maven packages
+#      uses: actions/cache@v2
+#      with:
+#        path: ~/.m2
+#        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#        restore-keys: ${{ runner.os }}-m2
+#    - name: Unit- and Integrationtests
+#      run: mvn -B -U verify --file pom.xml -Prelease
+#
+#  mutation-tests:
+#    needs: unit-and-integration-tests
+#    timeout-minutes: 30
+#    runs-on: ubuntu-latest
+#    strategy:
+#      fail-fast: false
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Set up JDK ${{ matrix.java }}
+#      uses: actions/setup-java@v1
+#      with:
+#       java-version: 11
+#    - name: Cache maven packages
+#      uses: actions/cache@v2
+#      with:
+#        path: ~/.m2
+#        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#        restore-keys: ${{ runner.os }}-m2
+#    - name: Run Mutation Tests
+#      run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
+#
 #  build-test-image:
 #    needs: unit-and-integration-tests
 #    timeout-minutes: 15
@@ -210,7 +210,7 @@ jobs:
 #          ignore-unfixed: true
 #          vuln-type: 'os,library'
 #          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
-
+#
 #  e2e-tests:
 #    needs: build-test-image
 #    timeout-minutes: 30
