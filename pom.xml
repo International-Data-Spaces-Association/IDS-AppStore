@@ -87,7 +87,7 @@
 		<idscp2.version>0.14.1</idscp2.version>
 
 		<!-- PROPS FOR Hibernate Search -->
-		<hibernate.search.version>6.0.0.Final</hibernate.search.version>
+		<hibernate.search.version>6.1.8.Final</hibernate.search.version>
 		<log4j2.version>2.17.1</log4j2.version>
 
 		<!-- Plugins -->
