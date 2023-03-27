@@ -70,7 +70,7 @@
 		<swagger-annotations.version>1.6.9</swagger-annotations.version>
 		<okhttp.version>4.10.0</okhttp.version>
 		<modelmapper.version>3.1.0</modelmapper.version>
-		<jackson.version>2.14.1</jackson.version>
+		<jackson.version>2.14.2</jackson.version>
 		<postgres.version>42.5.1</postgres.version>
 		<springdoc-ui.version>1.6.5</springdoc-ui.version>
 		<springdoc-security.version>1.6.5</springdoc-security.version>
