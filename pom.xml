@@ -82,7 +82,7 @@
 		<freemarker.version>2.3.31</freemarker.version>
 		<velocity.version>1.7</velocity.version>
 		<freemarker.version>2.3.31</freemarker.version>
-		<camel.version>3.19.0</camel.version>
+		<camel.version>3.20.2</camel.version>
 		<protobuf.version>3.21.10</protobuf.version>
 		<idscp2.version>0.14.1</idscp2.version>
 
