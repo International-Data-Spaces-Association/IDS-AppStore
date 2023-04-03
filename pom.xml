@@ -72,7 +72,7 @@
 		<modelmapper.version>3.1.0</modelmapper.version>
 		<jackson.version>2.14.1</jackson.version>
 		<postgres.version>42.5.1</postgres.version>
-		<springdoc-ui.version>1.6.5</springdoc-ui.version>
+		<springdoc-ui.version>1.7.0</springdoc-ui.version>
 		<springdoc-security.version>1.6.5</springdoc-security.version>
 		<springdoc-hateoas.version>1.6.5</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.4</jsonld-java.version>
