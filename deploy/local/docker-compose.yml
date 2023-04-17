@@ -63,10 +63,9 @@ services:
     volumes:
       - connector-data:/var/lib/postgresql/data
   appstore:
-    build:
-      context: ../.
     container_name: appstore
     hostname: appstore
+    image: ghcr.io/international-data-spaces-association/ids-appstore:main
     restart: "always"
     expose:
       - 8080
