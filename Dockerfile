@@ -55,6 +55,6 @@ COPY --from=builder /app/dependencies/ ./
 COPY --from=builder /app/application/ ./
 EXPOSE 8080
 EXPOSE 29292
-USER nonroot
+#USER nonroot
 ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher"]
 
