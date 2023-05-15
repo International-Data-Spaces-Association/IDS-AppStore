@@ -67,7 +67,7 @@
 		<ids-messaging-services.version>7.0.0</ids-messaging-services.version>
 		<springframework.version>5.3.23</springframework.version>
 <!--		<springframework.plugin>5.3.23</springframework.plugin>-->
-		<swagger-annotations.version>1.6.9</swagger-annotations.version>
+		<swagger-annotations.version>1.6.11</swagger-annotations.version>
 		<okhttp.version>4.10.0</okhttp.version>
 		<modelmapper.version>3.1.0</modelmapper.version>
 		<jackson.version>2.14.1</jackson.version>
