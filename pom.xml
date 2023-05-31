@@ -76,7 +76,7 @@
 		<springdoc-security.version>1.6.5</springdoc-security.version>
 		<springdoc-hateoas.version>1.6.5</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.4</jsonld-java.version>
-		<equalsverifier.version>3.11.1</equalsverifier.version>
+		<equalsverifier.version>3.14.2</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<freemarker.version>2.3.31</freemarker.version>
